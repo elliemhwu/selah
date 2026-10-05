@@ -15,13 +15,13 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0003](0003-schema-per-module.md) | One Postgres schema per module | Accepted |
 | [0004](0004-plan-record-pattern.md) | Plan → Record pattern | Accepted |
 | [0005](0005-finance-math-in-shared-utils.md) | Finance math as pure functions in `libs/shared-utils` | Accepted |
-| [0006](0006-money-representation.md) | Money representation | Proposed |
+| [0006](0006-money-representation.md) | Money representation | Accepted |
 | [0007](0007-offline-ready-data-conventions.md) | Offline-ready data conventions | Accepted |
-| [0008](0008-migrations-and-data-access.md) | SQL migrations with dbmate, queries with Kysely | Proposed |
+| [0008](0008-migrations-and-data-access.md) | SQL migrations with dbmate, queries with Kysely | Accepted |
 | [0009](0009-git-workflow.md) | Git workflow: `feat/*` → `develop` → `main` | Accepted |
-| [0010](0010-tooling-pnpm-docker.md) | pnpm and Docker Compose for local Postgres | Proposed |
+| [0010](0010-tooling-pnpm-docker.md) | pnpm and Docker Compose for local Postgres | Accepted |
 | [0011](0011-derive-dont-store.md) | Calculate balances and rollovers instead of storing them | Accepted |
-| [0012](0012-plan-versioning.md) | Plan versioning with stable item identity | Proposed |
+| [0012](0012-plan-versioning.md) | Plan versioning with stable item identity | Accepted |
 | [0013](0013-records-with-lines.md) | Records with lines | Accepted |
 
 ## Template

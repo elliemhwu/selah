@@ -1,6 +1,6 @@
 # 0006. Money representation
 
-- Status: **Proposed**
+- Status: Accepted
 - Date: 2026-10-05
 
 ## Context
@@ -10,9 +10,12 @@ JS `number` is a binary float, so `0.1 + 0.2 !== 0.3`. Amounts must be exact eve
 - **Database:** amounts are `NUMERIC(14,2)`; exchange rates are `NUMERIC(18,8)`; currencies are `CHAR(3)` ISO codes, checked against the supported list.
 - **API:** amounts are **decimal strings**, e.g. `"1234.50"`, never JSON numbers.
 - **Calculation:** `libs/shared-utils` converts to integer cents (`bigint`) internally and converts back to strings for output.
+- **Whole units for TWD and JPY:** the columns keep 2 decimals for every currency, but TWD and JPY amounts must be whole numbers. The API rejects TWD/JPY amounts with a fractional part, and calculated TWD values (`twd_amount`, percentage-anchored budget amounts) are rounded to whole TWD.
+- **Rounding:** half away from zero (`0.5 → 1`, `-0.5 → -1`), matching C# `MidpointRounding.AwayFromZero`. All rounding goes through `libs/shared-utils`.
 - **Display:** TWD and JPY are shown without decimals; EUR, GBP and USD with 2 decimals.
 - **Budget figures** are always in TWD. Foreign-currency record lines store both `amount` (original) and `twd_amount`.
 
 ## Consequences
 - `pg` returns `NUMERIC` as strings by default. Keep it that way and never parse to `number`.
-- Display rounding is a presentation concern; the stored values keep 2 decimals.
+- Because TWD and JPY are stored as whole numbers, what is displayed is exactly what is stored, and displayed lines always add up to displayed totals.
+- Splitting a whole-TWD amount by percentages can leave a remainder; `shared-utils` must distribute it explicitly rather than lose or invent a dollar.

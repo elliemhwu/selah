@@ -30,7 +30,7 @@ Nx monorepo:
 - **Finance math only in `libs/shared-utils`** ([ADR 0005](docs/decisions/0005-finance-math-in-shared-utils.md)): rounding, percentages, cadence conversion, rollover, FX.
   - Pure functions with no framework imports, each with unit tests.
   - Other code calls these functions and never reimplements the math inline.
-- **Money is never a JS `number` in transit** ([ADR 0006](docs/decisions/0006-money-representation.md)): `NUMERIC` in the DB, decimal strings over the API, integer cents in calculations.
+- **Money is never a JS `number` in transit** ([ADR 0006](docs/decisions/0006-money-representation.md)): `NUMERIC` in the DB, decimal strings over the API, integer cents in calculations. TWD/JPY are whole units; round half away from zero.
 - **Data is ready for offline sync** ([ADR 0007](docs/decisions/0007-offline-ready-data-conventions.md)):
   - UUID primary keys that the client can generate
   - `created_at` / `updated_at` on every row

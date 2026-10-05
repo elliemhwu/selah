@@ -7,11 +7,11 @@ _Last updated: 2026-10-05_
 ## Current state
 
 - **Phase 0 (requirements):** done.
-- **Phase 1 (schema decisions):** in discussion.
+- **Phase 1 (schema decisions):** decided. All ADRs are *Accepted*; the DDL hasn't been written yet.
 - **No code yet.** The Nx workspace hasn't been scaffolded.
-- **No GitHub remote yet.** The owner will create an empty `selah` repo, or install the `gh` CLI.
+- **GitHub:** `elliemhwu/selah`, with `main` and `develop` branches.
 
-**Next step:** the owner confirms the *Proposed* ADRs ([0006](decisions/0006-money-representation.md), [0008](decisions/0008-migrations-and-data-access.md), [0010](decisions/0010-tooling-pnpm-docker.md), [0012](decisions/0012-plan-versioning.md)). Then write the finance schema as SQL migrations.
+**Next step:** merge `feat/finance-requirements` into `develop`, then write the finance schema as SQL migrations on `feat/finance-schema`.
 
 ## Phases (Finance MVP)
 
@@ -19,7 +19,7 @@ _Last updated: 2026-10-05_
 |---|---|---|---|
 | 0 | Requirements discussion → [requirements.md](finance/requirements.md) | `feat/finance-requirements` | ✅ Done |
 | 0b | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs) | `feat/finance-requirements` | ✅ Done |
-| 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | 🟡 Decisions proposed |
+| 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | 🟡 Decisions accepted, DDL next |
 | 2 | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger | `feat/workspace-setup` | ⬜ |
 | 3 | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX | `feat/finance-utils` | ⬜ |
 | 4 | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports | `feat/finance-api-*` | ⬜ |
@@ -37,4 +37,4 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Open questions
 
-- GitHub remote: will the owner create the repo, or should it be created through the `gh` CLI?
+- None right now.

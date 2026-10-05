@@ -1,6 +1,6 @@
 # 0010. pnpm and Docker Compose for local Postgres
 
-- Status: **Proposed**
+- Status: Accepted
 - Date: 2026-10-05
 
 ## Context

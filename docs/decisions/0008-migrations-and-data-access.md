@@ -1,6 +1,6 @@
 # 0008. SQL migrations with dbmate, queries with Kysely
 
-- Status: **Proposed**
+- Status: Accepted
 - Date: 2026-10-05
 
 ## Context

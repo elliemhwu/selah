@@ -40,7 +40,7 @@ docs/               Requirements, decisions (ADRs), roadmap
 | GitHub CLI | latest | `winget install GitHub.cli` | Optional; used for PRs from the terminal |
 | VS Code | latest | `winget install Microsoft.VisualStudioCode` | Recommended extensions will be listed in `.vscode/extensions.json` |
 
-> The pnpm and Docker choices are *Proposed* in [ADR 0010](docs/decisions/0010-tooling-pnpm-docker.md). Update this table if that decision changes.
+> The Node, pnpm and Docker choices come from [ADR 0010](docs/decisions/0010-tooling-pnpm-docker.md). Update this table if that decision changes.
 
 ### 2. Clone the repo and configure git
 
