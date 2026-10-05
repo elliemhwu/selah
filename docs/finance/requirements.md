@@ -25,7 +25,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 | `income` | + one account | links to an Income plan item |
 | `expense` | − one account | optional budget item |
 | `transfer` | − from-account, + to-account | none |
-| `adjustment` | set the balance to an actual value; the difference is recorded | none |
+| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none |
 
 - **Structure:** a record has one or more **lines**.
   - The record holds the shared fields: date/time, type, account(s), currency, note.

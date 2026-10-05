@@ -7,11 +7,11 @@ _Last updated: 2026-10-05_
 ## Current state
 
 - **Phase 0 (requirements):** done.
-- **Phase 1 (schema decisions):** decided. All ADRs are *Accepted*; the DDL hasn't been written yet.
-- **No code yet.** The Nx workspace hasn't been scaffolded.
+- **Phase 1 (schema):** done. The `core` and `finance` schemas are SQL migrations in `db/migrations/`, checked against Postgres 18. They are not yet wired to dbmate or Docker Compose (Phase 2).
+- **No app code yet.** The Nx workspace hasn't been scaffolded.
 - **GitHub:** `elliemhwu/selah`, with `main` and `develop` branches.
 
-**Next step:** merge `feat/finance-requirements` into `develop`, then write the finance schema as SQL migrations on `feat/finance-schema`.
+**Next step:** merge `feat/finance-requirements`, then `feat/finance-schema`, into `develop`. Then Phase 2: scaffold the workspace on `feat/workspace-setup`.
 
 ## Phases (Finance MVP)
 
@@ -19,7 +19,7 @@ _Last updated: 2026-10-05_
 |---|---|---|---|
 | 0 | Requirements discussion → [requirements.md](finance/requirements.md) | `feat/finance-requirements` | ✅ Done |
 | 0b | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs) | `feat/finance-requirements` | ✅ Done |
-| 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | 🟡 Decisions accepted, DDL next |
+| 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | ✅ Done |
 | 2 | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger | `feat/workspace-setup` | ⬜ |
 | 3 | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX | `feat/finance-utils` | ⬜ |
 | 4 | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports | `feat/finance-api-*` | ⬜ |
@@ -37,4 +37,5 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Open questions
 
-- None right now.
+- **Records in a currency that isn't the account's, on a non-TWD account** (e.g. a JPY expense on a USD account): which amount moves the account balance? Same-currency records and TWD accounts work as designed (`amount` / `twd_amount`). Decide before the balance math in Phase 3.
+- **`percent_base` values:** the schema allows `net_income` (default) and `gross_income`. Add others, such as a parent item, when needed.

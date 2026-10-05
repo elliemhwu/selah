@@ -22,7 +22,8 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0010](0010-tooling-pnpm-docker.md) | pnpm and Docker Compose for local Postgres | Accepted |
 | [0011](0011-derive-dont-store.md) | Calculate balances and rollovers instead of storing them | Accepted |
 | [0012](0012-plan-versioning.md) | Plan versioning with stable item identity | Accepted |
-| [0013](0013-records-with-lines.md) | Records with lines | Accepted |
+| [0013](0013-records-with-lines.md) | Records with lines | Accepted (adjustment rule superseded by 0014) |
+| [0014](0014-record-dates-and-adjustments.md) | Record dates and adjustments | Accepted |
 
 ## Template
 
