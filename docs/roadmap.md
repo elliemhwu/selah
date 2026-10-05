@@ -11,20 +11,22 @@ _Last updated: 2026-10-05_
 - **Phase 2 (workspace):** done. Nx 23, Angular 22 PWA, NestJS 11 with Swagger, the three libs, Postgres 18 in Docker Compose, dbmate and Kysely. A health endpoint proves the whole path: web → proxy → API → database.
 - **GitHub:** `elliemhwu/selah`, with `main` and `develop` branches.
 
-**Next step:** the owner reviews [ADR 0015](decisions/0015-api-client-generation.md) (*Proposed*). Then start Phase 3, the finance math in `libs/shared-utils`, on `feat/finance-utils`.
+- **Phase 3 (finance math):** done. `libs/shared-utils` has money and rounding, percentages, FX, calendar dates, cadence conversion, rollover envelopes with resets, and account balances, with 90 unit tests. `libs/shared-types` holds the shared value sets, and a test checks them against the SQL CHECK constraints.
+
+**Next step:** the owner reviews [ADR 0015](decisions/0015-api-client-generation.md) (_Proposed_) and answers the open questions below. Then Phase 4, the finance API, starting with accounts and records.
 
 ## Phases (Finance MVP)
 
-| # | Phase | Branch | Status |
-|---|---|---|---|
-| 0 | Requirements discussion → [requirements.md](finance/requirements.md) | `feat/finance-requirements` | ✅ Done |
-| 0b | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs) | `feat/finance-requirements` | ✅ Done |
-| 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | ✅ Done |
-| 2 | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger | `feat/workspace-setup` | ✅ Done |
-| 3 | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX | `feat/finance-utils` | ⬜ |
-| 4 | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports | `feat/finance-api-*` | ⬜ |
-| 5 | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*` | ⬜ |
-| 6 | PWA polish, then deployment planning | — | ⬜ |
+| #   | Phase                                                                                                                                 | Branch                      | Status  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------- |
+| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                  | `feat/finance-requirements` | ✅ Done |
+| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                     | `feat/finance-requirements` | ✅ Done |
+| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                               | `feat/finance-schema`       | ✅ Done |
+| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                     | `feat/workspace-setup`      | ✅ Done |
+| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                          | `feat/finance-utils`        | ✅ Done |
+| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports             | `feat/finance-api-*`        | ⬜      |
+| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*`        | ⬜      |
+| 6   | PWA polish, then deployment planning                                                                                                  | —                           | ⬜      |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 
@@ -37,5 +39,5 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Open questions
 
-- **Records in a currency that isn't the account's, on a non-TWD account** (e.g. a JPY expense on a USD account): which amount moves the account balance? Same-currency records and TWD accounts work as designed (`amount` / `twd_amount`). Decide before the balance math in Phase 3.
+- **Rollover example in requirements §3.1:** "daily food of 185 with 150 spent leaves 210 available the next day." By the rule as described, the next day has 185 + 35 = **220**. The code does 220. Is the example a typo, or is there a rule missing?
 - **`percent_base` values:** the schema allows `net_income` (default) and `gross_income`. Add others, such as a parent item, when needed.

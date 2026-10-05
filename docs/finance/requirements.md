@@ -20,12 +20,12 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ## 2. Records
 
-| Type | Accounts | Budget |
-|---|---|---|
-| `income` | + one account | links to an Income plan item |
-| `expense` | − one account | optional budget item |
-| `transfer` | − from-account, + to-account | none |
-| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none |
+| Type         | Accounts                                                                                                                         | Budget                       |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `income`     | + one account                                                                                                                    | links to an Income plan item |
+| `expense`    | − one account                                                                                                                    | optional budget item         |
+| `transfer`   | − from-account, + to-account                                                                                                     | none                         |
+| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none                         |
 
 - **Structure:** a record has one or more **lines**.
   - The record holds the shared fields: date/time, type, account(s), currency, note.
@@ -37,6 +37,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
   - Every record has a currency (default TWD). The UI always shows a currency button labelled `TWD` that opens the full list when tapped.
   - Supported currencies: **TWD, JPY, EUR, GBP, USD**.
   - A foreign-currency line stores its original amount **and** its TWD amount. The rate field is pre-filled with the last rate used for that currency and can be edited.
+  - A record's currency must equal its account's currency, unless the account is TWD ([ADR 0016](../decisions/0016-record-currency-and-account-currency.md)).
   - Transfers store both the amount out and the amount in, so currency exchanges keep the exact rate.
   - Budgets are always in TWD.
 - **Ways to enter records:**
@@ -54,7 +55,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 - **Sections, in order:**
   1. **Income** — expected income
   2. **Government** — government insurance, income tax, health insurance, etc.
-  3. *Remaining amount = the allocation base*
+  3. _Remaining amount = the allocation base_
   4. **Offerings**, **Savings**, **Expenses**
 - **Item tree:** any item may have an optional parent item. Item depth is not fixed.
 - **Cadence:**
