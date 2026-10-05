@@ -28,3 +28,8 @@ Thumbs.db
 
 # Local Claude Code settings (personal, per machine)
 .claude/settings.local.json
+
+# Angular / Vitest
+.angular/
+__screenshots__/
+vitest.config.*.timestamp*

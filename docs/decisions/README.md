@@ -24,6 +24,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0012](0012-plan-versioning.md) | Plan versioning with stable item identity | Accepted |
 | [0013](0013-records-with-lines.md) | Records with lines | Accepted (adjustment rule superseded by 0014) |
 | [0014](0014-record-dates-and-adjustments.md) | Record dates and adjustments | Accepted |
+| [0015](0015-api-client-generation.md) | Generate the API client from the OpenAPI contract | Proposed |
 
 ## Template
 

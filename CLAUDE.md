@@ -27,6 +27,8 @@ Nx monorepo:
   - Every endpoint has full OpenAPI decorators.
   - Business logic lives in services, not controllers.
   - Avoid NestJS-only magic in domain logic.
+- **Regenerate after changing the contract:** run `pnpm db:codegen` after a migration and `pnpm openapi` after changing endpoints or DTOs. Commit the generated files.
+- **Nx loads `.env` into every task**, the Angular dev server included. Use prefixed env names (`API_PORT`, not `PORT`).
 - **Finance math only in `libs/shared-utils`** ([ADR 0005](docs/decisions/0005-finance-math-in-shared-utils.md)): rounding, percentages, cadence conversion, rollover, FX.
   - Pure functions with no framework imports, each with unit tests.
   - Other code calls these functions and never reimplements the math inline.

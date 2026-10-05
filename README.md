@@ -2,9 +2,9 @@
 
 A personal life management PWA, built module by module. The first module is **Finance**: budget planning, accounts and expense/income tracking.
 
-> **Status:** requirements done, workspace not scaffolded yet. See [docs/roadmap.md](docs/roadmap.md).
+> **Status:** workspace scaffolded and database schema in place; finance features not built yet. See [docs/roadmap.md](docs/roadmap.md).
 
-## Repository layout (planned)
+## Repository layout
 
 ```
 apps/
@@ -15,7 +15,7 @@ libs/
   shared-utils/     Finance math as pure functions
   api-client/       HTTP client for the API
 db/
-  migrations/       SQL migrations (one Postgres schema per module)
+  migrations/       SQL migrations, run by dbmate (one Postgres schema per module)
 docs/               Requirements, decisions (ADRs), roadmap
 ```
 
@@ -31,14 +31,14 @@ docs/               Requirements, decisions (ADRs), roadmap
 
 ### 1. Install the prerequisites
 
-| Tool | Version | Windows (winget) | Notes |
-|---|---|---|---|
-| Git | latest | `winget install Git.Git` | |
-| Node.js | 24 LTS | `winget install OpenJS.NodeJS.LTS` | The exact version will be pinned in `.nvmrc` |
-| pnpm | 10+ | `corepack enable` (bundled with Node 24) | Fallback: `npm i -g pnpm` |
-| Docker Desktop | latest | `winget install Docker.DockerDesktop` | Runs PostgreSQL locally |
-| GitHub CLI | latest | `winget install GitHub.cli` | Optional; used for PRs from the terminal |
-| VS Code | latest | `winget install Microsoft.VisualStudioCode` | Recommended extensions will be listed in `.vscode/extensions.json` |
+| Tool | Version | Windows (winget) | macOS (Homebrew) | Notes |
+|---|---|---|---|---|
+| Git | latest | `winget install Git.Git` | `brew install git` | |
+| Node.js | 24 LTS | `winget install OpenJS.NodeJS.LTS` | `nvm install` (reads `.nvmrc`) | Pinned in `.nvmrc` and `package.json#engines` |
+| pnpm | 12 | `corepack enable` | `corepack enable` | Corepack ships with Node 24 and picks the version from `package.json#packageManager` |
+| Docker Desktop | latest | `winget install Docker.DockerDesktop` | `brew install --cask docker` | Runs PostgreSQL locally |
+| GitHub CLI | latest | `winget install GitHub.cli` | `brew install gh` | Optional; used for PRs from the terminal |
+| VS Code | latest | `winget install Microsoft.VisualStudioCode` | `brew install --cask visual-studio-code` | Recommended extensions are in `.vscode/extensions.json` |
 
 > The Node, pnpm and Docker choices come from [ADR 0010](docs/decisions/0010-tooling-pnpm-docker.md). Update this table if that decision changes.
 
@@ -55,18 +55,32 @@ git checkout develop
 
 ### 3. Run the app
 
-> These steps only work after the workspace scaffold (roadmap phase 1). They describe the intended setup, and should be updated if the scaffold differs.
-
 ```bash
 pnpm install                 # install dependencies
 cp .env.example .env         # local config; never commit .env
-docker compose up -d         # start PostgreSQL
-pnpm db:migrate              # apply SQL migrations
-pnpm nx serve api            # API + Swagger UI at http://localhost:3000/api/docs
-pnpm nx serve web            # web app at http://localhost:4200
+pnpm db:up                   # start PostgreSQL 18 in Docker and wait until it's healthy
+pnpm db:migrate              # apply SQL migrations (dbmate)
+pnpm start                   # API on :3000 and web on :4200 (proxies /api to the API)
 ```
 
-### 4. Working with Claude Code on a new machine
+- Web app: http://localhost:4200
+- Swagger UI: http://localhost:3000/api/docs
+- Health check: http://localhost:4200/api/v1/health
+
+### 4. Everyday commands
+
+| Command | What it does |
+|---|---|
+| `pnpm start` | Serve the API and web app with reload |
+| `pnpm nx run-many -t build test lint` | Build, test and lint everything |
+| `pnpm nx test shared-utils` | Run one project's tests (watch mode in a terminal) |
+| `pnpm db:new <name>` | Create a new migration in `db/migrations/` |
+| `pnpm db:migrate` / `pnpm db:rollback` / `pnpm db:status` | Apply, undo the last, or list migrations |
+| `pnpm db:codegen` | Regenerate the Kysely table types from the running database. Run after every migration. |
+| `pnpm openapi` | Regenerate `apps/api/openapi.json`, the API contract. Run after changing endpoints or DTOs. |
+| `pnpm db:down` | Stop PostgreSQL. Data stays in the Docker volume. |
+
+### 5. Working with Claude Code on a new machine
 
 Claude Code's personal memory is stored per machine and **does not sync**. Everything a new session needs must be in the repo:
 

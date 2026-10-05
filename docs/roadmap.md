@@ -8,10 +8,10 @@ _Last updated: 2026-10-05_
 
 - **Phase 0 (requirements):** done.
 - **Phase 1 (schema):** done. The `core` and `finance` schemas are SQL migrations in `db/migrations/`, checked against Postgres 18. They are not yet wired to dbmate or Docker Compose (Phase 2).
-- **No app code yet.** The Nx workspace hasn't been scaffolded.
+- **Phase 2 (workspace):** done. Nx 23, Angular 22 PWA, NestJS 11 with Swagger, the three libs, Postgres 18 in Docker Compose, dbmate and Kysely. A health endpoint proves the whole path: web → proxy → API → database.
 - **GitHub:** `elliemhwu/selah`, with `main` and `develop` branches.
 
-**Next step:** merge `feat/finance-requirements`, then `feat/finance-schema`, into `develop`. Then Phase 2: scaffold the workspace on `feat/workspace-setup`.
+**Next step:** the owner reviews [ADR 0015](decisions/0015-api-client-generation.md) (*Proposed*). Then start Phase 3, the finance math in `libs/shared-utils`, on `feat/finance-utils`.
 
 ## Phases (Finance MVP)
 
@@ -20,7 +20,7 @@ _Last updated: 2026-10-05_
 | 0 | Requirements discussion → [requirements.md](finance/requirements.md) | `feat/finance-requirements` | ✅ Done |
 | 0b | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs) | `feat/finance-requirements` | ✅ Done |
 | 1 | DB schema decisions and DDL (`finance`, `core` schemas) | `feat/finance-schema` | ✅ Done |
-| 2 | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger | `feat/workspace-setup` | ⬜ |
+| 2 | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger | `feat/workspace-setup` | ✅ Done |
 | 3 | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX | `feat/finance-utils` | ⬜ |
 | 4 | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports | `feat/finance-api-*` | ⬜ |
 | 5 | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*` | ⬜ |

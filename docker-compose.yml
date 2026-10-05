@@ -1,0 +1,23 @@
+# Local PostgreSQL for development (ADR 0010).
+# Data lives in a named volume on this device and is not synced between devices.
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-selah}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-selah}
+      POSTGRES_DB: ${POSTGRES_DB:-selah}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      # Postgres 18+ images keep data under /var/lib/postgresql/<major>/.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  pgdata:
