@@ -27,6 +27,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0015](0015-api-client-generation.md)                | Generate the API client from the OpenAPI contract                            | Accepted                                      |
 | [0016](0016-record-currency-and-account-currency.md) | A record's currency must fit its account                                     | Accepted                                      |
 | [0017](0017-api-conventions.md)                      | API conventions: PUT upsert, soft delete, Problem Details, validation, tests | Accepted                                      |
+| [0018](0018-plan-api.md)                             | The plan API saves whole versions; older versions are a read-only log        | Accepted                                      |
 
 ## Template
 

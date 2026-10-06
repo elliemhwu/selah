@@ -811,6 +811,269 @@
           "finance: records"
         ]
       }
+    },
+    "/api/v1/finance/plan-versions": {
+      "get": {
+        "operationId": "listPlanVersions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlanVersionSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Plan versions, oldest first",
+        "tags": [
+          "finance: plan"
+        ]
+      }
+    },
+    "/api/v1/finance/plan-versions/{id}": {
+      "get": {
+        "operationId": "getPlanVersion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanVersionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "A plan version with all its items",
+        "tags": [
+          "finance: plan"
+        ]
+      },
+      "put": {
+        "operationId": "upsertPlanVersion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPlanVersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanVersionDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanVersionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create or replace a whole plan version (only the newest can change)",
+        "tags": [
+          "finance: plan"
+        ]
+      },
+      "delete": {
+        "operationId": "deletePlanVersion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted (or already deleted)."
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete the newest plan version",
+        "tags": [
+          "finance: plan"
+        ]
+      }
+    },
+    "/api/v1/finance/plan": {
+      "get": {
+        "operationId": "getActivePlan",
+        "parameters": [
+          {
+            "name": "month",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "example": "2026-10",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanVersionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "The plan version in effect for a month",
+        "tags": [
+          "finance: plan"
+        ]
+      }
     }
   },
   "info": {
@@ -1444,6 +1707,410 @@
           "currency",
           "rate",
           "occurredOn"
+        ]
+      },
+      "PlanVersionSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effectiveFromMonth": {
+            "type": "string",
+            "example": "2026-10"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "editable": {
+            "type": "boolean"
+          },
+          "itemCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "effectiveFromMonth",
+          "note",
+          "editable",
+          "itemCount"
+        ]
+      },
+      "Section": {
+        "type": "string",
+        "enum": [
+          "income",
+          "government",
+          "offering",
+          "saving",
+          "expense"
+        ]
+      },
+      "Cadence": {
+        "type": "string",
+        "enum": [
+          "daily",
+          "weekly",
+          "monthly",
+          "yearly",
+          "one_time"
+        ]
+      },
+      "Anchor": {
+        "type": "string",
+        "enum": [
+          "amount",
+          "percent"
+        ]
+      },
+      "PercentBase": {
+        "type": "string",
+        "enum": [
+          "net_income",
+          "gross_income"
+        ]
+      },
+      "ResetCycle": {
+        "type": "string",
+        "enum": [
+          "never",
+          "week",
+          "month",
+          "year"
+        ]
+      },
+      "ResetAction": {
+        "type": "string",
+        "enum": [
+          "drop",
+          "carry"
+        ]
+      },
+      "PlanOverrideDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD for that month."
+          }
+        },
+        "required": [
+          "month",
+          "amount"
+        ]
+      },
+      "PlanItemDto": {
+        "type": "object",
+        "properties": {
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "cadenceMonth": {
+            "type": "integer",
+            "nullable": true
+          },
+          "cadenceDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "anchor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Anchor"
+              }
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "nullable": true,
+            "example": "185.00"
+          },
+          "percent": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "percentBase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PercentBase"
+              }
+            ]
+          },
+          "rollover": {
+            "type": "boolean"
+          },
+          "resetCycle": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetCycle"
+              }
+            ]
+          },
+          "onReset": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetAction"
+              }
+            ]
+          },
+          "carryToItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "overrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanOverrideDto"
+            }
+          }
+        },
+        "required": [
+          "budgetItemId",
+          "section",
+          "name",
+          "parentItemId",
+          "cadence",
+          "cadenceMonth",
+          "cadenceDate",
+          "anchor",
+          "amount",
+          "percent",
+          "percentBase",
+          "rollover",
+          "resetCycle",
+          "onReset",
+          "carryToItemId",
+          "overrides"
+        ]
+      },
+      "PlanVersionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effectiveFromMonth": {
+            "type": "string",
+            "example": "2026-10"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "editable": {
+            "type": "boolean",
+            "description": "Only the newest version can be changed (ADR 0018)."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItemDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "effectiveFromMonth",
+          "note",
+          "editable",
+          "items",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PlanItemInput": {
+        "type": "object",
+        "properties": {
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The stable item id (ADR 0012). New ids create items."
+          },
+          "section": {
+            "description": "Fixed once the item exists.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Daily Food"
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Another item in this version."
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "cadenceMonth": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Yearly only."
+          },
+          "cadenceDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "nullable": true,
+            "description": "One-time only."
+          },
+          "anchor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Anchor"
+              }
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Whole TWD per cadence period. Anchor `amount` only."
+          },
+          "percent": {
+            "type": "string",
+            "pattern": "^(100(\\.0{1,4})?|\\d{1,2}(\\.\\d{1,4})?)$",
+            "example": "12.5",
+            "description": "Anchor `percent` only.",
+            "nullable": true
+          },
+          "percentBase": {
+            "default": "net_income",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PercentBase"
+              }
+            ]
+          },
+          "rollover": {
+            "type": "boolean",
+            "default": false
+          },
+          "resetCycle": {
+            "nullable": true,
+            "description": "Rollover only.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetCycle"
+              }
+            ]
+          },
+          "onReset": {
+            "nullable": true,
+            "description": "When the cycle resets.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetAction"
+              }
+            ]
+          },
+          "carryToItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "For `onReset: carry`: an item in this version."
+          },
+          "overrides": {
+            "description": "Monthly items only.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanOverrideDto"
+            }
+          }
+        },
+        "required": [
+          "budgetItemId",
+          "section",
+          "name",
+          "cadence",
+          "anchor"
+        ]
+      },
+      "UpsertPlanVersionDto": {
+        "type": "object",
+        "properties": {
+          "effectiveFromMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10",
+            "description": "The first month this version applies to."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          },
+          "items": {
+            "description": "In display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItemInput"
+            }
+          }
+        },
+        "required": [
+          "effectiveFromMonth",
+          "items"
         ]
       }
     }

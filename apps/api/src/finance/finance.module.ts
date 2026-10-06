@@ -6,6 +6,12 @@ import { CategoriesController } from './categories/categories.controller';
 import { CategoriesRepository } from './categories/categories.repository';
 import { CategoriesService } from './categories/categories.service';
 import {
+  ActivePlanController,
+  PlanVersionsController,
+} from './plan/plan.controller';
+import { PlanRepository } from './plan/plan.repository';
+import { PlanService } from './plan/plan.service';
+import {
   FxRatesController,
   RecordsController,
 } from './records/records.controller';
@@ -18,12 +24,16 @@ import { RecordsService } from './records/records.service';
     CategoriesController,
     RecordsController,
     FxRatesController,
+    PlanVersionsController,
+    ActivePlanController,
   ],
   providers: [
     AccountsRepository,
     AccountsService,
     CategoriesRepository,
     CategoriesService,
+    PlanRepository,
+    PlanService,
     RecordsRepository,
     RecordsService,
   ],

@@ -22,7 +22,10 @@ export default [
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
             // Shared libs stay framework-free and only build on each other.
-            { sourceTag: 'type:types', onlyDependOnLibsWithTags: ['type:types'] },
+            {
+              sourceTag: 'type:types',
+              onlyDependOnLibsWithTags: ['type:types'],
+            },
             {
               sourceTag: 'type:util',
               onlyDependOnLibsWithTags: ['type:types'],
@@ -56,7 +59,12 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
-    rules: {},
+    rules: {
+      // `const { omitted, ...rest } = obj` is the idiom for dropping a field.
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { ignoreRestSiblings: true },
+      ],
+    },
   },
 ];

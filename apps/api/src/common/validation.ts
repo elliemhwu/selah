@@ -8,6 +8,9 @@ import { Matches } from 'class-validator';
 const MONEY = /^-?\d{1,12}(\.\d{1,2})?$/;
 const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const LOCAL_TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
+/** 0–100 with up to 4 decimals, matching NUMERIC(7,4). */
+const PERCENT = /^(100(\.0{1,4})?|\d{1,2}(\.\d{1,4})?)$/;
 /** Up to 10 integer digits and 8 decimals, matching NUMERIC(18,8). */
 const RATE = /^\d{1,10}(\.\d{1,8})?$/;
 
@@ -59,6 +62,34 @@ export function IsRate(options: ApiPropertyOptions = {}) {
       pattern: RATE.source,
       example: '0.2083',
       description: 'TWD per 1 unit of the record currency.',
+      ...options,
+    } as ApiPropertyOptions),
+  );
+}
+
+export function IsYearMonth(options: ApiPropertyOptions = {}) {
+  return applyDecorators(
+    Matches(YEAR_MONTH, { message: '$property must be a month as YYYY-MM' }),
+    ApiProperty({
+      type: 'string',
+      pattern: YEAR_MONTH.source,
+      example: '2026-10',
+      ...options,
+    } as ApiPropertyOptions),
+  );
+}
+
+export function IsPercent(options: ApiPropertyOptions = {}) {
+  return applyDecorators(
+    Matches(PERCENT, {
+      message:
+        '$property must be a percentage from 0 to 100 with up to 4 decimals',
+    }),
+    ApiProperty({
+      type: 'string',
+      pattern: PERCENT.source,
+      example: '12.5',
+      description: 'Percentage points: "12.5" means 12.5%.',
       ...options,
     } as ApiPropertyOptions),
   );

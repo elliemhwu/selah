@@ -15,22 +15,22 @@ _Last updated: 2026-10-06_
 
 - **API client:** DTO types generated from the OpenAPI contract with openapi-typescript; the web app calls the API with plain `HttpClient` ([ADR 0015](decisions/0015-api-client-generation.md)). The health check already uses them. Every project now has a `typecheck` target.
 
-- **Phase 4 (finance API):** in progress. API conventions are in [ADR 0017](decisions/0017-api-conventions.md). Done: accounts (with derived balances), categories, and records with lines (single and batch upsert, filtered lists, last-used FX rates). Every endpoint has HTTP integration tests against a `selah_test` database.
+- **Phase 4 (finance API):** in progress. API conventions are in [ADR 0017](decisions/0017-api-conventions.md). Done: accounts (with derived balances), categories, records with lines (single and batch upsert, filtered lists, last-used FX rates), and the budget plan (whole-version saves, older versions read-only, active version per month; [ADR 0018](decisions/0018-plan-api.md)). Every endpoint has HTTP integration tests against a `selah_test` database.
 
-**Next step:** Phase 4c, the budget plan API (versions, items, overrides) on `feat/finance-api-plan`. The open questions below are still waiting for the owner.
+**Next step:** Phase 4d, budget transfers and the report endpoints (envelope balances with resets, monthly plan vs. actual, checklist status) on `feat/finance-api-reports`. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
-| #   | Phase                                                                                                                                 | Branch                      | Status                                |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------- |
-| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                  | `feat/finance-requirements` | ✅ Done                               |
-| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                     | `feat/finance-requirements` | ✅ Done                               |
-| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                               | `feat/finance-schema`       | ✅ Done                               |
-| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                     | `feat/workspace-setup`      | ✅ Done                               |
-| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                          | `feat/finance-utils`        | ✅ Done                               |
-| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports             | `feat/finance-api-*`        | 🟡 Accounts, categories, records done |
-| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*`        | ⬜                                    |
-| 6   | PWA polish, then deployment planning                                                                                                  | —                           | ⬜                                    |
+| #   | Phase                                                                                                                                 | Branch                      | Status                                      |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------- |
+| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                  | `feat/finance-requirements` | ✅ Done                                     |
+| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                     | `feat/finance-requirements` | ✅ Done                                     |
+| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                               | `feat/finance-schema`       | ✅ Done                                     |
+| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                     | `feat/workspace-setup`      | ✅ Done                                     |
+| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                          | `feat/finance-utils`        | ✅ Done                                     |
+| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports             | `feat/finance-api-*`        | 🟡 Accounts, categories, records, plan done |
+| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*`        | ⬜                                          |
+| 6   | PWA polish, then deployment planning                                                                                                  | —                           | ⬜                                          |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 

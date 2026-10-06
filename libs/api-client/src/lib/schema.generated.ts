@@ -147,6 +147,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/finance/plan-versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Plan versions, oldest first */
+        get: operations["listPlanVersions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/plan-versions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A plan version with all its items */
+        get: operations["getPlanVersion"];
+        /** Create or replace a whole plan version (only the newest can change) */
+        put: operations["upsertPlanVersion"];
+        post?: never;
+        /** Delete the newest plan version */
+        delete: operations["deletePlanVersion"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The plan version in effect for a month */
+        get: operations["getActivePlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -404,6 +457,135 @@ export interface components {
              * @example 2026-10-06
              */
             occurredOn: string;
+        };
+        PlanVersionSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example 2026-10 */
+            effectiveFromMonth: string;
+            note: string | null;
+            editable: boolean;
+            itemCount: number;
+        };
+        /** @enum {string} */
+        Section: "income" | "government" | "offering" | "saving" | "expense";
+        /** @enum {string} */
+        Cadence: "daily" | "weekly" | "monthly" | "yearly" | "one_time";
+        /** @enum {string} */
+        Anchor: "amount" | "percent";
+        /** @enum {string} */
+        PercentBase: "net_income" | "gross_income";
+        /** @enum {string} */
+        ResetCycle: "never" | "week" | "month" | "year";
+        /** @enum {string} */
+        ResetAction: "drop" | "carry";
+        PlanOverrideDto: {
+            /** @example 2026-10 */
+            month: string;
+            /**
+             * @description Whole TWD for that month.
+             * @example 1234.00
+             */
+            amount: string;
+        };
+        PlanItemDto: {
+            /** Format: uuid */
+            budgetItemId: string;
+            section: components["schemas"]["Section"];
+            name: string;
+            /** Format: uuid */
+            parentItemId: string | null;
+            cadence: components["schemas"]["Cadence"];
+            cadenceMonth: number | null;
+            /** Format: date */
+            cadenceDate: string | null;
+            anchor: components["schemas"]["Anchor"];
+            /** @example 185.00 */
+            amount: string | null;
+            /** @example null */
+            percent: string | null;
+            percentBase: components["schemas"]["PercentBase"];
+            rollover: boolean;
+            resetCycle: components["schemas"]["ResetCycle"] | null;
+            onReset: components["schemas"]["ResetAction"] | null;
+            /** Format: uuid */
+            carryToItemId: string | null;
+            overrides: components["schemas"]["PlanOverrideDto"][];
+        };
+        PlanVersionDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example 2026-10 */
+            effectiveFromMonth: string;
+            note: string | null;
+            /** @description Only the newest version can be changed (ADR 0018). */
+            editable: boolean;
+            items: components["schemas"]["PlanItemDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PlanItemInput: {
+            /**
+             * Format: uuid
+             * @description The stable item id (ADR 0012). New ids create items.
+             */
+            budgetItemId: string;
+            /** @description Fixed once the item exists. */
+            section: components["schemas"]["Section"];
+            /** @example Daily Food */
+            name: string;
+            /**
+             * Format: uuid
+             * @description Another item in this version.
+             */
+            parentItemId?: string | null;
+            cadence: components["schemas"]["Cadence"];
+            /** @description Yearly only. */
+            cadenceMonth?: number | null;
+            /**
+             * Format: date
+             * @description One-time only.
+             * @example 2026-10-06
+             */
+            cadenceDate?: string | null;
+            anchor: components["schemas"]["Anchor"];
+            /**
+             * @description Whole TWD per cadence period. Anchor `amount` only.
+             * @example 1234.00
+             */
+            amount?: string | null;
+            /**
+             * @description Anchor `percent` only.
+             * @example 12.5
+             */
+            percent?: string | null;
+            /** @default net_income */
+            percentBase: components["schemas"]["PercentBase"];
+            /** @default false */
+            rollover: boolean;
+            /** @description Rollover only. */
+            resetCycle?: components["schemas"]["ResetCycle"] | null;
+            /** @description When the cycle resets. */
+            onReset?: components["schemas"]["ResetAction"] | null;
+            /**
+             * Format: uuid
+             * @description For `onReset: carry`: an item in this version.
+             */
+            carryToItemId?: string | null;
+            /** @description Monthly items only. */
+            overrides?: components["schemas"]["PlanOverrideDto"][];
+        };
+        UpsertPlanVersionDto: {
+            /**
+             * @description The first month this version applies to.
+             * @example 2026-10
+             */
+            effectiveFromMonth: string;
+            note?: string | null;
+            /** @description In display order. */
+            items: components["schemas"]["PlanItemInput"][];
         };
     };
     responses: never;
@@ -1020,6 +1202,212 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LastUsedRateDto"][];
+                };
+            };
+        };
+    };
+    listPlanVersions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionSummaryDto"][];
+                };
+            };
+        };
+    };
+    getPlanVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    upsertPlanVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertPlanVersionDto"];
+            };
+        };
+        responses: {
+            /** @description Replaced. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionDto"];
+                };
+            };
+            /** @description Created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    deletePlanVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted (or already deleted). */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getActivePlan: {
+        parameters: {
+            query: {
+                month: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanVersionDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
                 };
             };
         };

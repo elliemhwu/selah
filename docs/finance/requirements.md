@@ -50,7 +50,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 ## 3. Budget plan
 
 - **Versions:**
-  - A plan has versions, each taking effect from a chosen month. Old versions are kept read-only.
+  - A plan has versions, each taking effect from a chosen month. Only the newest version can change; older versions are kept read-only, as a log of how the plan changed ([ADR 0018](../decisions/0018-plan-api.md)).
   - Plans are typically revised annually, half-yearly, or when the salary structure changes.
   - Plan items keep a **stable identity across versions**, so reports can compare "Food" between versions.
 - **Sections, in order:**
