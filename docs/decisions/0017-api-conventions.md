@@ -18,7 +18,8 @@ Phase 4 adds the finance endpoints. They should behave the same way across resou
 
 - **`PUT /{resource}/{id}` creates or replaces** (upsert). The client generates the UUID. It returns `201` when it created the row and `200` when it replaced it. Retrying a save never creates duplicates. There is no `POST` for creating rows.
 - A `PUT` to a soft-deleted id returns `409`. Deleted rows are not brought back by accident.
-- A record and its lines are written together, in one transaction. Saving a record replaces its whole set of lines.
+- A record and its lines are written together, in one transaction. Saving a record replaces its whole set of lines; lines keep their ids (matching ids are updated, new ones inserted, missing ones soft-deleted).
+- **Batch:** `PUT /{resource}` with `{ "records": [...] }` (each with its id) upserts several rows in one transaction, all or nothing. Errors point at the item: `records.2.lines.0.amount`.
 - **`DELETE /{resource}/{id}` soft-deletes** (`deleted_at`) and returns `204`. Deleting an already deleted row also returns `204`. An unknown id returns `404`.
 
 **Validation:**
@@ -29,15 +30,21 @@ Phase 4 adds the finance endpoints. They should behave the same way across resou
 **Errors** use [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) (`application/problem+json`), which ASP.NET Core produces natively:
 
 ```json
-{ "type": "about:blank", "title": "Bad Request", "status": 400, "detail": "…", "errors": { "name": ["must not be empty"] } }
+{
+  "type": "about:blank",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "…",
+  "errors": { "name": ["must not be empty"] }
+}
 ```
 
-| Status | When |
-|---|---|
-| 400 | The request shape is invalid. `errors` lists messages per field. |
-| 404 | The resource doesn't exist. |
-| 409 | Conflict: duplicate name, the row was deleted, or the row is still in use. |
-| 422 | The shape is fine, but a business rule refuses it. |
+| Status | When                                                                       |
+| ------ | -------------------------------------------------------------------------- |
+| 400    | The request shape is invalid. `errors` lists messages per field.           |
+| 404    | The resource doesn't exist.                                                |
+| 409    | Conflict: duplicate name, the row was deleted, or the row is still in use. |
+| 422    | The shape is fine, but a business rule refuses it.                         |
 
 **Code layout:** controllers are thin. Services hold the rules. Repositories hold the Kysely queries. Each layer maps directly to a .NET counterpart.
 

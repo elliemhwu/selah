@@ -442,6 +442,375 @@
           "finance: categories"
         ]
       }
+    },
+    "/api/v1/finance/records": {
+      "get": {
+        "operationId": "listRecords",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "First day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "Last day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "description": "Records from or to this account.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Records with a line in this category.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetItemId",
+            "required": false,
+            "in": "query",
+            "description": "Records with a line on this budget item.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/RecordType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecordDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Records in a date range, newest first, with their lines",
+        "tags": [
+          "finance: records"
+        ]
+      },
+      "put": {
+        "operationId": "upsertRecordBatch",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertRecordBatchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecordDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create or replace several records at once, all or nothing (batch entry)",
+        "tags": [
+          "finance: records"
+        ]
+      }
+    },
+    "/api/v1/finance/records/{id}": {
+      "get": {
+        "operationId": "getRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "One record with its lines",
+        "tags": [
+          "finance: records"
+        ]
+      },
+      "put": {
+        "operationId": "upsertRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertRecordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create or replace a record and its lines (the client generates the id)",
+        "tags": [
+          "finance: records"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted (or already deleted)."
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Soft-delete a record and its lines",
+        "tags": [
+          "finance: records"
+        ]
+      }
+    },
+    "/api/v1/finance/fx-rates/last-used": {
+      "get": {
+        "operationId": "listLastUsedRates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LastUsedRateDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "The most recent exchange rate used per currency, to pre-fill the record form",
+        "tags": [
+          "finance: records"
+        ]
+      }
     }
   },
   "info": {
@@ -694,6 +1063,387 @@
         },
         "required": [
           "name"
+        ]
+      },
+      "RecordType": {
+        "type": "string",
+        "enum": [
+          "income",
+          "expense",
+          "transfer",
+          "adjustment"
+        ]
+      },
+      "RecordLineDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "example": "150.00",
+            "description": "In the record currency; always positive."
+          },
+          "twdAmount": {
+            "type": "string",
+            "example": "150.00",
+            "description": "Whole TWD."
+          },
+          "fxRate": {
+            "type": "string",
+            "nullable": true,
+            "example": null,
+            "description": "Null for TWD records."
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "twdAmount",
+          "fxRate",
+          "categoryId",
+          "budgetItemId",
+          "note"
+        ]
+      },
+      "RecordDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecordType"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "nullable": true,
+            "example": "12:30"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "counterAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Transfer only."
+          },
+          "counterAmount": {
+            "type": "string",
+            "nullable": true,
+            "description": "Transfer only: the amount received."
+          },
+          "targetBalance": {
+            "type": "string",
+            "nullable": true,
+            "description": "Adjustment only (ADR 0014)."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordLineDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "occurredOn",
+          "occurredAt",
+          "accountId",
+          "currency",
+          "counterAccountId",
+          "counterAmount",
+          "targetBalance",
+          "note",
+          "lines",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "RecordLineInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated. Keep it when editing so the line keeps its identity."
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "In the record currency; must be positive."
+          },
+          "fxRate": {
+            "type": "string",
+            "pattern": "^\\d{1,10}(\\.\\d{1,8})?$",
+            "example": "0.2083",
+            "description": "Required for foreign-currency records; omit for TWD."
+          },
+          "twdAmount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD. Omit to calculate it from amount × fxRate; set it to match a statement."
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "BatchRecordInput": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecordType"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "example": "12:30",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "counterAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Transfer only."
+          },
+          "counterAmount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Transfer only: the amount received, in the receiving account currency."
+          },
+          "targetBalance": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Adjustment only: the actual balance (ADR 0014)."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          },
+          "lines": {
+            "description": "One or more for income/expense; exactly one for a transfer; none for an adjustment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordLineInput"
+            }
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated."
+          }
+        },
+        "required": [
+          "type",
+          "occurredOn",
+          "accountId",
+          "currency",
+          "lines",
+          "id"
+        ]
+      },
+      "UpsertRecordBatchDto": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BatchRecordInput"
+            }
+          }
+        },
+        "required": [
+          "records"
+        ]
+      },
+      "UpsertRecordDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecordType"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "example": "12:30",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "counterAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Transfer only."
+          },
+          "counterAmount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Transfer only: the amount received, in the receiving account currency."
+          },
+          "targetBalance": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Adjustment only: the actual balance (ADR 0014)."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          },
+          "lines": {
+            "description": "One or more for income/expense; exactly one for a transfer; none for an adjustment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordLineInput"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "occurredOn",
+          "accountId",
+          "currency",
+          "lines"
+        ]
+      },
+      "LastUsedRateDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "rate": {
+            "type": "string",
+            "example": "0.2083"
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          }
+        },
+        "required": [
+          "currency",
+          "rate",
+          "occurredOn"
         ]
       }
     }

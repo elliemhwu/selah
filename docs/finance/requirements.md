@@ -20,18 +20,19 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ## 2. Records
 
-| Type         | Accounts                                                                                                                         | Budget                       |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `income`     | + one account                                                                                                                    | links to an Income plan item |
-| `expense`    | − one account                                                                                                                    | optional budget item         |
-| `transfer`   | − from-account, + to-account                                                                                                     | none                         |
-| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none                         |
+| Type         | Accounts                                                                                                                         | Budget                    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `income`     | + one account                                                                                                                    | optional Income plan item |
+| `expense`    | − one account                                                                                                                    | optional budget item      |
+| `transfer`   | − from-account, + to-account                                                                                                     | none                      |
+| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none                      |
 
 - **Structure:** a record has one or more **lines**.
   - The record holds the shared fields: date/time, type, account(s), currency, note.
   - Each line holds amount, category, budget item and note.
   - A normal entry has one line. A split receipt has several.
   - Reports total **lines**, not records.
+- **Budget item:** optional on income and expense lines; not all income or spending is planned. A linked item must be in the matching section: Income items for income, any other section for expenses. Transfers and adjustments have none.
 - **Category:** optional, from a separate category tree. When a line has no category, the UI shows its budget item instead.
 - **Currency:**
   - Every record has a currency (default TWD). The UI always shows a currency button labelled `TWD` that opens the full list when tapped.

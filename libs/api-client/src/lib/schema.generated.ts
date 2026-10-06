@@ -93,6 +93,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/finance/records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Records in a date range, newest first, with their lines */
+        get: operations["listRecords"];
+        /** Create or replace several records at once, all or nothing (batch entry) */
+        put: operations["upsertRecordBatch"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/records/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One record with its lines */
+        get: operations["getRecord"];
+        /** Create or replace a record and its lines (the client generates the id) */
+        put: operations["upsertRecord"];
+        post?: never;
+        /** Soft-delete a record and its lines */
+        delete: operations["deleteRecord"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/fx-rates/last-used": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The most recent exchange rate used per currency, to pre-fill the record form */
+        get: operations["listLastUsedRates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -187,6 +241,169 @@ export interface components {
             parentId?: string | null;
             /** @default 0 */
             sortOrder: number;
+        };
+        /** @enum {string} */
+        RecordType: "income" | "expense" | "transfer" | "adjustment";
+        RecordLineDto: {
+            /** Format: uuid */
+            id: string;
+            /**
+             * @description In the record currency; always positive.
+             * @example 150.00
+             */
+            amount: string;
+            /**
+             * @description Whole TWD.
+             * @example 150.00
+             */
+            twdAmount: string;
+            /**
+             * @description Null for TWD records.
+             * @example null
+             */
+            fxRate: string | null;
+            /** Format: uuid */
+            categoryId: string | null;
+            /** Format: uuid */
+            budgetItemId: string | null;
+            note: string | null;
+        };
+        RecordDto: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["RecordType"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            accountId: string;
+            currency: components["schemas"]["Currency"];
+            /**
+             * Format: uuid
+             * @description Transfer only.
+             */
+            counterAccountId: string | null;
+            /** @description Transfer only: the amount received. */
+            counterAmount: string | null;
+            /** @description Adjustment only (ADR 0014). */
+            targetBalance: string | null;
+            note: string | null;
+            lines: components["schemas"]["RecordLineDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        RecordLineInput: {
+            /**
+             * Format: uuid
+             * @description Client-generated. Keep it when editing so the line keeps its identity.
+             */
+            id?: string;
+            /**
+             * @description In the record currency; must be positive.
+             * @example 1234.00
+             */
+            amount: string;
+            /**
+             * @description Required for foreign-currency records; omit for TWD.
+             * @example 0.2083
+             */
+            fxRate?: string;
+            /**
+             * @description Whole TWD. Omit to calculate it from amount × fxRate; set it to match a statement.
+             * @example 1234.00
+             */
+            twdAmount?: string;
+            /** Format: uuid */
+            categoryId?: string | null;
+            /** Format: uuid */
+            budgetItemId?: string | null;
+            note?: string | null;
+        };
+        BatchRecordInput: {
+            type: components["schemas"]["RecordType"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt?: string | null;
+            /** Format: uuid */
+            accountId: string;
+            currency: components["schemas"]["Currency"];
+            /**
+             * Format: uuid
+             * @description Transfer only.
+             */
+            counterAccountId?: string | null;
+            /**
+             * @description Transfer only: the amount received, in the receiving account currency.
+             * @example 1234.00
+             */
+            counterAmount?: string | null;
+            /**
+             * @description Adjustment only: the actual balance (ADR 0014).
+             * @example 1234.00
+             */
+            targetBalance?: string | null;
+            note?: string | null;
+            /** @description One or more for income/expense; exactly one for a transfer; none for an adjustment. */
+            lines: components["schemas"]["RecordLineInput"][];
+            /**
+             * Format: uuid
+             * @description Client-generated.
+             */
+            id: string;
+        };
+        UpsertRecordBatchDto: {
+            records: components["schemas"]["BatchRecordInput"][];
+        };
+        UpsertRecordDto: {
+            type: components["schemas"]["RecordType"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt?: string | null;
+            /** Format: uuid */
+            accountId: string;
+            currency: components["schemas"]["Currency"];
+            /**
+             * Format: uuid
+             * @description Transfer only.
+             */
+            counterAccountId?: string | null;
+            /**
+             * @description Transfer only: the amount received, in the receiving account currency.
+             * @example 1234.00
+             */
+            counterAmount?: string | null;
+            /**
+             * @description Adjustment only: the actual balance (ADR 0014).
+             * @example 1234.00
+             */
+            targetBalance?: string | null;
+            note?: string | null;
+            /** @description One or more for income/expense; exactly one for a transfer; none for an adjustment. */
+            lines: components["schemas"]["RecordLineInput"][];
+        };
+        LastUsedRateDto: {
+            currency: components["schemas"]["Currency"];
+            /** @example 0.2083 */
+            rate: string;
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
         };
     };
     responses: never;
@@ -546,6 +763,263 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    listRecords: {
+        parameters: {
+            query: {
+                /** @description First day, inclusive. */
+                from: string;
+                /** @description Last day, inclusive. */
+                to: string;
+                /** @description Records from or to this account. */
+                accountId?: string;
+                /** @description Records with a line in this category. */
+                categoryId?: string;
+                /** @description Records with a line on this budget item. */
+                budgetItemId?: string;
+                type?: components["schemas"]["RecordType"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    upsertRecordBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertRecordBatchDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    upsertRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertRecordDto"];
+            };
+        };
+        responses: {
+            /** @description Replaced. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordDto"];
+                };
+            };
+            /** @description Created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    deleteRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted (or already deleted). */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    listLastUsedRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LastUsedRateDto"][];
                 };
             };
         };
