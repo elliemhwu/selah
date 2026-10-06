@@ -8,24 +8,25 @@ An ADR is one short file per significant decision, explaining **what** was decid
 - **Accepted:** follow it.
 - **Superseded:** replaced by a later ADR.
 
-| #                                                    | Title                                                            | Status                                        |
-| ---------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------- |
-| [0001](0001-monorepo-and-stack.md)                   | Nx monorepo, Angular, NestJS, PostgreSQL; API to migrate to .NET | Accepted                                      |
-| [0002](0002-openapi-from-day-one.md)                 | OpenAPI/Swagger from day one                                     | Accepted                                      |
-| [0003](0003-schema-per-module.md)                    | One Postgres schema per module                                   | Accepted                                      |
-| [0004](0004-plan-record-pattern.md)                  | Plan → Record pattern                                            | Accepted                                      |
-| [0005](0005-finance-math-in-shared-utils.md)         | Finance math as pure functions in `libs/shared-utils`            | Accepted                                      |
-| [0006](0006-money-representation.md)                 | Money representation                                             | Accepted                                      |
-| [0007](0007-offline-ready-data-conventions.md)       | Offline-ready data conventions                                   | Accepted                                      |
-| [0008](0008-migrations-and-data-access.md)           | SQL migrations with dbmate, queries with Kysely                  | Accepted                                      |
-| [0009](0009-git-workflow.md)                         | Git workflow: `feat/*` → `develop` → `main`                      | Accepted                                      |
-| [0010](0010-tooling-pnpm-docker.md)                  | pnpm and Docker Compose for local Postgres                       | Accepted                                      |
-| [0011](0011-derive-dont-store.md)                    | Calculate balances and rollovers instead of storing them         | Accepted                                      |
-| [0012](0012-plan-versioning.md)                      | Plan versioning with stable item identity                        | Accepted                                      |
-| [0013](0013-records-with-lines.md)                   | Records with lines                                               | Accepted (adjustment rule superseded by 0014) |
-| [0014](0014-record-dates-and-adjustments.md)         | Record dates and adjustments                                     | Accepted                                      |
-| [0015](0015-api-client-generation.md)                | Generate the API client from the OpenAPI contract                | Accepted                                      |
-| [0016](0016-record-currency-and-account-currency.md) | A record's currency must fit its account                         | Accepted                                      |
+| #                                                    | Title                                                                        | Status                                        |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------- |
+| [0001](0001-monorepo-and-stack.md)                   | Nx monorepo, Angular, NestJS, PostgreSQL; API to migrate to .NET             | Accepted                                      |
+| [0002](0002-openapi-from-day-one.md)                 | OpenAPI/Swagger from day one                                                 | Accepted                                      |
+| [0003](0003-schema-per-module.md)                    | One Postgres schema per module                                               | Accepted                                      |
+| [0004](0004-plan-record-pattern.md)                  | Plan → Record pattern                                                        | Accepted                                      |
+| [0005](0005-finance-math-in-shared-utils.md)         | Finance math as pure functions in `libs/shared-utils`                        | Accepted                                      |
+| [0006](0006-money-representation.md)                 | Money representation                                                         | Accepted                                      |
+| [0007](0007-offline-ready-data-conventions.md)       | Offline-ready data conventions                                               | Accepted                                      |
+| [0008](0008-migrations-and-data-access.md)           | SQL migrations with dbmate, queries with Kysely                              | Accepted                                      |
+| [0009](0009-git-workflow.md)                         | Git workflow: `feat/*` → `develop` → `main`                                  | Accepted                                      |
+| [0010](0010-tooling-pnpm-docker.md)                  | pnpm and Docker Compose for local Postgres                                   | Accepted                                      |
+| [0011](0011-derive-dont-store.md)                    | Calculate balances and rollovers instead of storing them                     | Accepted                                      |
+| [0012](0012-plan-versioning.md)                      | Plan versioning with stable item identity                                    | Accepted                                      |
+| [0013](0013-records-with-lines.md)                   | Records with lines                                                           | Accepted (adjustment rule superseded by 0014) |
+| [0014](0014-record-dates-and-adjustments.md)         | Record dates and adjustments                                                 | Accepted                                      |
+| [0015](0015-api-client-generation.md)                | Generate the API client from the OpenAPI contract                            | Accepted                                      |
+| [0016](0016-record-currency-and-account-currency.md) | A record's currency must fit its account                                     | Accepted                                      |
+| [0017](0017-api-conventions.md)                      | API conventions: PUT upsert, soft delete, Problem Details, validation, tests | Accepted                                      |
 
 ## Template
 

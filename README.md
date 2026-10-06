@@ -74,6 +74,7 @@ pnpm start                   # API on :3000 and web on :4200 (proxies /api to th
 | `pnpm start`                                              | Serve the API and web app with reload                                                                                                  |
 | `pnpm nx run-many -t typecheck build test lint`           | Type-check, build, test and lint everything                                                                                            |
 | `pnpm nx test shared-utils`                               | Run one project's tests (watch mode in a terminal)                                                                                     |
+| `pnpm nx run api:integration`                             | API tests over HTTP against the `selah_test` database (needs `pnpm db:up`)                                                             |
 | `pnpm db:new <name>`                                      | Create a new migration in `db/migrations/`                                                                                             |
 | `pnpm db:migrate` / `pnpm db:rollback` / `pnpm db:status` | Apply, undo the last, or list migrations                                                                                               |
 | `pnpm db:codegen`                                         | Regenerate the Kysely table types from the running database. Run after every migration.                                                |

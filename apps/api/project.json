@@ -82,6 +82,16 @@
         ],
         "parallel": false
       }
+    },
+    "integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm db:test:prepare",
+          "vitest run --config apps/api/vitest.int.config.mts"
+        ],
+        "parallel": false
+      }
     }
   }
 }

@@ -1,8 +1,9 @@
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
 import { AppModule } from './app/app.module';
+import { configureApp } from './app/configure-app';
 import { buildOpenApiDocument } from './openapi';
 
 function loadEnv(): void {
@@ -15,11 +16,7 @@ function loadEnv(): void {
 
 async function bootstrap() {
   loadEnv();
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api');
-  // Routes are /api/v1/... (ADR 0002).
-  app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
-  app.enableShutdownHooks();
+  const app = configureApp(await NestFactory.create(AppModule));
 
   const document = buildOpenApiDocument(app);
 
@@ -35,7 +32,9 @@ async function bootstrap() {
 
   const port = process.env['API_PORT'] || 3000;
   await app.listen(port);
-  Logger.log(`🚀 API running on http://localhost:${port}/api (docs: /api/docs)`);
+  Logger.log(
+    `🚀 API running on http://localhost:${port}/api (docs: /api/docs)`,
+  );
 }
 
 bootstrap();

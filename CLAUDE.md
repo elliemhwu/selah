@@ -30,6 +30,7 @@ Nx monorepo:
 - **Regenerate after changing the contract:** run `pnpm db:codegen` after a migration and `pnpm openapi` after changing endpoints or DTOs (it also regenerates `libs/api-client`). Commit the generated files.
 - **Web → API calls** ([ADR 0015](docs/decisions/0015-api-client-generation.md)): plain `HttpClient` / `httpResource`, typed with DTOs from `@selah/api-client` (never hand-written or from `shared-types`). Put calls in per-feature services, not components.
 - **Nx loads `.env` into every task**, the Angular dev server included. Use prefixed env names (`API_PORT`, not `PORT`).
+- **API conventions** ([ADR 0017](docs/decisions/0017-api-conventions.md)): `PUT /{id}` upserts with client ids, `DELETE` soft-deletes, errors are Problem Details. Services throw the errors in `apps/api/src/common/errors.ts`, never NestJS HTTP exceptions. Cover endpoints with `*.int-spec.ts` tests (`pnpm nx run api:integration`).
 - **Finance math only in `libs/shared-utils`** ([ADR 0005](docs/decisions/0005-finance-math-in-shared-utils.md)): rounding, percentages, cadence conversion, rollover, FX.
   - Pure functions with no framework imports, each with unit tests.
   - Other code calls these functions and never reimplements the math inline.
