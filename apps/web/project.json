@@ -4,16 +4,11 @@
   "projectType": "application",
   "prefix": "selah",
   "sourceRoot": "apps/web/src",
-  "tags": [
-    "type:app",
-    "scope:web"
-  ],
+  "tags": ["type:app", "scope:web"],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/web",
@@ -26,9 +21,7 @@
             "input": "apps/web/public"
           }
         ],
-        "styles": [
-          "apps/web/src/styles.scss"
-        ]
+        "styles": ["apps/web/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -58,9 +51,7 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
-      "dependsOn": [
-        "api:serve"
-      ],
+      "dependsOn": ["api:serve"],
       "options": {
         "proxyConfig": "apps/web/proxy.conf.json"
       },
@@ -86,6 +77,19 @@
         "buildTarget": "web:build",
         "staticFilePath": "dist/apps/web/browser",
         "spa": true
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "tsc --noEmit -p tsconfig.app.json",
+          "tsc --noEmit -p tsconfig.spec.json"
+        ],
+        "parallel": false
       }
     }
   }

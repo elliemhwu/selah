@@ -9,6 +9,8 @@ export default defineConfig(() => ({
   test: {
     name: 'api-client',
     watch: false,
+    // Types only for now (ADR 0015).
+    passWithNoTests: true,
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

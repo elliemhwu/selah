@@ -11,7 +11,8 @@
     "db:new": "dbmate new",
     "db:status": "dbmate status",
     "db:codegen": "kysely-codegen --dialect postgres --camel-case --date-parser string --numeric-parser string --include-pattern \"{core,finance}.*\" --out-file apps/api/src/database/db.generated.ts",
-    "openapi": "nx run api:openapi"
+    "openapi": "nx run api:openapi && pnpm api-client:gen",
+    "api-client:gen": "openapi-typescript apps/api/openapi.json -o libs/api-client/src/lib/schema.generated.ts"
   },
   "private": true,
   "dependencies": {
@@ -67,6 +68,7 @@
     "jsdom": "^27.1.0",
     "kysely-codegen": "^0.20.0",
     "nx": "23.2.0",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.1",
     "tslib": "^2.3.0",
     "typescript": "~6.0.3",

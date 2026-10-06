@@ -2,18 +2,20 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-05_
+_Last updated: 2026-10-06_
 
 ## Current state
 
 - **Phase 0 (requirements):** done.
-- **Phase 1 (schema):** done. The `core` and `finance` schemas are SQL migrations in `db/migrations/`, checked against Postgres 18. They are not yet wired to dbmate or Docker Compose (Phase 2).
+- **Phase 1 (schema):** done. The `core` and `finance` schemas are SQL migrations in `db/migrations/`, checked against Postgres 18. `pnpm db:migrate` applies them with dbmate.
 - **Phase 2 (workspace):** done. Nx 23, Angular 22 PWA, NestJS 11 with Swagger, the three libs, Postgres 18 in Docker Compose, dbmate and Kysely. A health endpoint proves the whole path: web → proxy → API → database.
 - **GitHub:** `elliemhwu/selah`, with `main` and `develop` branches.
 
 - **Phase 3 (finance math):** done. `libs/shared-utils` has money and rounding, percentages, FX, calendar dates, cadence conversion, rollover envelopes with resets, and account balances, with 90 unit tests. `libs/shared-types` holds the shared value sets, and a test checks them against the SQL CHECK constraints.
 
-**Next step:** the owner reviews [ADR 0015](decisions/0015-api-client-generation.md) (_Proposed_) and answers the open questions below. Then Phase 4, the finance API, starting with accounts and records.
+- **API client:** DTO types generated from the OpenAPI contract with openapi-typescript; the web app calls the API with plain `HttpClient` ([ADR 0015](decisions/0015-api-client-generation.md)). The health check already uses them. Every project now has a `typecheck` target.
+
+**Next step:** Phase 4, the finance API, starting with accounts and records. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -36,6 +38,7 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 - Offline sync. The schema is already prepared ([ADR 0007](decisions/0007-offline-ready-data-conventions.md)).
 - Deployment and phone access.
 - Migrating `apps/api` to .NET.
+- Revisit the API client approach when the frontend grows: plain `HttpClient` vs. a typed wrapper, openapi-fetch or openapi-generator ([ADR 0015](decisions/0015-api-client-generation.md)).
 
 ## Open questions
 

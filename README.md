@@ -31,14 +31,14 @@ docs/               Requirements, decisions (ADRs), roadmap
 
 ### 1. Install the prerequisites
 
-| Tool | Version | Windows (winget) | macOS (Homebrew) | Notes |
-|---|---|---|---|---|
-| Git | latest | `winget install Git.Git` | `brew install git` | |
-| Node.js | 24 LTS | `winget install OpenJS.NodeJS.LTS` | `nvm install` (reads `.nvmrc`) | Pinned in `.nvmrc` and `package.json#engines` |
-| pnpm | 12 | `corepack enable` | `corepack enable` | Corepack ships with Node 24 and picks the version from `package.json#packageManager` |
-| Docker Desktop | latest | `winget install Docker.DockerDesktop` | `brew install --cask docker` | Runs PostgreSQL locally |
-| GitHub CLI | latest | `winget install GitHub.cli` | `brew install gh` | Optional; used for PRs from the terminal |
-| VS Code | latest | `winget install Microsoft.VisualStudioCode` | `brew install --cask visual-studio-code` | Recommended extensions are in `.vscode/extensions.json` |
+| Tool           | Version | Windows (winget)                            | macOS (Homebrew)                         | Notes                                                                                |
+| -------------- | ------- | ------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| Git            | latest  | `winget install Git.Git`                    | `brew install git`                       |                                                                                      |
+| Node.js        | 24 LTS  | `winget install OpenJS.NodeJS.LTS`          | `nvm install` (reads `.nvmrc`)           | Pinned in `.nvmrc` and `package.json#engines`                                        |
+| pnpm           | 12      | `corepack enable`                           | `corepack enable`                        | Corepack ships with Node 24 and picks the version from `package.json#packageManager` |
+| Docker Desktop | latest  | `winget install Docker.DockerDesktop`       | `brew install --cask docker`             | Runs PostgreSQL locally                                                              |
+| GitHub CLI     | latest  | `winget install GitHub.cli`                 | `brew install gh`                        | Optional; used for PRs from the terminal                                             |
+| VS Code        | latest  | `winget install Microsoft.VisualStudioCode` | `brew install --cask visual-studio-code` | Recommended extensions are in `.vscode/extensions.json`                              |
 
 > The Node, pnpm and Docker choices come from [ADR 0010](docs/decisions/0010-tooling-pnpm-docker.md). Update this table if that decision changes.
 
@@ -69,16 +69,16 @@ pnpm start                   # API on :3000 and web on :4200 (proxies /api to th
 
 ### 4. Everyday commands
 
-| Command | What it does |
-|---|---|
-| `pnpm start` | Serve the API and web app with reload |
-| `pnpm nx run-many -t build test lint` | Build, test and lint everything |
-| `pnpm nx test shared-utils` | Run one project's tests (watch mode in a terminal) |
-| `pnpm db:new <name>` | Create a new migration in `db/migrations/` |
-| `pnpm db:migrate` / `pnpm db:rollback` / `pnpm db:status` | Apply, undo the last, or list migrations |
-| `pnpm db:codegen` | Regenerate the Kysely table types from the running database. Run after every migration. |
-| `pnpm openapi` | Regenerate `apps/api/openapi.json`, the API contract. Run after changing endpoints or DTOs. |
-| `pnpm db:down` | Stop PostgreSQL. Data stays in the Docker volume. |
+| Command                                                   | What it does                                                                                                                           |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm start`                                              | Serve the API and web app with reload                                                                                                  |
+| `pnpm nx run-many -t typecheck build test lint`           | Type-check, build, test and lint everything                                                                                            |
+| `pnpm nx test shared-utils`                               | Run one project's tests (watch mode in a terminal)                                                                                     |
+| `pnpm db:new <name>`                                      | Create a new migration in `db/migrations/`                                                                                             |
+| `pnpm db:migrate` / `pnpm db:rollback` / `pnpm db:status` | Apply, undo the last, or list migrations                                                                                               |
+| `pnpm db:codegen`                                         | Regenerate the Kysely table types from the running database. Run after every migration.                                                |
+| `pnpm openapi`                                            | Regenerate `apps/api/openapi.json` (the API contract) and the typed client in `libs/api-client`. Run after changing endpoints or DTOs. |
+| `pnpm db:down`                                            | Stop PostgreSQL. Data stays in the Docker volume.                                                                                      |
 
 ### 5. Working with Claude Code on a new machine
 
