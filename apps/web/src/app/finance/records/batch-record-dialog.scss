@@ -1,0 +1,49 @@
+.shared {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+
+  mat-form-field {
+    flex: 1 1 160px;
+  }
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    gap: 4px 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  .name {
+    grid-column: 1 / -1;
+  }
+
+  .note-field {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .amount-field {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .excluded mat-form-field {
+    opacity: 0.5;
+  }
+}
+
+.planned {
+  display: block;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}

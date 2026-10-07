@@ -1,0 +1,97 @@
+<h2 mat-dialog-title i18n="@@record.title">New record</h2>
+
+<mat-dialog-content>
+  <form id="record-form" [formGroup]="form" (ngSubmit)="save()">
+    <mat-button-toggle-group formControlName="type" class="type" i18n-aria-label="@@record.type" aria-label="Record type">
+      <mat-button-toggle value="expense" i18n="@@record.type.expense">Expense</mat-button-toggle>
+      <mat-button-toggle value="income" i18n="@@record.type.income">Income</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="row">
+      <mat-form-field class="grow">
+        <mat-label i18n="@@record.amount">Amount</mat-label>
+        <input matInput formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+        <mat-error>{{ errorText(form.controls.amount) }}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="currency">
+        <mat-label i18n="@@record.currency">Currency</mat-label>
+        <mat-select formControlName="currency">
+          @for (currency of currencies(); track currency) {
+            <mat-option [value]="currency">{{ currency }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>{{ errorText(form.controls.currency) }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    @if (foreign()) {
+      <mat-form-field>
+        <mat-label i18n="@@record.fxRate">TWD per 1 {{ form.controls.currency.value }}</mat-label>
+        <input matInput formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+        @if (twdPreview(); as twd) {
+          <mat-hint i18n="@@record.twdPreview">= {{ twd | money }} TWD</mat-hint>
+        }
+        <mat-error>{{ errorText(form.controls.fxRate) }}</mat-error>
+      </mat-form-field>
+    }
+
+    <mat-form-field>
+      <mat-label i18n="@@record.date">Date</mat-label>
+      <input matInput type="date" formControlName="occurredOn" />
+      <mat-error>{{ errorText(form.controls.occurredOn) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="@@record.account">Account</mat-label>
+      <mat-select formControlName="accountId">
+        @for (account of accounts.value(); track account.id) {
+          <mat-option [value]="account.id">{{ account.name }} · {{ account.currency }}</mat-option>
+        }
+      </mat-select>
+      @if (accounts.hasValue() && accounts.value().length === 0) {
+        <mat-hint i18n="@@record.noAccounts">Add an account first.</mat-hint>
+      }
+      <mat-error>{{ errorText(form.controls.accountId) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="@@record.budgetItem">Budget item</mat-label>
+      <mat-select formControlName="budgetItemId">
+        <mat-option value="" i18n="@@record.none">None</mat-option>
+        @for (group of itemGroups(); track group.section) {
+          <mat-optgroup [label]="group.label">
+            @for (item of group.items; track item.id) {
+              <mat-option [value]="item.id" [style.padding-inline-start.px]="16 + item.depth * 16">{{ item.name }}</mat-option>
+            }
+          </mat-optgroup>
+        }
+      </mat-select>
+      @if (noPlan()) {
+        <mat-hint i18n="@@record.noPlan">No plan covers this month.</mat-hint>
+      }
+      <mat-error>{{ errorText(form.controls.budgetItemId) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="@@record.category">Category</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option value="" i18n="@@record.none">None</mat-option>
+        @for (category of categoryOptions(); track category.id) {
+          <mat-option [value]="category.id" [style.padding-inline-start.px]="16 + category.depth * 16">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>{{ errorText(form.controls.categoryId) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="@@record.note">Note</mat-label>
+      <input matInput formControlName="note" autocomplete="off" />
+      <mat-error>{{ errorText(form.controls.note) }}</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close i18n="@@action.cancel">Cancel</button>
+  <button mat-flat-button type="submit" form="record-form" [disabled]="saving()" i18n="@@action.save">Save</button>
+</mat-dialog-actions>

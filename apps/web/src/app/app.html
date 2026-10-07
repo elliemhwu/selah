@@ -1,5 +1,29 @@
+<mat-toolbar class="top-bar">
+  <span class="title">Selah</span>
+</mat-toolbar>
+
+@if (offline()) {
+  <div class="offline" role="status">
+    <span i18n="@@shell.offline">Can't reach the server. Your data may be out of date.</span>
+    <button type="button" (click)="retry()" i18n="@@action.retry">Try again</button>
+  </div>
+}
+
 <main>
-  <h1>Selah</h1>
-  <p class="status">{{ apiStatus() }}</p>
   <router-outlet />
 </main>
+
+<nav class="bottom-nav" i18n-aria-label="@@nav.label" aria-label="Main">
+  @for (item of nav; track item.path) {
+    <a
+      [routerLink]="item.path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      #link="routerLinkActive"
+      [attr.aria-current]="link.isActive ? 'page' : null"
+    >
+      <span class="indicator"><mat-icon aria-hidden="true">{{ item.icon }}</mat-icon></span>
+      <span class="label">{{ item.label }}</span>
+    </a>
+  }
+</nav>

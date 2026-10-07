@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// Material 3 theme (ADR 0020). Follows the system light or dark mode.
+// Custom styles use the --mat-sys-* tokens this defines.
+html {
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+}
+
+// Amounts line up in columns.
+.amount {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.negative {
+  color: var(--mat-sys-error);
+}
+
+// Full-screen dialogs on phones.
+@media (max-width: 599px) {
+  .selah-fullscreen-dialog {
+    max-width: 100vw !important;
+    width: 100vw;
+    height: 100dvh;
+
+    .mat-mdc-dialog-surface {
+      border-radius: 0;
+    }
+  }
+}
