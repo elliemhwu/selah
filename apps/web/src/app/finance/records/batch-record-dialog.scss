@@ -1,0 +1,60 @@
+.rows {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+
+  li {
+    padding: 4px 0 12px;
+    border-bottom: 1px dotted var(--rule);
+  }
+
+  .row-head {
+    display: flex;
+    align-items: center;
+    margin-left: -12px;
+  }
+
+  .row-name {
+    flex: 1;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .row-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 128px;
+    gap: 12px;
+  }
+
+  input:not(.check) {
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--touch);
+    padding: 0 12px;
+    border: 1px dashed var(--rule);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+    font: 16px var(--font-text);
+  }
+
+  input.amount {
+    font-family: var(--font-amount);
+    text-align: right;
+  }
+
+  .note-field {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .amount-field {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .excluded .row-fields,
+  .excluded .row-name {
+    opacity: 0.45;
+  }
+}

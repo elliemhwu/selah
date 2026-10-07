@@ -17,25 +17,28 @@ _Last updated: 2026-10-07_
 
 - **Phase 4 (finance API):** done. API conventions are in [ADR 0017](decisions/0017-api-conventions.md). Accounts (with derived balances), categories, records with lines (single and batch upsert, filtered lists, last-used FX rates), the budget plan (whole-version saves, older versions read-only, active version per month; [ADR 0018](decisions/0018-plan-api.md)), manual budget transfers, and the reports: envelopes, checklist, monthly plan vs. actual, and transfers with computed resets ([ADR 0019](decisions/0019-budget-transfers-and-reports.md)). The planned-amount and envelope math is in `libs/shared-utils` (`plan.ts`, `ledger.ts`). Every endpoint has HTTP integration tests against a `selah_test` database.
 
-**Next step:** Phase 5, the Angular UI, on `feat/finance-web-*`. Start with the home screen (envelopes, checklist, quick add), since every endpoint it needs exists now. The open questions below are still waiting for the owner.
+- **Phase 5 (web UI):** in progress. The UI foundation is in [ADR 0020](decisions/0020-web-ui-foundation.md) (`@angular/localize` with English as the only locale so far, lazy-loaded feature routes), and the look is the **Linen ledger** style in [ADR 0021](decisions/0021-linen-ledger-ui.md): the Angular CDK with our own small components, no Material. Done: the app shell (top bar, bottom navigation, offline banner) and the home screen. It shows what's left in each envelope and this period's checklist (tap to record one item, or select several for batch entry), and has a quick "+" record form for single-line income and expenses, foreign currencies included. Records, Budget, Review and Accounts are placeholders for now.
+
+**Next step:** Phase 5b, the Accounts screen and the budget editor on `feat/finance-web-budget`. Until they exist, the home screen has no data to show unless it's entered through the API. After that: the Records screen (list, the full form with split lines, transfers and adjustments), then the monthly review. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
-| #   | Phase                                                                                                                                 | Branch                      | Status  |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------- |
-| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                  | `feat/finance-requirements` | ✅ Done |
-| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                     | `feat/finance-requirements` | ✅ Done |
-| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                               | `feat/finance-schema`       | ✅ Done |
-| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                     | `feat/workspace-setup`      | ✅ Done |
-| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                          | `feat/finance-utils`        | ✅ Done |
-| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports             | `feat/finance-api-*`        | ✅ Done |
-| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*`        | ⬜      |
-| 6   | PWA polish, then deployment planning                                                                                                  | —                           | ⬜      |
+| #   | Phase                                                                                                                                 | Branch                      | Status                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ---------------------- |
+| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                  | `feat/finance-requirements` | ✅ Done                |
+| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                     | `feat/finance-requirements` | ✅ Done                |
+| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                               | `feat/finance-schema`       | ✅ Done                |
+| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                     | `feat/workspace-setup`      | ✅ Done                |
+| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                          | `feat/finance-utils`        | ✅ Done                |
+| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports             | `feat/finance-api-*`        | ✅ Done                |
+| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings | `feat/finance-web-*`        | 🟡 Shell and home done |
+| 6   | PWA polish, then deployment planning                                                                                                  | —                           | ⬜                     |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 
 ## Beta / later
 
+- Switchable themes: the Paper (light) and Evening (dark) directions from the UI comparison, as extra token sets ([ADR 0021](decisions/0021-linen-ledger-ui.md)). An idea only, not planned.
 - Close Week / Close Month: persist computed resets as `reset` budget transfers. See requirements §5.
 - Offline sync. The schema is already prepared ([ADR 0007](decisions/0007-offline-ready-data-conventions.md)).
 - Deployment and phone access.
