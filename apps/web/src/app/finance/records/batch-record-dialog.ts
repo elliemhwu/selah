@@ -1,18 +1,13 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { isRecordCurrencyAllowed } from '@selah/shared-utils';
 import { map } from 'rxjs';
 import { MoneyPipe } from '../../core/money.pipe';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { TODAY } from '../../core/today';
+import { Toast } from '../../ui/toast';
 import { AccountsApi, type ChecklistItemDto, type RecordDto, RecordsApi } from '../data/finance-api';
 import { toInputAmount } from './budget-item-options';
 import { errorText, MONEY_PATTERN, positiveAmount } from './form-errors';
@@ -27,24 +22,15 @@ export interface BatchRecordDialogData {
  */
 @Component({
   selector: 'selah-batch-record-dialog',
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MoneyPipe,
-  ],
+  imports: [ReactiveFormsModule, MoneyPipe],
   templateUrl: './batch-record-dialog.html',
   styleUrl: './batch-record-dialog.scss',
 })
 export class BatchRecordDialog {
-  protected readonly items = inject<BatchRecordDialogData>(MAT_DIALOG_DATA).items;
-  private readonly dialogRef = inject<MatDialogRef<BatchRecordDialog, RecordDto[]>>(MatDialogRef);
+  protected readonly items = inject<BatchRecordDialogData>(DIALOG_DATA).items;
+  private readonly dialogRef = inject<DialogRef<RecordDto[], BatchRecordDialog>>(DialogRef);
   private readonly recordsApi = inject(RecordsApi);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(Toast);
   private readonly fb = inject(NonNullableFormBuilder);
   /** One id per row, kept across retries (ADR 0017). */
   private readonly ids = this.items.map(() => crypto.randomUUID());
@@ -82,6 +68,10 @@ export class BatchRecordDialog {
     });
   }
 
+  protected cancel(): void {
+    this.dialogRef.close();
+  }
+
   async save(): Promise<void> {
     const rows = this.form.controls.rows.controls;
     const included = rows.map((row, index) => ({ row, index })).filter(({ row }) => row.controls.include.value);
@@ -114,7 +104,7 @@ export class BatchRecordDialog {
       this.dialogRef.close(saved);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field, included.map((i) => i.index)));
-      if (unmatched.length) this.snackBar.open(unmatched.join(' '), $localize`:@@action.dismiss:Dismiss`);
+      if (unmatched.length) this.toast.show(unmatched.join(' '));
     } finally {
       this.saving.set(false);
     }

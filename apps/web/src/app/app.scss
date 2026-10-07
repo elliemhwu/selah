@@ -4,82 +4,54 @@
   min-height: 100dvh;
 }
 
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--mat-sys-surface-container);
-}
-
-.title {
-  font: var(--mat-sys-title-large);
-}
-
 .offline {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 16px;
-  background: var(--mat-sys-error-container);
-  color: var(--mat-sys-on-error-container);
-  font: var(--mat-sys-body-medium);
+  padding: max(8px, env(safe-area-inset-top)) var(--gutter) 8px;
+  background: var(--offline);
+  font-size: 14px;
 
-  button {
-    border: 0;
-    background: none;
-    color: inherit;
-    font: var(--mat-sys-label-large);
-    cursor: pointer;
+  .btn-quiet {
+    color: var(--ink);
+    text-decoration: underline;
   }
 }
 
 main {
   flex: 1;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
-// Material 3 navigation bar; Angular Material has no component for it.
 .bottom-nav {
   position: fixed;
   inset: auto 0 0;
   z-index: 2;
-  display: flex;
-  height: 80px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: var(--nav-height);
   padding-bottom: env(safe-area-inset-bottom);
-  background: var(--mat-sys-surface-container);
+  border-top: 1px solid var(--rule-strong);
+  background: var(--paper);
 
   a {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--ink-muted);
     text-decoration: none;
-    font: var(--mat-sys-label-medium);
-  }
-
-  .indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 64px;
-    height: 32px;
-    border-radius: 16px;
+    font-size: 12px;
   }
 
   a.active {
-    color: var(--mat-sys-on-surface);
+    color: var(--ink);
+    font-weight: 600;
 
-    .indicator {
-      background: var(--mat-sys-secondary-container);
-      color: var(--mat-sys-on-secondary-container);
+    .label {
+      border-bottom: 1.5px solid var(--accent);
     }
-  }
-
-  a:focus-visible .indicator {
-    outline: 2px solid var(--mat-sys-primary);
   }
 }

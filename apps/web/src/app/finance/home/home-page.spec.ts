@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { Dialog } from '@angular/cdk/dialog';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { TODAY } from '../../core/today';
@@ -47,7 +47,7 @@ describe('HomePage', () => {
   let open: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    open = vi.fn(() => ({ afterClosed: () => of(undefined) }));
+    open = vi.fn(() => ({ closed: of(undefined) }));
     TestBed.configureTestingModule({
       imports: [HomePage],
       providers: [
@@ -55,7 +55,7 @@ describe('HomePage', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: TODAY, useValue: () => '2026-10-07' },
-        { provide: MatDialog, useValue: { open } },
+        { provide: Dialog, useValue: { open } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -82,12 +82,14 @@ describe('HomePage', () => {
     const { el } = await render([envelope], [checklistItem('rent', 'Rent'), checklistItem('salary', 'Salary', true)]);
     expect(el.querySelector('.envelope-name')?.textContent).toContain('Daily Food');
     expect(el.querySelector('.envelope-available')?.textContent).toContain('220');
-    expect(el.querySelector('.envelope')?.textContent).toContain('resets Sun, Oct 11');
+    expect(el.querySelector('.envelope')?.textContent).toContain('resets Sun');
     const rows = [...el.querySelectorAll('.checklist li')];
     expect(rows.map((r) => r.querySelector('.item-name')?.textContent)).toEqual(['Rent', 'Salary']);
-    expect(rows[0].textContent).toContain('1,200 planned');
+    expect(rows[0].querySelector('.item-amount')?.textContent).toContain('1,200');
+    expect(rows[0].querySelector('input.check')).not.toBeNull();
     expect(rows[1].classList).toContain('done');
-    expect(rows[1].textContent).toContain('1,200 of 1,200');
+    expect(rows[1].querySelector('.done-mark')).not.toBeNull();
+    expect(rows[1].querySelector('input.check')).toBeNull();
   });
 
   it('opens the record form pre-filled from a checklist item', async () => {
@@ -106,14 +108,14 @@ describe('HomePage', () => {
     boxes[0].click();
     boxes[2].click();
     fixture.detectChanges();
-    const button = [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Record 2'));
+    const button = [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Record 2 selected'));
     button?.click();
     expect(open).toHaveBeenCalledWith(BatchRecordDialog, expect.objectContaining({ data: { items: [items[0], items[2]] } }));
   });
 
   it('opens an empty record form from the + button', async () => {
     const { el } = await render([], []);
-    el.querySelector<HTMLButtonElement>('.fab')?.click();
+    el.querySelector<HTMLButtonElement>('.new-entry')?.click();
     expect(open).toHaveBeenCalledWith(RecordDialog, expect.objectContaining({ data: {} }));
   });
 

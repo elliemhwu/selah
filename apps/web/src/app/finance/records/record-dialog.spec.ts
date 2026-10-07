@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TODAY } from '../../core/today';
 import type { AccountDto, PlanVersionDto } from '../data/finance-api';
 import { RecordDialog, type RecordDialogData } from './record-dialog';
@@ -30,8 +30,8 @@ describe('RecordDialog', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: TODAY, useValue: () => '2026-10-07' },
-        { provide: MAT_DIALOG_DATA, useValue: data },
-        { provide: MatDialogRef, useValue: { close } },
+        { provide: DIALOG_DATA, useValue: data },
+        { provide: DialogRef, useValue: { close } },
       ],
     });
     http = TestBed.inject(HttpTestingController);

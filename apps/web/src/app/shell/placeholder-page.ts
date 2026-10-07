@@ -1,21 +1,22 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { Icon } from '../ui/icon';
 
 /** Stands in for screens of later Phase 5 branches (docs/roadmap.md). */
 @Component({
   selector: 'selah-placeholder-page',
-  imports: [MatIconModule],
+  imports: [Icon],
   template: `
-    <mat-icon aria-hidden="true">construction</mat-icon>
-    <p i18n="@@placeholder.text">This screen is coming in a later update.</p>
+    <selah-icon name="tools" [size]="28" />
+    <p class="section-title" i18n="@@placeholder.text">This page of the ledger is still blank.</p>
   `,
   styles: `
     :host {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 16px;
-      color: var(--mat-sys-on-surface-variant);
+      gap: 8px;
+      padding: 64px var(--gutter);
+      color: var(--ink-muted);
     }
   `,
 })

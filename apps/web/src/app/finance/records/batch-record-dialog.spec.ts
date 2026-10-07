@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TODAY } from '../../core/today';
 import type { ChecklistItemDto } from '../data/finance-api';
 import { BatchRecordDialog } from './batch-record-dialog';
@@ -21,8 +21,8 @@ describe('BatchRecordDialog', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: TODAY, useValue: () => '2026-10-07' },
-        { provide: MAT_DIALOG_DATA, useValue: { items: [item('salary', 'income', '60000.00'), item('rent', 'expense', '15000.00'), item('power', 'expense', '1200.00')] } },
-        { provide: MatDialogRef, useValue: { close } },
+        { provide: DIALOG_DATA, useValue: { items: [item('salary', 'income', '60000.00'), item('rent', 'expense', '15000.00'), item('power', 'expense', '1200.00')] } },
+        { provide: DialogRef, useValue: { close } },
       ],
     });
     http = TestBed.inject(HttpTestingController);

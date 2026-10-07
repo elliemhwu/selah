@@ -1,6 +1,6 @@
 # 0020. Web UI foundation: Angular Material, i18n, app structure
 
-- Status: Accepted
+- Status: Accepted. The "Components and theme" part is superseded by [0021](0021-linen-ledger-ui.md).
 - Date: 2026-10-07
 
 ## Context

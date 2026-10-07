@@ -1,49 +1,60 @@
-.shared {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 8px;
-
-  mat-form-field {
-    flex: 1 1 160px;
-  }
-}
-
 .rows {
   list-style: none;
-  margin: 0;
+  margin: 16px 0 0;
   padding: 0;
 
   li {
-    display: grid;
-    grid-template-columns: 1fr 120px;
-    gap: 4px 12px;
-    align-items: center;
-    padding: 12px 0;
-    border-top: 1px solid var(--mat-sys-outline-variant);
+    padding: 4px 0 12px;
+    border-bottom: 1px dotted var(--rule);
   }
 
-  .name {
-    grid-column: 1 / -1;
+  .row-head {
+    display: flex;
+    align-items: center;
+    margin-left: -12px;
+  }
+
+  .row-name {
+    flex: 1;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .row-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 128px;
+    gap: 12px;
+  }
+
+  input:not(.check) {
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--touch);
+    padding: 0 12px;
+    border: 1px dashed var(--rule);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+    font: 16px var(--font-text);
+  }
+
+  input.amount {
+    font-family: var(--font-amount);
+    text-align: right;
   }
 
   .note-field {
+    grid-row: 1;
     grid-column: 1;
-    grid-row: 2;
   }
 
   .amount-field {
+    grid-row: 1;
     grid-column: 2;
-    grid-row: 2;
   }
 
-  .excluded mat-form-field {
-    opacity: 0.5;
+  .excluded .row-fields,
+  .excluded .row-name {
+    opacity: 0.45;
   }
-}
-
-.planned {
-  display: block;
-  color: var(--mat-sys-on-surface-variant);
-  font: var(--mat-sys-body-small);
 }

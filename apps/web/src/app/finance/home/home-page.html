@@ -1,87 +1,98 @@
-@if (loading()) {
-  <mat-progress-bar mode="indeterminate" class="loading" />
-}
+<header class="page-header">
+  <div class="masthead small muted">
+    <span>{{ today() | date: 'EEE d MMM y' }}</span>
+    <span class="brand">Selah</span>
+  </div>
+  <h1 i18n="@@home.title">Pause, and take stock.</h1>
+</header>
 
-@if (noPlan()) {
-  <mat-card appearance="outlined" class="empty">
-    <mat-card-content>
-      <p i18n="@@home.noPlan">No budget plan covers this month yet.</p>
-      <a mat-button routerLink="/budget" i18n="@@home.createPlan">Set up the budget</a>
-    </mat-card-content>
-  </mat-card>
-} @else if (failed()) {
-  <mat-card appearance="outlined" class="empty">
-    <mat-card-content>
-      <p i18n="@@home.failed">Couldn't load your budgets.</p>
-      <button mat-button type="button" (click)="envelopes.reload(); checklist.reload()" i18n="@@action.retry">Try again</button>
-    </mat-card-content>
-  </mat-card>
-} @else {
-  <section aria-labelledby="envelopes-heading">
-    <h2 id="envelopes-heading" i18n="@@home.envelopes">What's left</h2>
-    @if (envelopes.hasValue() && envelopes.value().length === 0) {
-      <p class="muted" i18n="@@home.noEnvelopes">No rollover budgets in this plan.</p>
-    }
-    <div class="envelopes">
-      @for (envelope of envelopes.value(); track envelope.budgetItemId) {
-        <mat-card appearance="outlined" class="envelope">
-          <mat-card-content>
+<div class="page">
+  @if (loading()) {
+    <p class="muted small status" role="status" i18n="@@home.loading">Turning the pages…</p>
+  }
+
+  @if (noPlan()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@home.noPlan">No budget plan covers this month yet.</p>
+      <a class="btn" routerLink="/budget" i18n="@@home.createPlan">Set up the budget</a>
+    </div>
+  } @else if (failed()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@home.failed">Couldn't load your budgets.</p>
+      <button type="button" class="btn" (click)="envelopes.reload(); checklist.reload()" i18n="@@action.retry">Try again</button>
+    </div>
+  } @else {
+    <section aria-labelledby="envelopes-heading">
+      <h2 id="envelopes-heading" class="section-title" i18n="@@home.envelopes">What's left</h2>
+      @if (envelopes.hasValue() && envelopes.value().length === 0) {
+        <p class="muted" i18n="@@home.noEnvelopes">No rollover budgets in this plan.</p>
+      }
+      <div class="envelopes">
+        @for (envelope of envelopes.value(); track envelope.budgetItemId) {
+          <div class="envelope">
             <div class="envelope-name">{{ envelope.name }}</div>
             <div class="envelope-available amount" [class.negative]="isNegative(envelope.available)">
               {{ envelope.available | money }}
             </div>
-            <div class="muted small">
+            <div class="small muted">
               <span i18n="@@home.allotment">{{ envelope.allotment | money }} {{ periodLabel(envelope) }}</span>
               @if (envelope.resetsOn) {
                 ·
-                <span i18n="@@home.resetsOn">resets {{ envelope.resetsOn | date: 'EEE, MMM d' }}</span>
+                <span i18n="@@home.resetsOn">resets {{ envelope.resetsOn | date: 'EEE' }}</span>
               }
             </div>
-          </mat-card-content>
-        </mat-card>
-      }
-    </div>
-  </section>
+          </div>
+        }
+      </div>
+    </section>
 
-  <section aria-labelledby="checklist-heading">
-    <div class="section-header">
-      <h2 id="checklist-heading" i18n="@@home.checklist">This period</h2>
-      @if (selected().size > 0) {
-        <button mat-flat-button type="button" (click)="recordSelected()" i18n="@@home.recordSelected">
-          Record {{ selected().size }}
-        </button>
+    <section aria-labelledby="checklist-heading">
+      <div class="section-header">
+        <h2 id="checklist-heading" class="section-title" i18n="@@home.checklist">This period</h2>
+        @if (checklist.value().length > 0) {
+          <span class="small muted" i18n="@@home.doneCount">{{ doneCount() }} of {{ checklist.value().length }} recorded</span>
+        }
+      </div>
+      @if (checklist.hasValue() && checklist.value().length === 0) {
+        <p class="muted" i18n="@@home.noChecklist">Nothing recurring is due in this period.</p>
       }
-    </div>
-    @if (checklist.hasValue() && checklist.value().length === 0) {
-      <p class="muted" i18n="@@home.noChecklist">Nothing recurring is due in this period.</p>
-    }
-    <ul class="checklist">
-      @for (item of checklist.value(); track item.budgetItemId) {
-        <li [class.done]="item.done">
-          <mat-checkbox
-            [checked]="selected().has(item.budgetItemId)"
-            (change)="toggle(item, $event.checked)"
-            [aria-label]="item.name"
-          />
-          <button type="button" class="item" (click)="recordItem(item)">
-            <span class="item-name">{{ item.name }}</span>
-            <span class="muted small amount">
-              @if (item.done) {
-                <span i18n="@@home.recordedOf">{{ item.recorded | money }} of {{ item.planned | money }}</span>
-              } @else {
-                <span i18n="@@home.plannedOnly">{{ item.planned | money }} planned</span>
-              }
-            </span>
-          </button>
-          @if (item.done) {
-            <mat-icon class="done-icon" i18n-aria-label="@@home.recorded" aria-label="Recorded">check_circle</mat-icon>
-          }
-        </li>
-      }
-    </ul>
-  </section>
-}
+      <ul class="checklist">
+        @for (item of checklist.value(); track item.budgetItemId) {
+          <li [class.done]="item.done">
+            @if (item.done) {
+              <span class="done-mark" i18n-title="@@home.recorded" title="Recorded">
+                <selah-icon name="check" [size]="14" [weight]="2" />
+              </span>
+            } @else {
+              <input
+                type="checkbox"
+                class="check"
+                [checked]="selected().has(item.budgetItemId)"
+                (change)="toggle(item, $any($event.target).checked)"
+                [attr.aria-label]="item.name"
+              />
+            }
+            <button type="button" class="item" (click)="recordItem(item)">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="amount item-amount">{{ (item.done ? item.recorded : item.planned) | money }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</div>
 
-<button mat-fab class="fab" type="button" (click)="addRecord()" i18n-aria-label="@@home.add" aria-label="Add a record">
-  <mat-icon>add</mat-icon>
-</button>
+<div class="actions">
+  @if (selected().size > 0) {
+    <button type="button" class="btn btn-primary" (click)="recordSelected()" i18n="@@home.recordSelected">
+      Record {{ selected().size }} selected
+    </button>
+  } @else {
+    <button type="button" class="btn new-entry" (click)="addRecord()">
+      <selah-icon name="add" [size]="16" [weight]="1.8" />
+      <span i18n="@@home.add">New entry</span>
+    </button>
+  }
+</div>

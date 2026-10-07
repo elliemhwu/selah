@@ -1,19 +1,19 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import type { ApiSchemas } from '@selah/api-client';
+import { Icon, type IconName } from './ui/icon';
+import { ToastOutlet } from './ui/toast';
 
 interface NavItem {
   path: string;
-  icon: string;
+  icon: IconName;
   label: string;
 }
 
-/** The app shell: top bar, the current screen, and the bottom navigation (ADR 0020). */
+/** The app shell: the current screen, the bottom navigation, and toasts (ADR 0021). */
 @Component({
-  imports: [MatIconModule, MatToolbarModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [Icon, RouterLink, RouterLinkActive, RouterOutlet, ToastOutlet],
   selector: 'selah-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -21,10 +21,10 @@ interface NavItem {
 export class App {
   protected readonly nav: NavItem[] = [
     { path: '/', icon: 'home', label: $localize`:@@nav.home:Home` },
-    { path: '/records', icon: 'receipt_long', label: $localize`:@@nav.records:Records` },
-    { path: '/budget', icon: 'savings', label: $localize`:@@nav.budget:Budget` },
-    { path: '/review', icon: 'insights', label: $localize`:@@nav.review:Review` },
-    { path: '/accounts', icon: 'account_balance', label: $localize`:@@nav.accounts:Accounts` },
+    { path: '/records', icon: 'records', label: $localize`:@@nav.records:Records` },
+    { path: '/budget', icon: 'budget', label: $localize`:@@nav.budget:Budget` },
+    { path: '/review', icon: 'review', label: $localize`:@@nav.review:Review` },
+    { path: '/accounts', icon: 'accounts', label: $localize`:@@nav.accounts:Accounts` },
   ];
 
   private readonly health = httpResource<ApiSchemas['HealthDto']>(() => '/api/v1/health');

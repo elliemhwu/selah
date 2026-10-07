@@ -1,23 +1,12 @@
-form {
-  display: flex;
-  flex-direction: column;
-  padding-top: 8px;
-}
-
 .type {
-  align-self: flex-start;
   margin-bottom: 16px;
 }
 
-.row {
-  display: flex;
-  gap: 12px;
+.amount-box {
+  margin-bottom: 8px;
 }
 
-.grow {
-  flex: 1;
-}
-
-.currency {
-  width: 112px;
+.hint {
+  margin: 4px 0 0;
+  text-align: right;
 }

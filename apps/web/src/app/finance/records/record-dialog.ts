@@ -1,19 +1,14 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CURRENCIES, type Currency } from '@selah/shared-types';
 import { formatMoney, isRecordCurrencyAllowed, parseMoney, parseRate, toTwd, yearMonthOf } from '@selah/shared-utils';
 import { map } from 'rxjs';
 import { MoneyPipe } from '../../core/money.pipe';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { TODAY } from '../../core/today';
+import { Toast } from '../../ui/toast';
 import { AccountsApi, CategoriesApi, PlanApi, type RecordDto, RecordsApi } from '../data/finance-api';
 import { budgetItemGroups, toInputAmount } from './budget-item-options';
 import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from './form-errors';
@@ -30,24 +25,15 @@ const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/;
 /** The quick record form: one income or expense line. */
 @Component({
   selector: 'selah-record-dialog',
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MoneyPipe,
-  ],
+  imports: [ReactiveFormsModule, MoneyPipe],
   templateUrl: './record-dialog.html',
   styleUrl: './record-dialog.scss',
 })
 export class RecordDialog {
-  private readonly data: RecordDialogData = inject<RecordDialogData | null>(MAT_DIALOG_DATA, { optional: true }) ?? {};
-  private readonly dialogRef = inject<MatDialogRef<RecordDialog, RecordDto>>(MatDialogRef);
+  private readonly data: RecordDialogData = inject<RecordDialogData | null>(DIALOG_DATA, { optional: true }) ?? {};
+  private readonly dialogRef = inject<DialogRef<RecordDto, RecordDialog>>(DialogRef);
   private readonly recordsApi = inject(RecordsApi);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(Toast);
   /** Generated once, so saving again after an error never duplicates the record (ADR 0017). */
   private readonly id = crypto.randomUUID();
   private readonly today = inject(TODAY)();
@@ -137,6 +123,10 @@ export class RecordDialog {
     });
   }
 
+  protected cancel(): void {
+    this.dialogRef.close();
+  }
+
   async save(): Promise<void> {
     const v = this.form.getRawValue();
     if (this.foreign() && !v.fxRate) this.form.controls.fxRate.setErrors({ required: true });
@@ -164,7 +154,7 @@ export class RecordDialog {
       this.dialogRef.close(record);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
-      if (unmatched.length) this.snackBar.open(unmatched.join(' '), $localize`:@@action.dismiss:Dismiss`);
+      if (unmatched.length) this.toast.show(unmatched.join(' '));
     } finally {
       this.saving.set(false);
     }

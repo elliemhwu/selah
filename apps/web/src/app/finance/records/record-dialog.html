@@ -1,97 +1,104 @@
-<h2 mat-dialog-title i18n="@@record.title">New record</h2>
+<header class="dialog-header">
+  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+  <h2 id="record-title" i18n="@@record.title">New entry</h2>
+  <button type="submit" form="record-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+</header>
 
-<mat-dialog-content>
-  <form id="record-form" [formGroup]="form" (ngSubmit)="save()">
-    <mat-button-toggle-group formControlName="type" class="type" i18n-aria-label="@@record.type" aria-label="Record type">
-      <mat-button-toggle value="expense" i18n="@@record.type.expense">Expense</mat-button-toggle>
-      <mat-button-toggle value="income" i18n="@@record.type.income">Income</mat-button-toggle>
-    </mat-button-toggle-group>
+<form id="record-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="record-title">
+  <fieldset class="segmented type">
+    <legend class="cdk-visually-hidden" i18n="@@record.type">Record type</legend>
+    <input type="radio" id="rec-expense" formControlName="type" value="expense" />
+    <label for="rec-expense" i18n="@@record.type.expense">Expense</label>
+    <input type="radio" id="rec-income" formControlName="type" value="income" />
+    <label for="rec-income" i18n="@@record.type.income">Income</label>
+  </fieldset>
 
-    <div class="row">
-      <mat-form-field class="grow">
-        <mat-label i18n="@@record.amount">Amount</mat-label>
-        <input matInput formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
-        <mat-error>{{ errorText(form.controls.amount) }}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="currency">
-        <mat-label i18n="@@record.currency">Currency</mat-label>
-        <mat-select formControlName="currency">
-          @for (currency of currencies(); track currency) {
-            <mat-option [value]="currency">{{ currency }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>{{ errorText(form.controls.currency) }}</mat-error>
-      </mat-form-field>
+  <div class="amount-box">
+    <label for="rec-amount" i18n="@@record.amount">Amount</label>
+    <div class="amount-line">
+      <select formControlName="currency" i18n-aria-label="@@record.currency" aria-label="Currency">
+        @for (currency of currencies(); track currency) {
+          <option [value]="currency">{{ currency }}</option>
+        }
+      </select>
+      <input id="rec-amount" formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
     </div>
+  </div>
+  @if (form.controls.amount.touched && form.controls.amount.invalid) {
+    <p class="field-error">{{ errorText(form.controls.amount) }}</p>
+  }
 
-    @if (foreign()) {
-      <mat-form-field>
-        <mat-label i18n="@@record.fxRate">TWD per 1 {{ form.controls.currency.value }}</mat-label>
-        <input matInput formControlName="fxRate" inputmode="decimal" autocomplete="off" />
-        @if (twdPreview(); as twd) {
-          <mat-hint i18n="@@record.twdPreview">= {{ twd | money }} TWD</mat-hint>
-        }
-        <mat-error>{{ errorText(form.controls.fxRate) }}</mat-error>
-      </mat-form-field>
+  @if (foreign()) {
+    <div class="ledger-row">
+      <label for="rec-rate" i18n="@@record.fxRate">TWD per {{ form.controls.currency.value }}</label>
+      <input id="rec-rate" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+    </div>
+    @if (form.controls.fxRate.touched && form.controls.fxRate.invalid) {
+      <p class="field-error">{{ errorText(form.controls.fxRate) }}</p>
+    } @else if (twdPreview(); as twd) {
+      <p class="hint small muted" i18n="@@record.twdPreview">= <span class="amount">{{ twd | money }}</span> TWD</p>
     }
+  }
 
-    <mat-form-field>
-      <mat-label i18n="@@record.date">Date</mat-label>
-      <input matInput type="date" formControlName="occurredOn" />
-      <mat-error>{{ errorText(form.controls.occurredOn) }}</mat-error>
-    </mat-form-field>
+  <div class="ledger-row">
+    <label for="rec-date" i18n="@@record.date">Date</label>
+    <input id="rec-date" type="date" formControlName="occurredOn" />
+  </div>
+  @if (form.controls.occurredOn.touched && form.controls.occurredOn.invalid) {
+    <p class="field-error">{{ errorText(form.controls.occurredOn) }}</p>
+  }
 
-    <mat-form-field>
-      <mat-label i18n="@@record.account">Account</mat-label>
-      <mat-select formControlName="accountId">
-        @for (account of accounts.value(); track account.id) {
-          <mat-option [value]="account.id">{{ account.name }} · {{ account.currency }}</mat-option>
-        }
-      </mat-select>
-      @if (accounts.hasValue() && accounts.value().length === 0) {
-        <mat-hint i18n="@@record.noAccounts">Add an account first.</mat-hint>
+  <div class="ledger-row">
+    <label for="rec-account" i18n="@@record.account">Account</label>
+    <select id="rec-account" formControlName="accountId">
+      @for (account of accounts.value(); track account.id) {
+        <option [value]="account.id">{{ account.name }} · {{ account.currency }}</option>
       }
-      <mat-error>{{ errorText(form.controls.accountId) }}</mat-error>
-    </mat-form-field>
+    </select>
+  </div>
+  @if (accounts.hasValue() && accounts.value().length === 0) {
+    <p class="hint small muted" i18n="@@record.noAccounts">Add an account first.</p>
+  } @else if (form.controls.accountId.touched && form.controls.accountId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.accountId) }}</p>
+  }
 
-    <mat-form-field>
-      <mat-label i18n="@@record.budgetItem">Budget item</mat-label>
-      <mat-select formControlName="budgetItemId">
-        <mat-option value="" i18n="@@record.none">None</mat-option>
-        @for (group of itemGroups(); track group.section) {
-          <mat-optgroup [label]="group.label">
-            @for (item of group.items; track item.id) {
-              <mat-option [value]="item.id" [style.padding-inline-start.px]="16 + item.depth * 16">{{ item.name }}</mat-option>
-            }
-          </mat-optgroup>
-        }
-      </mat-select>
-      @if (noPlan()) {
-        <mat-hint i18n="@@record.noPlan">No plan covers this month.</mat-hint>
+  <div class="ledger-row">
+    <label for="rec-item" i18n="@@record.budgetItem">Budget item</label>
+    <select id="rec-item" formControlName="budgetItemId">
+      <option value="" i18n="@@record.none">None</option>
+      @for (group of itemGroups(); track group.section) {
+        <optgroup [label]="group.label">
+          @for (item of group.items; track item.id) {
+            <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+          }
+        </optgroup>
       }
-      <mat-error>{{ errorText(form.controls.budgetItemId) }}</mat-error>
-    </mat-form-field>
+    </select>
+  </div>
+  @if (noPlan()) {
+    <p class="hint small muted" i18n="@@record.noPlan">No plan covers this month.</p>
+  } @else if (form.controls.budgetItemId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.budgetItemId) }}</p>
+  }
 
-    <mat-form-field>
-      <mat-label i18n="@@record.category">Category</mat-label>
-      <mat-select formControlName="categoryId">
-        <mat-option value="" i18n="@@record.none">None</mat-option>
-        @for (category of categoryOptions(); track category.id) {
-          <mat-option [value]="category.id" [style.padding-inline-start.px]="16 + category.depth * 16">{{ category.name }}</mat-option>
-        }
-      </mat-select>
-      <mat-error>{{ errorText(form.controls.categoryId) }}</mat-error>
-    </mat-form-field>
+  <div class="ledger-row">
+    <label for="rec-category" i18n="@@record.category">Category</label>
+    <select id="rec-category" formControlName="categoryId">
+      <option value="" i18n="@@record.none">None</option>
+      @for (category of categoryOptions(); track category.id) {
+        <option [value]="category.id">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.categoryId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.categoryId) }}</p>
+  }
 
-    <mat-form-field>
-      <mat-label i18n="@@record.note">Note</mat-label>
-      <input matInput formControlName="note" autocomplete="off" />
-      <mat-error>{{ errorText(form.controls.note) }}</mat-error>
-    </mat-form-field>
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-button type="button" mat-dialog-close i18n="@@action.cancel">Cancel</button>
-  <button mat-flat-button type="submit" form="record-form" [disabled]="saving()" i18n="@@action.save">Save</button>
-</mat-dialog-actions>
+  <div class="ledger-row">
+    <label for="rec-note" i18n="@@record.note">Note</label>
+    <input id="rec-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+  </div>
+  @if (form.controls.note.invalid) {
+    <p class="field-error">{{ errorText(form.controls.note) }}</p>
+  }
+</form>
