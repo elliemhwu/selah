@@ -1,0 +1,125 @@
+<header class="page-header">
+  <h1 i18n="@@review.title">Review</h1>
+  <div class="month-row small muted">
+    @if (review.hasValue()) {
+      <span i18n="@@review.netIncome">Net income <span class="amount ink">{{ review.value().bases.netIncome | money }}</span></span>
+    } @else {
+      <span></span>
+    }
+    <span class="stepper">
+      <button type="button" class="btn btn-quiet" (click)="previousMonth()" i18n-aria-label="@@budget.previousMonth" aria-label="Previous month">‹</button>
+      <span class="month">{{ firstOfMonth(month()) | date: 'MMMM y' }}</span>
+      <button type="button" class="btn btn-quiet" (click)="nextMonth()" i18n-aria-label="@@budget.nextMonth" aria-label="Next month">›</button>
+    </span>
+  </div>
+</header>
+
+<div class="page">
+  @if (review.isLoading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  }
+  @if (noPlan()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@review.noPlan">No plan covers this month, so there is nothing to compare.</p>
+      <a class="btn" routerLink="/budget" i18n="@@home.createPlan">Set up the budget</a>
+    </div>
+  } @else if (review.error()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@review.failed">Couldn't load the review.</p>
+      <button type="button" class="btn" (click)="review.reload()" i18n="@@action.retry">Try again</button>
+    </div>
+  }
+
+  @for (section of sections(); track section.section) {
+    <section [attr.aria-labelledby]="'review-' + section.section">
+      <div class="section-head">
+        <h2 [id]="'review-' + section.section" class="section-title">{{ section.label }}</h2>
+        <span class="grow"></span>
+        <span class="amount" i18n="@@review.actualOfPlanned">{{ section.actual | money }} <span class="muted">of {{ section.planned | money }}</span></span>
+      </div>
+
+      <ul class="items">
+        @for (row of section.rows; track row.item.budgetItemId) {
+          <li [class.child]="row.depth > 0" [style.margin-inline-start.px]="row.depth * 16">
+            <a class="item" routerLink="/records" [queryParams]="recordsLink(row.item)" [class.quiet]="quietThisMonth(row.item)">
+              <span class="item-text">
+                <span class="item-name">{{ row.item.name }}</span>
+                <span class="small muted">
+                  @if (quietThisMonth(row.item)) {
+                    <ng-container i18n="@@review.notThisMonth">not this month</ng-container>
+                  } @else if (isIncome(row.item.section)) {
+                    @if (isNegative(row.item.remaining) || isZero(row.item.remaining)) {
+                      <ng-container i18n="@@review.allReceived">all received</ng-container>
+                    } @else {
+                      <ng-container i18n="@@review.stillToCome">{{ row.item.remaining | money }} still to come</ng-container>
+                    }
+                  } @else if (isNegative(row.item.remaining)) {
+                    <span class="negative" i18n="@@review.over">{{ row.item.remaining.slice(1) | money }} over</span>
+                  } @else {
+                    <ng-container i18n="@@review.left">{{ row.item.remaining | money }} left</ng-container>
+                  }
+                  @if (!isZero(row.item.transfers)) {
+                    <ng-container i18n="@@review.moved"> · {{ row.item.transfers | money }} moved</ng-container>
+                  }
+                  @if (row.item.year; as year) {
+                    <ng-container i18n="@@review.thisYear"> · this year {{ year.actual | money }} of {{ year.planned | money }}</ng-container>
+                  }
+                </span>
+              </span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="amount item-amount">
+                {{ row.item.actual | money }}
+                <span class="muted" i18n="@@review.of">of {{ row.item.planned | money }}</span>
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (review.hasValue()) {
+    @if (!isZero(review.value().unplanned.expense) || !isZero(review.value().unplanned.income)) {
+      <div class="unplanned">
+        <span class="section-title" i18n="@@review.unplanned">Not on any budget item</span>
+        <span class="small muted" i18n="@@review.unplannedDetail">spent <span class="amount ink">{{ review.value().unplanned.expense | money }}</span> · received <span class="amount ink">{{ review.value().unplanned.income | money }}</span></span>
+      </div>
+    }
+
+    <section aria-labelledby="movements-heading" class="movements">
+      <h2 id="movements-heading" class="section-title" i18n="@@review.movements">Moved between budgets</h2>
+      @if (movements.status() === 'resolved' && movements.value().length === 0) {
+        <p class="small muted" i18n="@@review.noMovements">Nothing moved this month.</p>
+      }
+      <ul class="items">
+        @for (movement of movements.value(); track $index) {
+          <li class="movement">
+            <span class="item-text">
+              <span>
+                {{ itemName(movement.fromItemId) }} →
+                @if (movement.toItemId) {
+                  {{ itemName(movement.toItemId) }}
+                } @else {
+                  <span class="muted" i18n="@@review.letGo">let go</span>
+                }
+              </span>
+              <span class="small muted">
+                {{ movement.occurredOn | date: 'EEE d MMM' }}
+                @if (movement.kind === 'reset') {
+                  <ng-container i18n="@@review.reset"> · reset</ng-container>
+                } @else if (movement.note) {
+                  · {{ movement.note }}
+                }
+              </span>
+            </span>
+            <span class="leader" aria-hidden="true"></span>
+            <span class="amount item-amount" [class.negative]="isNegative(movement.amount)">{{ movement.amount | money }}</span>
+          </li>
+        }
+      </ul>
+      @if (monthOpen()) {
+        <p class="small muted note" i18n="@@review.resetNote">Resets later this month assume nothing more is spent.</p>
+      }
+    </section>
+  }
+</div>

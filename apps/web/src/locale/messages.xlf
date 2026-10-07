@@ -27,6 +27,10 @@
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
           <context context-type="linenumber">73,75</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">29,33</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="nav.label" datatype="html">
         <source>Main</source>
@@ -39,7 +43,7 @@
         <source>Home</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">12</context>
+          <context context-type="linenumber">11</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -50,7 +54,7 @@
         <source>New entry</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
@@ -61,14 +65,14 @@
         <source>Record items</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="nav.records" datatype="html">
         <source>Records</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">28</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -79,7 +83,7 @@
         <source>Edit entry</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">33</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
@@ -90,7 +94,7 @@
         <source>Budget</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">39</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -101,7 +105,7 @@
         <source>Plan versions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
@@ -112,14 +116,14 @@
         <source>Budget item</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="nav.review" datatype="html">
         <source>Review</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -130,7 +134,7 @@
         <source>Accounts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -141,7 +145,7 @@
         <source>New account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">66</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/account-form-page.html</context>
@@ -152,7 +156,7 @@
         <source>Transfer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">72</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/transfer-page.html</context>
@@ -163,7 +167,7 @@
         <source>Adjust balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/adjust-page.html</context>
@@ -174,7 +178,7 @@
         <source>Edit transfer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">84</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/transfer-page.html</context>
@@ -185,7 +189,7 @@
         <source>Edit adjustment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">90</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/adjust-page.html</context>
@@ -196,7 +200,7 @@
         <source>Edit account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">96</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/account-form-page.html</context>
@@ -300,6 +304,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
           <context context-type="linenumber">68,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">19,21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="account.notFound" datatype="html">
@@ -1188,6 +1196,10 @@
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
           <context context-type="linenumber">15,16</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="budget.nextMonth" datatype="html">
         <source>Next month</source>
@@ -1198,6 +1210,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
           <context context-type="linenumber">17,19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="budget.editingNoChanges" datatype="html">
@@ -1545,6 +1561,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
           <context context-type="linenumber">17,19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">24,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.failed" datatype="html">
@@ -1996,11 +2016,144 @@
           <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="placeholder.text" datatype="html">
-        <source>This page of the ledger is still blank.</source>
+      <trans-unit id="review.title" datatype="html">
+        <source>Review</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/shell/placeholder-page.ts</context>
-          <context context-type="linenumber">10,13</context>
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.netIncome" datatype="html">
+        <source>Net income <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;amount ink&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ review.value().bases.netIncome | money }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.noPlan" datatype="html">
+        <source>No plan covers this month, so there is nothing to compare.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.failed" datatype="html">
+        <source>Couldn&apos;t load the review.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.actualOfPlanned" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ section.actual | money }}"/> <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;muted&quot;&gt;"/>of <x id="INTERPOLATION_1" equiv-text="{{ section.planned | money }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">38,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.notThisMonth" datatype="html">
+        <source>not this month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.allReceived" datatype="html">
+        <source>all received</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">52,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.stillToCome" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.remaining | money }}"/> still to come</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.over" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.remaining.slice(1) | money }}"/> over</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">57,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.left" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.remaining | money }}"/> left</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.moved" datatype="html">
+        <source> · <x id="INTERPOLATION" equiv-text="{{ row.item.transfers | money }}"/> moved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.thisYear" datatype="html">
+        <source> · this year <x id="INTERPOLATION" equiv-text="{{ year.actual | money }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ year.planned | money }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">65,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.of" datatype="html">
+        <source>of <x id="INTERPOLATION" equiv-text="{{ row.item.planned | money }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">72,73</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.unplanned" datatype="html">
+        <source>Not on any budget item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">84,85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.unplannedDetail" datatype="html">
+        <source>spent <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;amount ink&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ review.value().unplanned.expense | money }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> · received <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;amount ink&quot;&gt;"/><x id="INTERPOLATION_1" equiv-text="{{ review.value().unplanned.income | money }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">85,86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.movements" datatype="html">
+        <source>Moved between budgets</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.noMovements" datatype="html">
+        <source>Nothing moved this month.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">92,94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.letGo" datatype="html">
+        <source>let go</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">103,105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.reset" datatype="html">
+        <source> · reset</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">109,110</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="review.resetNote" datatype="html">
+        <source>Resets later this month assume nothing more is spent.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
+          <context context-type="linenumber">121,124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="action.dismiss" datatype="html">
