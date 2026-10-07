@@ -1,7 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  ANCHORS,
+  type Anchor,
   CADENCES,
   type Cadence,
+  PERCENT_BASES,
+  type PercentBase,
   RESET_ACTIONS,
   RESET_CYCLES,
   type ResetAction,
@@ -26,11 +30,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsLocalDate, IsMoney, IsPercent, IsYearMonth } from '../../common/validation';
-
-export const ANCHORS = ['amount', 'percent'] as const;
-export type Anchor = (typeof ANCHORS)[number];
-export const PERCENT_BASES = ['net_income', 'gross_income'] as const;
-export type PercentBase = (typeof PERCENT_BASES)[number];
 
 // ---- Shared item fields ------------------------------------------------
 

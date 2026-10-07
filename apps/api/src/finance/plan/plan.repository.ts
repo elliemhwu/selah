@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Cadence, ResetAction, ResetCycle, Section } from '@selah/shared-types';
+import type { Anchor, Cadence, PercentBase, ResetAction, ResetCycle, Section } from '@selah/shared-types';
 import type { Selectable } from 'kysely';
 import { DATABASE } from '../../database/database.module';
 import type { Database } from '../../database/database';
 import type { FinanceBudgetPlanVersions } from '../../database/db.generated';
-import type { Anchor, PercentBase } from './plan.dto';
 
 export type VersionRow = Selectable<FinanceBudgetPlanVersions>;
 
@@ -89,6 +88,17 @@ export class PlanRepository {
       .orderBy('effectiveFromMonth', 'desc')
       .limit(1)
       .executeTakeFirst();
+  }
+
+  /** Every live version with its items, oldest first, for the reports. */
+  async loadAllDocuments(): Promise<VersionDocument[]> {
+    const versions = await this.db
+      .selectFrom('finance.budgetPlanVersions')
+      .selectAll()
+      .where('deletedAt', 'is', null)
+      .orderBy('effectiveFromMonth')
+      .execute();
+    return Promise.all(versions.map((version) => this.loadDocument(version)));
   }
 
   /** Sections of existing stable items, to keep them fixed. */

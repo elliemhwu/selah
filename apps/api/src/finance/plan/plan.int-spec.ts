@@ -163,6 +163,10 @@ describe('plan API', () => {
     ['a reset without an action', patch('daily', { onReset: null, carryToItemId: null }), 'items.4.onReset'],
     ['carry without a target', patch('daily', { carryToItemId: null }), 'items.4.carryToItemId'],
     ['a carry target outside the version', patch('daily', { carryToItemId: 'NEW' }), 'items.4.carryToItemId'],
+    ['a weekly percentage', patch('allowance', { anchor: 'percent', amount: null, percent: '1' }), 'items.5.anchor'],
+    ['rollover on an income item', patch('salary', { rollover: true, resetCycle: 'never' }), 'items.0.rollover'],
+    ['carrying into an income item', patch('daily', { carryToItemId: 'SALARY' }), 'items.4.carryToItemId'],
+    ['a carry loop', patch('allowance', { resetCycle: 'week', onReset: 'carry', carryToItemId: 'DAILY' }), 'items.5.carryToItemId'],
     ['reset settings without rollover', patch('rent', { resetCycle: 'month' }), 'items.6.resetCycle'],
     ['an override on a weekly item', patch('allowance', { overrides: [{ month: '2026-12', amount: '1' }] }), 'items.5.overrides'],
     ['an override before the start', patch('rent', { overrides: [{ month: '2026-09', amount: '1' }] }), 'items.6.overrides.0.month'],
@@ -172,7 +176,8 @@ describe('plan API', () => {
       JSON.stringify(build())
         .replaceAll('"NEW"', `"${newId()}"`)
         .replaceAll('"FOOD"', `"${ids.food}"`)
-        .replaceAll('"DAILY"', `"${ids.daily}"`),
+        .replaceAll('"DAILY"', `"${ids.daily}"`)
+        .replaceAll('"SALARY"', `"${ids.salary}"`),
     );
     const res = await put(newId(), version('2026-10', { items: body })).expect(422);
     expect(Object.keys(res.body.errors)).toContain(field);

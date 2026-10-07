@@ -8,6 +8,7 @@ import {
   endOfYear,
   fromDayNumber,
   isoWeekday,
+  nextYearMonth,
   startOfMonth,
   startOfWeek,
   toDayNumber,
@@ -59,6 +60,11 @@ describe('dates', () => {
     expect(endOfMonth('2024-02-10')).toBe('2024-02-29');
     expect(endOfYear('2026-05-05')).toBe('2026-12-31');
     expect(daysBetweenInclusive('2026-10-01', '2026-10-31')).toBe(31);
+  });
+
+  it('steps to the next month', () => {
+    expect(nextYearMonth('2026-10')).toBe('2026-11');
+    expect(nextYearMonth('2026-12')).toBe('2027-01');
   });
 
   it.each(['2026-02-29', '2026-13-01', '2026-1-01', '20261001', ''])('rejects "%s"', (date) => {

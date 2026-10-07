@@ -69,6 +69,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
   - In the editor, changing either field updates the other.
   - When the base changes, percentage-anchored items are recalculated and fixed items keep their amount.
   - The default base is income after government expenses; the backend supports other bases.
+  - Percentages apply to a month's base, so daily and weekly items are always fixed amounts ([ADR 0019](../decisions/0019-budget-transfers-and-reports.md)).
   - Percentages are shown mainly at section and top level. Sub-items focus on amounts.
 - **Converting cadences** for monthly totals: `monthly = weekly × 52 / 12`, `daily × days in the month`.
 - **Plans and records are stored independently.** They are compared only in the review views.
@@ -92,7 +93,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ### 3.2 Budget transfers
 
-- A budget transfer moves an amount between budget items. It **never touches accounts**.
+- A budget transfer moves an amount between budget items. It **never touches accounts**. Income items are not budgets, so they take no transfers, don't roll over, and receive no carried resets ([ADR 0019](../decisions/0019-budget-transfers-and-reports.md)).
   - Example: 500 of leftover allowance moved to Travel or Savings.
 - It has a date/time and a kind: `manual`, or `reset` (computed in the MVP).
 - In the form, the period defaults to the previous month.

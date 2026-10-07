@@ -27,6 +27,13 @@ export type Section = (typeof SECTIONS)[number];
 export const CADENCES = ['daily', 'weekly', 'monthly', 'yearly', 'one_time'] as const;
 export type Cadence = (typeof CADENCES)[number];
 
+/** A plan item is anchored to a fixed amount or a percentage of a base. */
+export const ANCHORS = ['amount', 'percent'] as const;
+export type Anchor = (typeof ANCHORS)[number];
+
+export const PERCENT_BASES = ['net_income', 'gross_income'] as const;
+export type PercentBase = (typeof PERCENT_BASES)[number];
+
 export const RESET_CYCLES = ['never', 'week', 'month', 'year'] as const;
 export type ResetCycle = (typeof RESET_CYCLES)[number];
 

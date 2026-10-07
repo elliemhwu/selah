@@ -1074,6 +1074,544 @@
           "finance: plan"
         ]
       }
+    },
+    "/api/v1/finance/budget-transfers": {
+      "get": {
+        "operationId": "listBudgetTransfers",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "First day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "Last day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetItemId",
+            "required": false,
+            "in": "query",
+            "description": "Transfers from or to this item.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BudgetTransferDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Stored budget transfers in a date range, oldest first (computed resets are in the reports)",
+        "tags": [
+          "finance: budget transfers"
+        ]
+      }
+    },
+    "/api/v1/finance/budget-transfers/{id}": {
+      "get": {
+        "operationId": "getBudgetTransfer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetTransferDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "One budget transfer",
+        "tags": [
+          "finance: budget transfers"
+        ]
+      },
+      "put": {
+        "operationId": "upsertBudgetTransfer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertBudgetTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetTransferDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetTransferDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create or replace a manual budget transfer (the client generates the id)",
+        "tags": [
+          "finance: budget transfers"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteBudgetTransfer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted (or already deleted)."
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Soft-delete a manual budget transfer",
+        "tags": [
+          "finance: budget transfers"
+        ]
+      }
+    },
+    "/api/v1/finance/reports/envelopes": {
+      "get": {
+        "operationId": "getEnvelopes",
+        "parameters": [
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "description": "The day to report on, usually today.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnvelopeDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "What is left in every rollover budget on a day, with its current period",
+        "tags": [
+          "finance: reports"
+        ]
+      }
+    },
+    "/api/v1/finance/reports/checklist": {
+      "get": {
+        "operationId": "getChecklist",
+        "parameters": [
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "description": "The day to report on, usually today.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChecklistItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "The recurring checklist for the periods containing a day: what's recorded and what isn't yet",
+        "tags": [
+          "finance: reports"
+        ]
+      }
+    },
+    "/api/v1/finance/reports/monthly": {
+      "get": {
+        "operationId": "getMonthlyReview",
+        "parameters": [
+          {
+            "name": "month",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "example": "2026-10",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyReviewDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Plan vs. actual per section and item for a month",
+        "tags": [
+          "finance: reports"
+        ]
+      }
+    },
+    "/api/v1/finance/reports/budget-transfers": {
+      "get": {
+        "operationId": "getBudgetTransfersReport",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "First day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "Last day, inclusive.",
+            "schema": {
+              "format": "date",
+              "example": "2026-10-06",
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetItemId",
+            "required": false,
+            "in": "query",
+            "description": "Transfers from or to this item.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BudgetMovementDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Manual budget transfers and computed resets in a date range, in date order",
+        "tags": [
+          "finance: reports"
+        ]
+      }
     }
   },
   "info": {
@@ -2111,6 +2649,575 @@
         "required": [
           "effectiveFromMonth",
           "items"
+        ]
+      },
+      "BudgetTransferKind": {
+        "type": "string",
+        "enum": [
+          "manual",
+          "reset"
+        ]
+      },
+      "BudgetTransferDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetTransferKind"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-31"
+          },
+          "occurredAt": {
+            "type": "string",
+            "nullable": true,
+            "example": "21:00"
+          },
+          "fromItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null only for a stored reset that dropped the leftover."
+          },
+          "amount": {
+            "type": "string",
+            "example": "500.00",
+            "description": "Whole TWD."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "occurredOn",
+          "occurredAt",
+          "fromItemId",
+          "toItemId",
+          "amount",
+          "note",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpsertBudgetTransferDto": {
+        "type": "object",
+        "properties": {
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "example": "12:30",
+            "nullable": true
+          },
+          "fromItemId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The budget item the amount leaves."
+          },
+          "toItemId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The budget item that receives it."
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD; must be positive."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "occurredOn",
+          "fromItemId",
+          "toItemId",
+          "amount"
+        ]
+      },
+      "PeriodDto": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-05"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-11"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ]
+      },
+      "EnvelopeDto": {
+        "type": "object",
+        "properties": {
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "resetCycle": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetCycle"
+              }
+            ]
+          },
+          "onReset": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetAction"
+              }
+            ]
+          },
+          "carryToItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "envelopeStart": {
+            "type": "string",
+            "format": "date",
+            "description": "When this envelope started (ADR 0019)."
+          },
+          "resetsOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "The end of the current reset cycle; null if it never resets."
+          },
+          "period": {
+            "description": "The current cadence period.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PeriodDto"
+              }
+            ]
+          },
+          "allotment": {
+            "type": "string",
+            "example": "185.00",
+            "description": "The current period's allotment."
+          },
+          "carryIn": {
+            "type": "string",
+            "example": "35.00",
+            "description": "Carried in from earlier periods (negative = overspent)."
+          },
+          "transfers": {
+            "type": "string",
+            "example": "0.00",
+            "description": "Net budget transfers in this period, resets carried in included."
+          },
+          "spent": {
+            "type": "string",
+            "example": "0.00",
+            "description": "Spent in this period, up to the report date."
+          },
+          "available": {
+            "type": "string",
+            "example": "220.00",
+            "description": "What is left now (negative = overspent)."
+          }
+        },
+        "required": [
+          "budgetItemId",
+          "name",
+          "section",
+          "parentItemId",
+          "cadence",
+          "resetCycle",
+          "onReset",
+          "carryToItemId",
+          "envelopeStart",
+          "resetsOn",
+          "period",
+          "allotment",
+          "carryIn",
+          "transfers",
+          "spent",
+          "available"
+        ]
+      },
+      "ChecklistItemDto": {
+        "type": "object",
+        "properties": {
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "period": {
+            "$ref": "#/components/schemas/PeriodDto"
+          },
+          "planned": {
+            "type": "string",
+            "example": "1200.00",
+            "description": "Planned for the period; pre-fills batch entry."
+          },
+          "recorded": {
+            "type": "string",
+            "example": "0.00",
+            "description": "Recorded in the period, on the item and its descendants."
+          },
+          "lineCount": {
+            "type": "integer",
+            "description": "Record lines behind `recorded`."
+          },
+          "done": {
+            "type": "boolean",
+            "description": "True once any line is recorded."
+          }
+        },
+        "required": [
+          "budgetItemId",
+          "name",
+          "section",
+          "parentItemId",
+          "cadence",
+          "period",
+          "planned",
+          "recorded",
+          "lineCount",
+          "done"
+        ]
+      },
+      "PlanBasesDto": {
+        "type": "object",
+        "properties": {
+          "grossIncome": {
+            "type": "string",
+            "example": "60000.00"
+          },
+          "government": {
+            "type": "string",
+            "example": "3000.00"
+          },
+          "netIncome": {
+            "type": "string",
+            "example": "57000.00",
+            "description": "Gross income minus Government: the default base."
+          }
+        },
+        "required": [
+          "grossIncome",
+          "government",
+          "netIncome"
+        ]
+      },
+      "SectionReviewDto": {
+        "type": "object",
+        "properties": {
+          "planned": {
+            "type": "string",
+            "description": "Planned for the month."
+          },
+          "transfers": {
+            "type": "string",
+            "description": "Net budget transfers in the month, computed resets included."
+          },
+          "actual": {
+            "type": "string",
+            "description": "Received (income) or spent (other sections)."
+          },
+          "remaining": {
+            "type": "string",
+            "description": "planned + transfers − actual."
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          }
+        },
+        "required": [
+          "planned",
+          "transfers",
+          "actual",
+          "remaining",
+          "section"
+        ]
+      },
+      "YearToDateDto": {
+        "type": "object",
+        "properties": {
+          "planned": {
+            "type": "string",
+            "description": "Planned for the whole year, across versions."
+          },
+          "actual": {
+            "type": "string",
+            "description": "Actual from January to the end of this month."
+          }
+        },
+        "required": [
+          "planned",
+          "actual"
+        ]
+      },
+      "ItemReviewDto": {
+        "type": "object",
+        "properties": {
+          "planned": {
+            "type": "string",
+            "description": "Planned for the month."
+          },
+          "transfers": {
+            "type": "string",
+            "description": "Net budget transfers in the month, computed resets included."
+          },
+          "actual": {
+            "type": "string",
+            "description": "Received (income) or spent (other sections)."
+          },
+          "remaining": {
+            "type": "string",
+            "description": "planned + transfers − actual."
+          },
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "year": {
+            "nullable": true,
+            "description": "Yearly and one-time items only.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/YearToDateDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "planned",
+          "transfers",
+          "actual",
+          "remaining",
+          "budgetItemId",
+          "name",
+          "section",
+          "parentItemId",
+          "cadence",
+          "year"
+        ]
+      },
+      "UnplannedDto": {
+        "type": "object",
+        "properties": {
+          "income": {
+            "type": "string",
+            "description": "Income on no item, or on an item outside this version."
+          },
+          "expense": {
+            "type": "string",
+            "description": "Spending on no item, or on an item outside this version."
+          }
+        },
+        "required": [
+          "income",
+          "expense"
+        ]
+      },
+      "MonthlyReviewDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "example": "2026-10"
+          },
+          "planVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bases": {
+            "$ref": "#/components/schemas/PlanBasesDto"
+          },
+          "sections": {
+            "description": "Totals of the top-level items, in section order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectionReviewDto"
+            }
+          },
+          "items": {
+            "description": "In plan order. A parent's transfers and actual include its descendants'.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemReviewDto"
+            }
+          },
+          "unplanned": {
+            "$ref": "#/components/schemas/UnplannedDto"
+          }
+        },
+        "required": [
+          "month",
+          "planVersionId",
+          "bases",
+          "sections",
+          "items",
+          "unplanned"
+        ]
+      },
+      "BudgetMovementDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetTransferKind"
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null for a computed reset."
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "occurredAt": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "fromItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null when a reset drops the leftover."
+          },
+          "amount": {
+            "type": "string",
+            "example": "620.00",
+            "description": "Negative for a reset that carries an overspend."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "occurredOn",
+          "occurredAt",
+          "fromItemId",
+          "toItemId",
+          "amount",
+          "note"
         ]
       }
     }
