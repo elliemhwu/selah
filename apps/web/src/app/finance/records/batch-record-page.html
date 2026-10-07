@@ -1,12 +1,20 @@
-<header class="dialog-header">
-  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-  <h2 id="batch-title" i18n="@@batch.title">Record {{ items.length }} items</h2>
-  <button type="submit" form="batch-form" class="btn btn-primary" [disabled]="saving() || includedCount() === 0" i18n="@@batch.save">
-    Save {{ includedCount() }}
-  </button>
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="batch-title" i18n="@@batch.title">Record {{ items().length }} items</h1>
+    <button type="submit" form="batch-form" class="btn btn-primary" [disabled]="saving() || includedCount() === 0" i18n="@@batch.save">
+      Save {{ includedCount() }}
+    </button>
+  </div>
 </header>
 
-<form id="batch-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="batch-title">
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (missing()) {
+  <p class="form-status muted" i18n="@@batch.missing">These items aren't on this period's checklist any more.</p>
+}
+
+<form id="batch-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="batch-title">
   <div class="ledger-row">
     <label for="batch-date" i18n="@@record.date">Date</label>
     <input id="batch-date" type="date" formControlName="occurredOn" />
@@ -31,16 +39,16 @@
       <li [formGroupName]="i" [class.excluded]="!row.controls.include.value">
         <div class="row-head">
           <input type="checkbox" class="check" [id]="'batch-include-' + i" formControlName="include" />
-          <label class="row-name" [for]="'batch-include-' + i">{{ items[i].name }}</label>
-          <span class="small muted" i18n="@@batch.planned">planned <span class="amount">{{ items[i].planned | money }}</span></span>
+          <label class="row-name" [for]="'batch-include-' + i">{{ items()[i].name }}</label>
+          <span class="small muted" i18n="@@batch.planned">planned <span class="amount">{{ items()[i].planned | money }}</span></span>
         </div>
         <div class="row-fields">
           <div class="amount-field">
-            <label class="cdk-visually-hidden" [for]="'batch-amount-' + i" i18n="@@batch.amountFor">Amount for {{ items[i].name }}</label>
+            <label class="cdk-visually-hidden" [for]="'batch-amount-' + i" i18n="@@batch.amountFor">Amount for {{ items()[i].name }}</label>
             <input class="amount" [id]="'batch-amount-' + i" formControlName="amount" inputmode="decimal" autocomplete="off" />
           </div>
           <div class="note-field">
-            <label class="cdk-visually-hidden" [for]="'batch-note-' + i" i18n="@@batch.noteFor">Note for {{ items[i].name }}</label>
+            <label class="cdk-visually-hidden" [for]="'batch-note-' + i" i18n="@@batch.noteFor">Note for {{ items()[i].name }}</label>
             <input [id]="'batch-note-' + i" formControlName="note" autocomplete="off" i18n-placeholder="@@record.note" placeholder="Note" />
           </div>
         </div>

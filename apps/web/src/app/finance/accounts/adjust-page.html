@@ -1,14 +1,16 @@
-<header class="dialog-header">
-  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-  <h2 id="adjust-title" i18n="@@adjust.title">Adjust balance</h2>
-  <button type="submit" form="adjust-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="adjust-title" i18n="@@adjust.title">Adjust balance</h1>
+    <button type="submit" form="adjust-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
 </header>
 
-<form id="adjust-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="adjust-title">
+<form id="adjust-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="adjust-title">
   <div class="ledger-row">
     <label for="adj-account" i18n="@@record.account">Account</label>
     <select id="adj-account" formControlName="accountId">
-      @for (a of accounts; track a.id) {
+      @for (a of accounts(); track a.id) {
         <option [value]="a.id">{{ a.name }} · {{ a.currency }}</option>
       }
     </select>

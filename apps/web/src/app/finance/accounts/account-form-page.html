@@ -1,16 +1,24 @@
-<header class="dialog-header">
-  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-  <h2 id="account-title">
-    @if (account) {
-      <ng-container i18n="@@account.editTitle">Edit account</ng-container>
-    } @else {
-      <ng-container i18n="@@account.newTitle">New account</ng-container>
-    }
-  </h2>
-  <button type="submit" form="account-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="account-title">
+      @if (editing) {
+        <ng-container i18n="@@account.editTitle">Edit account</ng-container>
+      } @else {
+        <ng-container i18n="@@account.newTitle">New account</ng-container>
+      }
+    </h1>
+    <button type="submit" form="account-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
 </header>
 
-<form id="account-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="account-title">
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@account.notFound">This account isn't in the ledger.</p>
+}
+
+<form id="account-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="account-title">
   <div class="ledger-row">
     <label for="acc-name" i18n="@@account.name">Name</label>
     <input id="acc-name" formControlName="name" autocomplete="off" cdkFocusInitial />
@@ -50,11 +58,11 @@
     <p class="small muted hint" i18n="@@account.openingHint">Negative for a card that starts with debt.</p>
   }
 
-  @if (account) {
+  @if (editing) {
     <div class="danger">
       <button type="button" class="btn btn-quiet delete" [disabled]="saving()" (click)="remove()">
         @if (confirmingDelete()) {
-          <ng-container i18n="@@account.confirmDelete">Tap again to delete {{ account.name }}</ng-container>
+          <ng-container i18n="@@account.confirmDelete">Tap again to delete {{ account()?.name }}</ng-container>
         } @else {
           <ng-container i18n="@@account.delete">Delete account</ng-container>
         }

@@ -12,7 +12,7 @@
       <p class="section-title" i18n="@@accounts.failed">Couldn't load your accounts.</p>
       <button type="button" class="btn" (click)="accounts.reload()" i18n="@@action.retry">Try again</button>
     </div>
-  } @else if (accounts.hasValue() && accounts.value().length === 0) {
+  } @else if (accounts.status() === 'resolved' && accounts.value().length === 0) {
     <div class="empty">
       <p class="section-title" i18n="@@accounts.none">No accounts yet.</p>
       <p class="muted" i18n="@@accounts.noneHint">Start with the cash in your wallet and your main bank account.</p>
@@ -21,7 +21,7 @@
     <ul class="accounts">
       @for (account of accounts.value(); track account.id) {
         <li>
-          <button type="button" class="account" (click)="edit(account)">
+          <a class="account" [routerLink]="['/accounts', account.id]">
             <span class="account-name">
               {{ account.name }}
               <span class="small muted type">{{ typeLabels[account.type] }}</span>
@@ -33,7 +33,7 @@
                 <span class="small muted">{{ account.currency }}</span>
               }
             </span>
-          </button>
+          </a>
         </li>
       }
     </ul>
@@ -52,14 +52,14 @@
 
   <div class="actions">
     @if (accounts.value().length > 1) {
-      <button type="button" class="btn" (click)="transfer()" i18n="@@accounts.transfer">Transfer</button>
+      <a class="btn" routerLink="/accounts/transfer" i18n="@@accounts.transfer">Transfer</a>
     }
     @if (accounts.value().length > 0) {
-      <button type="button" class="btn" (click)="adjust()" i18n="@@accounts.adjust">Adjust balance</button>
+      <a class="btn" routerLink="/accounts/adjust" i18n="@@accounts.adjust">Adjust balance</a>
     }
-    <button type="button" class="btn new-account" (click)="newAccount()">
+    <a class="btn new-account" routerLink="/accounts/new">
       <selah-icon name="add" [size]="16" [weight]="1.8" />
       <span i18n="@@accounts.new">New account</span>
-    </button>
+    </a>
   </div>
 </div>

@@ -1,41 +1,39 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { TODAY } from '../../core/today';
+import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
-import { type AccountDto, type RecordDto, RecordsApi } from '../data/finance-api';
+import { type AccountDto, AccountsApi, RecordsApi } from '../data/finance-api';
 import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from '../records/form-errors';
-
-export interface TransferDialogData {
-  accounts: AccountDto[];
-  /** Pre-selects the account money leaves. */
-  fromAccountId?: string;
-}
 
 /**
  * Moves money between two accounts (requirements §2). The amount sent and the
  * amount received are both stored, so an exchange keeps its exact rate.
+ * Route: `/accounts/transfer?from=<account id>` (ADR 0022).
  */
 @Component({
-  selector: 'selah-transfer-dialog',
+  selector: 'selah-transfer-page',
+  host: { class: 'form-page' },
   imports: [ReactiveFormsModule],
-  templateUrl: './transfer-dialog.html',
+  templateUrl: './transfer-page.html',
 })
-export class TransferDialog {
-  private readonly data = inject<TransferDialogData>(DIALOG_DATA);
-  protected readonly accounts = this.data.accounts;
-  private readonly dialogRef = inject<DialogRef<RecordDto, TransferDialog>>(DialogRef);
+export class TransferPage {
+  private readonly fromParam = inject(ActivatedRoute).snapshot.queryParamMap.get('from');
+  private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
   private readonly id = crypto.randomUUID();
   private readonly rates = this.recordsApi.lastUsedRates();
+  private readonly allAccounts = inject(AccountsApi).list();
+  protected readonly accounts = computed(() => this.allAccounts.value());
 
   protected readonly form = inject(NonNullableFormBuilder).group({
-    fromAccountId: [this.data.fromAccountId ?? this.accounts[0]?.id ?? '', Validators.required],
-    toAccountId: [this.accounts.find((a) => a.id !== (this.data.fromAccountId ?? this.accounts[0]?.id))?.id ?? '', Validators.required],
+    fromAccountId: ['', Validators.required],
+    toAccountId: ['', Validators.required],
     occurredOn: [inject(TODAY)(), Validators.required],
     amount: ['', [Validators.required, Validators.pattern(MONEY_PATTERN), positiveAmount]],
     counterAmount: ['', [Validators.pattern(MONEY_PATTERN), positiveAmount]],
@@ -46,8 +44,8 @@ export class TransferDialog {
     initialValue: this.form.getRawValue(),
   });
 
-  protected readonly from = computed(() => this.accounts.find((a) => a.id === this.value().fromAccountId));
-  protected readonly to = computed(() => this.accounts.find((a) => a.id === this.value().toAccountId));
+  protected readonly from = computed(() => this.accounts().find((a) => a.id === this.value().fromAccountId));
+  protected readonly to = computed(() => this.accounts().find((a) => a.id === this.value().toAccountId));
   /** Different currencies: the amount received is entered separately. */
   protected readonly exchange = computed(() => !!this.from() && !!this.to() && this.from()?.currency !== this.to()?.currency);
   /** A foreign-currency line needs its TWD value (ADR 0006). */
@@ -56,6 +54,16 @@ export class TransferDialog {
   protected readonly errorText = errorText;
 
   constructor() {
+    // Default the two accounts once they load: the one asked for, then the next one.
+    effect(() => {
+      const list = this.accounts();
+      const { fromAccountId, toAccountId } = this.form.controls;
+      if (list.length === 0 || fromAccountId.value) return;
+      const from = list.find((a) => a.id === this.fromParam) ?? list[0];
+      fromAccountId.setValue(from.id);
+      if (!toAccountId.value) toAccountId.setValue(list.find((a) => a.id !== from.id)?.id ?? '');
+    });
+    // Pre-fill the last rate used for a foreign account (requirements §2).
     effect(() => {
       const currency = this.from()?.currency;
       const rate = this.rates.value().find((r) => r.currency === currency)?.rate;
@@ -65,7 +73,7 @@ export class TransferDialog {
   }
 
   protected cancel(): void {
-    this.dialogRef.close();
+    this.nav.leave('/accounts');
   }
 
   async save(): Promise<void> {
@@ -82,7 +90,7 @@ export class TransferDialog {
     const from = this.from() as AccountDto;
     this.saving.set(true);
     try {
-      const record = await this.recordsApi.upsert(this.id, {
+      await this.recordsApi.upsert(this.id, {
         type: 'transfer',
         occurredOn: v.occurredOn,
         accountId: v.fromAccountId,
@@ -92,7 +100,7 @@ export class TransferDialog {
         note: v.note.trim() || null,
         lines: [{ amount: v.amount, fxRate: this.needsRate() ? v.fxRate : undefined }],
       });
-      this.dialogRef.close(record);
+      this.nav.leave('/accounts', $localize`:@@accounts.transferSaved:Transfer saved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));

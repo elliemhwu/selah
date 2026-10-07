@@ -3,6 +3,7 @@
 - Status: Accepted
 - Date: 2026-10-07
 - Supersedes: the "Components and theme" part of [0020](0020-web-ui-foundation.md)
+- Dialogs: superseded by [0022](0022-forms-are-routes.md); forms are routes
 
 ## Context
 

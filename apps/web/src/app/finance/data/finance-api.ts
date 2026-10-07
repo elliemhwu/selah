@@ -29,6 +29,14 @@ export class AccountsApi {
     return httpResource<AccountDto[]>(() => `${API}/accounts`, { defaultValue: [] });
   }
 
+  /** One account; no request while `id` is undefined. Errors with 404 for an unknown id. */
+  get(id: () => string | undefined) {
+    return httpResource<AccountDto>(() => {
+      const value = id();
+      return value ? `${API}/accounts/${value}` : undefined;
+    });
+  }
+
   /** Creates or replaces an account; the caller generates the id (ADR 0017). */
   upsert(id: string, account: UpsertAccountDto): Promise<AccountDto> {
     return firstValueFrom(this.http.put<AccountDto>(`${API}/accounts/${id}`, account));
