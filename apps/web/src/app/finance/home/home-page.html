@@ -24,7 +24,7 @@
   } @else {
     <section aria-labelledby="envelopes-heading">
       <h2 id="envelopes-heading" class="section-title" i18n="@@home.envelopes">What's left</h2>
-      @if (envelopes.hasValue() && envelopes.value().length === 0) {
+      @if (envelopes.status() === 'resolved' && envelopes.value().length === 0) {
         <p class="muted" i18n="@@home.noEnvelopes">No rollover budgets in this plan.</p>
       }
       <div class="envelopes">
@@ -53,7 +53,7 @@
           <span class="small muted" i18n="@@home.doneCount">{{ doneCount() }} of {{ checklist.value().length }} recorded</span>
         }
       </div>
-      @if (checklist.hasValue() && checklist.value().length === 0) {
+      @if (checklist.status() === 'resolved' && checklist.value().length === 0) {
         <p class="muted" i18n="@@home.noChecklist">Nothing recurring is due in this period.</p>
       }
       <ul class="checklist">
@@ -72,11 +72,11 @@
                 [attr.aria-label]="item.name"
               />
             }
-            <button type="button" class="item" (click)="recordItem(item)">
+            <a class="item" routerLink="/records/new" [queryParams]="recordParams(item)">
               <span class="item-name">{{ item.name }}</span>
               <span class="leader" aria-hidden="true"></span>
               <span class="amount item-amount">{{ (item.done ? item.recorded : item.planned) | money }}</span>
-            </button>
+            </a>
           </li>
         }
       </ul>
@@ -86,13 +86,13 @@
 
 <div class="actions">
   @if (selected().size > 0) {
-    <button type="button" class="btn btn-primary" (click)="recordSelected()" i18n="@@home.recordSelected">
+    <a class="btn btn-primary" routerLink="/records/batch" [queryParams]="batchParams()" i18n="@@home.recordSelected">
       Record {{ selected().size }} selected
-    </button>
+    </a>
   } @else {
-    <button type="button" class="btn new-entry" (click)="addRecord()">
+    <a class="btn new-entry" routerLink="/records/new">
       <selah-icon name="add" [size]="16" [weight]="1.8" />
       <span i18n="@@home.add">New entry</span>
-    </button>
+    </a>
   }
 </div>

@@ -22,6 +22,10 @@
 main {
   flex: 1;
   padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+
+  &.form {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 .bottom-nav {

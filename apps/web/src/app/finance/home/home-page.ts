@@ -1,4 +1,3 @@
-import { Dialog } from '@angular/cdk/dialog';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -6,14 +5,13 @@ import { RouterLink } from '@angular/router';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
 import { Icon } from '../../ui/icon';
-import { Toast } from '../../ui/toast';
-import { type ChecklistItemDto, type EnvelopeDto, type RecordDto, ReportsApi } from '../data/finance-api';
-import { BatchRecordDialog, type BatchRecordDialogData } from '../records/batch-record-dialog';
-import { RecordDialog, type RecordDialogData } from '../records/record-dialog';
+import { type ChecklistItemDto, type EnvelopeDto, ReportsApi } from '../data/finance-api';
 
-export const DIALOG_OPTIONS = { panelClass: 'ledger-dialog', backdropClass: 'ledger-backdrop' };
-
-/** Home (requirements §4): what's left in each envelope, this period's checklist, and a new entry. */
+/**
+ * Home (requirements §4): what's left in each envelope, this period's
+ * checklist, and a new entry. Entries open as routes (ADR 0022); this screen
+ * loads fresh numbers each time it is shown.
+ */
 @Component({
   selector: 'selah-home-page',
   imports: [DatePipe, Icon, MoneyPipe, RouterLink],
@@ -21,8 +19,6 @@ export const DIALOG_OPTIONS = { panelClass: 'ledger-dialog', backdropClass: 'led
   styleUrl: './home-page.scss',
 })
 export class HomePage {
-  private readonly dialog = inject(Dialog);
-  private readonly toast = inject(Toast);
   private readonly reports = inject(ReportsApi);
 
   protected readonly today = signal(inject(TODAY)());
@@ -38,9 +34,15 @@ export class HomePage {
   protected readonly failed = computed(() => !this.noPlan() && (!!this.envelopes.error() || !!this.checklist.error()));
   protected readonly loading = computed(() => this.envelopes.isLoading() || this.checklist.isLoading());
   protected readonly doneCount = computed(() => this.checklist.value().filter((item) => item.done).length);
-  protected readonly selectedItems = computed(() =>
-    this.checklist.value().filter((item) => this.selected().has(item.budgetItemId)),
-  );
+  /** Query parameters for batch entry of the selected items, in checklist order. */
+  protected readonly batchParams = computed(() => ({
+    items: this.checklist
+      .value()
+      .filter((item) => this.selected().has(item.budgetItemId))
+      .map((item) => item.budgetItemId)
+      .join(','),
+    date: this.today(),
+  }));
 
   protected periodLabel(envelope: EnvelopeDto): string {
     switch (envelope.cadence) {
@@ -57,47 +59,15 @@ export class HomePage {
     return amount.startsWith('-');
   }
 
+  /** Pre-fills the entry form from a plan item (requirements §2). */
+  protected recordParams(item: ChecklistItemDto) {
+    return { type: item.section === 'income' ? 'income' : 'expense', item: item.budgetItemId, amount: item.planned };
+  }
+
   protected toggle(item: ChecklistItemDto, checked: boolean): void {
     const next = new Set(this.selected());
     if (checked) next.add(item.budgetItemId);
     else next.delete(item.budgetItemId);
     this.selected.set(next);
-  }
-
-  protected addRecord(): void {
-    this.openRecord({});
-  }
-
-  protected recordItem(item: ChecklistItemDto): void {
-    this.openRecord({
-      type: item.section === 'income' ? 'income' : 'expense',
-      budgetItemId: item.budgetItemId,
-      amount: item.planned,
-    });
-  }
-
-  protected recordSelected(): void {
-    const data: BatchRecordDialogData = { items: this.selectedItems() };
-    this.dialog
-      .open<RecordDto[]>(BatchRecordDialog, { ...DIALOG_OPTIONS, data })
-      .closed.subscribe((saved) => {
-        if (!saved) return;
-        this.selected.set(new Set());
-        this.refresh($localize`:@@home.savedMany:Saved ${saved.length}:count: entries.`);
-      });
-  }
-
-  private openRecord(data: RecordDialogData): void {
-    this.dialog
-      .open<RecordDto>(RecordDialog, { ...DIALOG_OPTIONS, data })
-      .closed.subscribe((saved) => {
-        if (saved) this.refresh($localize`:@@home.saved:Saved.`);
-      });
-  }
-
-  private refresh(message: string): void {
-    this.envelopes.reload();
-    this.checklist.reload();
-    this.toast.show(message);
   }
 }

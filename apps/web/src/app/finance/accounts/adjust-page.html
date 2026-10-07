@@ -1,0 +1,39 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="adjust-title" i18n="@@adjust.title">Adjust balance</h1>
+    <button type="submit" form="adjust-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+<form id="adjust-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="adjust-title">
+  <div class="ledger-row">
+    <label for="adj-account" i18n="@@record.account">Account</label>
+    <select id="adj-account" formControlName="accountId">
+      @for (a of accounts(); track a.id) {
+        <option [value]="a.id">{{ a.name }} · {{ a.currency }}</option>
+      }
+    </select>
+  </div>
+  @if (account(); as a) {
+    <p class="small muted hint" i18n="@@adjust.current">Now in Selah: <span class="amount">{{ a.balance | money: a.currency }}</span> {{ a.currency }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="adj-target" i18n="@@adjust.actual">Actual balance</label>
+    <input id="adj-target" class="amount" formControlName="targetBalance" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+  </div>
+  @if (form.controls.targetBalance.touched && form.controls.targetBalance.invalid) {
+    <p class="field-error">{{ errorText(form.controls.targetBalance) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="adj-date" i18n="@@record.date">Date</label>
+    <input id="adj-date" type="date" formControlName="occurredOn" />
+  </div>
+  <div class="ledger-row">
+    <label for="adj-note" i18n="@@record.note">Note</label>
+    <input id="adj-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+  </div>
+  <p class="small muted hint" i18n="@@adjust.hint">Enter what the account really holds. Selah records the difference.</p>
+</form>

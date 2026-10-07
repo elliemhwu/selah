@@ -1,0 +1,76 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="transfer-title" i18n="@@transfer.title">Transfer</h1>
+    <button type="submit" form="transfer-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+<form id="transfer-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="transfer-title">
+  <div class="ledger-row">
+    <label for="tr-from" i18n="@@transfer.from">From</label>
+    <select id="tr-from" formControlName="fromAccountId">
+      @for (account of accounts(); track account.id) {
+        <option [value]="account.id">{{ account.name }} · {{ account.currency }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.fromAccountId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.fromAccountId) }}</p>
+  }
+  <div class="ledger-row">
+    <label for="tr-to" i18n="@@transfer.to">To</label>
+    <select id="tr-to" formControlName="toAccountId">
+      @for (account of accounts(); track account.id) {
+        <option [value]="account.id">{{ account.name }} · {{ account.currency }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.toAccountId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.toAccountId) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="tr-amount">
+      @if (exchange()) {
+        <ng-container i18n="@@transfer.sent">Sent, {{ from()?.currency }}</ng-container>
+      } @else {
+        <ng-container i18n="@@record.amount">Amount</ng-container>
+      }
+    </label>
+    <input id="tr-amount" class="amount" formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+  </div>
+  @if (form.controls.amount.touched && form.controls.amount.invalid) {
+    <p class="field-error">{{ errorText(form.controls.amount) }}</p>
+  }
+
+  @if (exchange()) {
+    <div class="ledger-row">
+      <label for="tr-received" i18n="@@transfer.received">Received, {{ to()?.currency }}</label>
+      <input id="tr-received" class="amount" formControlName="counterAmount" inputmode="decimal" autocomplete="off" />
+    </div>
+    @if (form.controls.counterAmount.touched && form.controls.counterAmount.invalid) {
+      <p class="field-error">{{ errorText(form.controls.counterAmount) }}</p>
+    }
+  }
+
+  @if (needsRate()) {
+    <div class="ledger-row">
+      <label for="tr-rate" i18n="@@record.fxRate">TWD per {{ from()?.currency }}</label>
+      <input id="tr-rate" class="amount" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+    </div>
+    @if (form.controls.fxRate.touched && form.controls.fxRate.invalid) {
+      <p class="field-error">{{ errorText(form.controls.fxRate) }}</p>
+    }
+  }
+
+  <div class="ledger-row">
+    <label for="tr-date" i18n="@@record.date">Date</label>
+    <input id="tr-date" type="date" formControlName="occurredOn" />
+  </div>
+  <div class="ledger-row">
+    <label for="tr-note" i18n="@@record.note">Note</label>
+    <input id="tr-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+  </div>
+  <p class="small muted hint" i18n="@@transfer.hint">Paying a card bill is a transfer from the bank to the card.</p>
+</form>
