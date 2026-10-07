@@ -12,7 +12,7 @@ Selah's theme is a retreat from busy life to get ready for the next round. The f
 
 **The look**
 
-- **Colours:** oatmeal paper `#EEE9DF`, a lighter panel `#F4F0E8`, ink `#2F2C27`, muted ink `#6A6458`, rules `#9E9686` and `#B9B1A2`, and one sage accent `#56705A`. Errors use a muted brick `#9B4A3A`. The app is light only for now.
+- **Colours:** oatmeal paper `#EEE9DF`, a lighter panel `#F4F0E8`, ink `#2F2C27`, muted ink `#6A6458`, rules `#9E9686` and `#B9B1A2`, and one terracotta accent `#B5603C` (the owner's favourite colour; it replaced the sage of the mockup). Errors use a deep red `#8C2F2F`, darker than the accent so the two differ in lightness, not only hue. The app is light only for now.
 - **Type:** Libre Caslon Text (often italic) for titles and section headings, Karla for text and controls, and IBM Plex Mono for every amount, like a typewritten ledger.
 - **Details:** a double rule under page headers, dotted leaders between a name and its amount, dashed boxes for envelopes and the amount field, small square checkboxes, and done items crossed out.
 - **Forms:** a label always visible, above the field or to its left in a ledger row. Nothing floats, ripples or animates. Inputs are native, so phones show their own date and select pickers.
