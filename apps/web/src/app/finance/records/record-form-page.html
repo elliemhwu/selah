@@ -1,10 +1,22 @@
 <header class="form-header">
   <div class="form-header-inner">
     <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-    <h1 id="record-title" i18n="@@record.title">New entry</h1>
+    <h1 id="record-title">
+      @if (editing) {
+        <ng-container i18n="@@record.editTitle">Edit entry</ng-container>
+      } @else {
+        <ng-container i18n="@@record.title">New entry</ng-container>
+      }
+    </h1>
     <button type="submit" form="record-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
   </div>
 </header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@record.notFound">This entry isn't in the ledger.</p>
+}
 
 <form id="record-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="record-title">
   <fieldset class="segmented type">
@@ -16,24 +28,34 @@
   </fieldset>
 
   <div class="amount-box">
-    <label for="rec-amount" i18n="@@record.amount">Amount</label>
+    <label for="rec-amount">
+      @if (split()) {
+        <ng-container i18n="@@record.total">Total</ng-container>
+      } @else {
+        <ng-container i18n="@@record.amount">Amount</ng-container>
+      }
+    </label>
     <div class="amount-line">
       <select formControlName="currency" i18n-aria-label="@@record.currency" aria-label="Currency">
         @for (currency of currencies(); track currency) {
           <option [value]="currency">{{ currency }}</option>
         }
       </select>
-      <input id="rec-amount" formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+      @if (split()) {
+        <output id="rec-amount" class="total">{{ total() | money: value().currency }}</output>
+      } @else {
+        <input id="rec-amount" [formControl]="form.controls.lines.at(0).controls.amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+      }
     </div>
   </div>
-  @if (form.controls.amount.touched && form.controls.amount.invalid) {
-    <p class="field-error">{{ errorText(form.controls.amount) }}</p>
+  @if (!split() && form.controls.lines.at(0).controls.amount.touched && form.controls.lines.at(0).controls.amount.invalid) {
+    <p class="field-error">{{ errorText(form.controls.lines.at(0).controls.amount) }}</p>
   }
 
   @if (foreign()) {
     <div class="ledger-row">
       <label for="rec-rate" i18n="@@record.fxRate">TWD per {{ form.controls.currency.value }}</label>
-      <input id="rec-rate" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+      <input id="rec-rate" class="amount" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
     </div>
     @if (form.controls.fxRate.touched && form.controls.fxRate.invalid) {
       <p class="field-error">{{ errorText(form.controls.fxRate) }}</p>
@@ -49,6 +71,10 @@
   @if (form.controls.occurredOn.touched && form.controls.occurredOn.invalid) {
     <p class="field-error">{{ errorText(form.controls.occurredOn) }}</p>
   }
+  <div class="ledger-row">
+    <label for="rec-time" i18n="@@record.time">Time</label>
+    <input id="rec-time" type="time" formControlName="occurredAt" />
+  </div>
 
   <div class="ledger-row">
     <label for="rec-account" i18n="@@record.account">Account</label>
@@ -64,37 +90,67 @@
     <p class="field-error">{{ errorText(form.controls.accountId) }}</p>
   }
 
-  <div class="ledger-row">
-    <label for="rec-item" i18n="@@record.budgetItem">Budget item</label>
-    <select id="rec-item" formControlName="budgetItemId">
-      <option value="" i18n="@@record.none">None</option>
-      @for (group of itemGroups(); track group.section) {
-        <optgroup [label]="group.label">
-          @for (item of group.items; track item.id) {
-            <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+  <ng-template #lineFields let-line let-i="index">
+    <div class="ledger-row">
+      <label [for]="'rec-item-' + i" i18n="@@record.budgetItem">Budget item</label>
+      <select [id]="'rec-item-' + i" [formControl]="line.controls.budgetItemId">
+        <option value="" i18n="@@record.none">None</option>
+        @for (group of itemGroups(); track group.section) {
+          <optgroup [label]="group.label">
+            @for (item of group.items; track item.id) {
+              <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+            }
+          </optgroup>
+        }
+      </select>
+    </div>
+    @if (line.controls.budgetItemId.invalid) {
+      <p class="field-error">{{ errorText(line.controls.budgetItemId) }}</p>
+    }
+    <div class="ledger-row">
+      <label [for]="'rec-category-' + i" i18n="@@record.category">Category</label>
+      <select [id]="'rec-category-' + i" [formControl]="line.controls.categoryId">
+        <option value="" i18n="@@record.none">None</option>
+        @for (category of categoryOptions(); track category.id) {
+          <option [value]="category.id">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
+        }
+      </select>
+    </div>
+    @if (line.controls.categoryId.invalid) {
+      <p class="field-error">{{ errorText(line.controls.categoryId) }}</p>
+    }
+  </ng-template>
+
+  @if (split()) {
+    <ol class="lines">
+      @for (line of form.controls.lines.controls; track line.controls.id.value; let i = $index) {
+        <li>
+          <div class="line-head">
+            <span class="section-title" i18n="@@record.lineNumber">Line {{ i + 1 }}</span>
+            <button type="button" class="btn btn-quiet remove" (click)="removeLine(i)" i18n-aria-label="@@record.removeLine" aria-label="Remove this line">×</button>
+          </div>
+          <div class="ledger-row">
+            <label [for]="'rec-line-amount-' + i" i18n="@@record.amount">Amount</label>
+            <input [id]="'rec-line-amount-' + i" class="amount" [formControl]="line.controls.amount" inputmode="decimal" autocomplete="off" />
+          </div>
+          @if (line.controls.amount.touched && line.controls.amount.invalid) {
+            <p class="field-error">{{ errorText(line.controls.amount) }}</p>
           }
-        </optgroup>
+          <ng-container *ngTemplateOutlet="lineFields; context: { $implicit: line, index: i }" />
+          <div class="ledger-row">
+            <label [for]="'rec-line-note-' + i" i18n="@@record.note">Note</label>
+            <input [id]="'rec-line-note-' + i" [formControl]="line.controls.note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+          </div>
+        </li>
       }
-    </select>
-  </div>
+    </ol>
+  } @else {
+    <ng-container *ngTemplateOutlet="lineFields; context: { $implicit: form.controls.lines.at(0), index: 0 }" />
+  }
   @if (noPlan()) {
     <p class="hint small muted" i18n="@@record.noPlan">No plan covers this month.</p>
-  } @else if (form.controls.budgetItemId.invalid) {
-    <p class="field-error">{{ errorText(form.controls.budgetItemId) }}</p>
   }
-
-  <div class="ledger-row">
-    <label for="rec-category" i18n="@@record.category">Category</label>
-    <select id="rec-category" formControlName="categoryId">
-      <option value="" i18n="@@record.none">None</option>
-      @for (category of categoryOptions(); track category.id) {
-        <option [value]="category.id">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
-      }
-    </select>
-  </div>
-  @if (form.controls.categoryId.invalid) {
-    <p class="field-error">{{ errorText(form.controls.categoryId) }}</p>
-  }
+  <button type="button" class="btn btn-quiet add-line" (click)="addLine()" i18n="@@record.addLine">+ Split into another line</button>
 
   <div class="ledger-row">
     <label for="rec-note" i18n="@@record.note">Note</label>
@@ -102,5 +158,17 @@
   </div>
   @if (form.controls.note.invalid) {
     <p class="field-error">{{ errorText(form.controls.note) }}</p>
+  }
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@record.confirmDelete">Tap again to delete this entry</ng-container>
+        } @else {
+          <ng-container i18n="@@record.delete">Delete entry</ng-container>
+        }
+      </button>
+    </div>
   }
 </form>

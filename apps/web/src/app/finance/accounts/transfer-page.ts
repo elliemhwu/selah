@@ -8,6 +8,7 @@ import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
 import { type AccountDto, AccountsApi, RecordsApi } from '../data/finance-api';
+import { toInputAmount } from '../records/budget-item-options';
 import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from '../records/form-errors';
 
 /**
@@ -26,7 +27,15 @@ export class TransferPage {
   private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
-  private readonly id = crypto.randomUUID();
+  /** The transfer being edited, from `/accounts/transfer/:id`; undefined for a new one. */
+  private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
+  protected readonly editing = !!this.editId;
+  private readonly id = this.editId ?? crypto.randomUUID();
+  private readonly loaded = this.recordsApi.get(() => this.editId);
+  private filled = false;
+  protected readonly loading = computed(() => this.editing && this.loaded.isLoading());
+  protected readonly notFound = computed(() => this.editing && !!this.loaded.error());
+  protected readonly confirmingDelete = signal(false);
   private readonly rates = this.recordsApi.lastUsedRates();
   private readonly allAccounts = inject(AccountsApi).list();
   protected readonly accounts = computed(() => this.allAccounts.value());
@@ -54,6 +63,21 @@ export class TransferPage {
   protected readonly errorText = errorText;
 
   constructor() {
+    // Editing: fill the form once the transfer arrives.
+    effect(() => {
+      if (this.filled || !this.loaded.hasValue()) return;
+      const record = this.loaded.value();
+      this.filled = true;
+      this.form.patchValue({
+        fromAccountId: record.accountId,
+        toAccountId: record.counterAccountId ?? '',
+        occurredOn: record.occurredOn,
+        amount: toInputAmount(record.lines[0]?.amount ?? ''),
+        counterAmount: toInputAmount(record.counterAmount ?? ''),
+        fxRate: record.lines[0]?.fxRate ?? '',
+        note: record.note ?? '',
+      });
+    });
     // Default the two accounts once they load: the one asked for, then the next one.
     effect(() => {
       const list = this.accounts();
@@ -72,6 +96,24 @@ export class TransferPage {
     });
   }
 
+  async remove(): Promise<void> {
+    if (!this.editId) return;
+    if (!this.confirmingDelete()) {
+      this.confirmingDelete.set(true);
+      return;
+    }
+    this.saving.set(true);
+    try {
+      await this.recordsApi.remove(this.editId);
+      this.nav.leave('/records', $localize`:@@record.deleted:Entry deleted.`);
+    } catch (error) {
+      this.toast.show(problemOf(error).message);
+      this.confirmingDelete.set(false);
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
   protected cancel(): void {
     this.nav.leave('/accounts');
   }
@@ -83,7 +125,7 @@ export class TransferPage {
     }
     if (this.exchange() && !v.counterAmount) this.form.controls.counterAmount.setErrors({ required: true });
     if (this.needsRate() && !v.fxRate) this.form.controls.fxRate.setErrors({ required: true });
-    if (this.form.invalid) {
+    if (this.form.invalid || this.loading() || this.notFound()) {
       this.form.markAllAsTouched();
       return;
     }

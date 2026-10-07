@@ -1,0 +1,132 @@
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.page-header {
+  padding-top: max(24px, env(safe-area-inset-top));
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  h1 {
+    font-size: 30px;
+  }
+}
+
+.month-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+
+  .ink {
+    color: var(--ink);
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    flex: none;
+  }
+
+  .btn-quiet {
+    min-width: var(--touch);
+    color: var(--ink);
+    font-size: 18px;
+  }
+
+  .month {
+    font-family: var(--font-title);
+    font-style: italic;
+    color: var(--ink);
+  }
+}
+
+.filters {
+  margin: 8px var(--gutter) 0;
+  padding: 4px 16px 8px;
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  background: var(--panel);
+
+  .clear {
+    padding: 0;
+    color: var(--accent);
+    font-size: 14px;
+  }
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px var(--gutter) 32px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 16px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.day {
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+.records {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.record {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.record-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .record-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.leader {
+  flex: 1;
+  min-width: 16px;
+  border-bottom: 1px dotted var(--rule);
+  transform: translateY(-4px);
+}
+
+.record-amount {
+  font-size: 14px;
+
+  &.income {
+    color: var(--accent);
+  }
+}
+
+.new-entry {
+  margin-top: 16px;
+}
