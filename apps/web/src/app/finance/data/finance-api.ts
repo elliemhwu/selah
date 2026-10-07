@@ -10,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 const API = '/api/v1/finance';
 
 export type AccountDto = ApiSchemas['AccountDto'];
+export type UpsertAccountDto = ApiSchemas['UpsertAccountDto'];
 export type CategoryDto = ApiSchemas['CategoryDto'];
 export type PlanVersionDto = ApiSchemas['PlanVersionDto'];
 export type PlanItemDto = ApiSchemas['PlanItemDto'];
@@ -22,8 +23,20 @@ export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
 
 @Injectable({ providedIn: 'root' })
 export class AccountsApi {
+  private readonly http = inject(HttpClient);
+
   list() {
     return httpResource<AccountDto[]>(() => `${API}/accounts`, { defaultValue: [] });
+  }
+
+  /** Creates or replaces an account; the caller generates the id (ADR 0017). */
+  upsert(id: string, account: UpsertAccountDto): Promise<AccountDto> {
+    return firstValueFrom(this.http.put<AccountDto>(`${API}/accounts/${id}`, account));
+  }
+
+  /** Soft-deletes an account; refused with 409 while it has records. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/accounts/${id}`));
   }
 }
 

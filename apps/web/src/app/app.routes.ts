@@ -13,6 +13,10 @@ export const appRoutes: Route[] = [
   { path: 'records', title: $localize`:@@nav.records:Records`, loadComponent: placeholder },
   { path: 'budget', title: $localize`:@@nav.budget:Budget`, loadComponent: placeholder },
   { path: 'review', title: $localize`:@@nav.review:Review`, loadComponent: placeholder },
-  { path: 'accounts', title: $localize`:@@nav.accounts:Accounts`, loadComponent: placeholder },
+  {
+    path: 'accounts',
+    title: $localize`:@@nav.accounts:Accounts`,
+    loadComponent: () => import('./finance/accounts/accounts-page').then((m) => m.AccountsPage),
+  },
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,65 @@
+<header class="page-header">
+  <h1 i18n="@@accounts.title">Accounts</h1>
+  <p class="small muted subtitle" i18n="@@accounts.subtitle">Where your money really is.</p>
+</header>
+
+<div class="page">
+  @if (accounts.isLoading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  }
+  @if (accounts.error()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@accounts.failed">Couldn't load your accounts.</p>
+      <button type="button" class="btn" (click)="accounts.reload()" i18n="@@action.retry">Try again</button>
+    </div>
+  } @else if (accounts.hasValue() && accounts.value().length === 0) {
+    <div class="empty">
+      <p class="section-title" i18n="@@accounts.none">No accounts yet.</p>
+      <p class="muted" i18n="@@accounts.noneHint">Start with the cash in your wallet and your main bank account.</p>
+    </div>
+  } @else {
+    <ul class="accounts">
+      @for (account of accounts.value(); track account.id) {
+        <li>
+          <button type="button" class="account" (click)="edit(account)">
+            <span class="account-name">
+              {{ account.name }}
+              <span class="small muted type">{{ typeLabels[account.type] }}</span>
+            </span>
+            <span class="leader" aria-hidden="true"></span>
+            <span class="amount balance" [class.negative]="isNegative(account.balance)">
+              {{ account.balance | money: account.currency }}
+              @if (account.currency !== 'TWD') {
+                <span class="small muted">{{ account.currency }}</span>
+              }
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <section class="totals" aria-labelledby="totals-heading">
+      <h2 id="totals-heading" class="section-title" i18n="@@accounts.totals">Totals</h2>
+      @for (total of totals(); track total.currency) {
+        <div class="total">
+          <span>{{ total.currency }}</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="amount" [class.negative]="isNegative(total.total)">{{ total.total | money: total.currency }}</span>
+        </div>
+      }
+    </section>
+  }
+
+  <div class="actions">
+    @if (accounts.value().length > 1) {
+      <button type="button" class="btn" (click)="transfer()" i18n="@@accounts.transfer">Transfer</button>
+    }
+    @if (accounts.value().length > 0) {
+      <button type="button" class="btn" (click)="adjust()" i18n="@@accounts.adjust">Adjust balance</button>
+    }
+    <button type="button" class="btn new-account" (click)="newAccount()">
+      <selah-icon name="add" [size]="16" [weight]="1.8" />
+      <span i18n="@@accounts.new">New account</span>
+    </button>
+  </div>
+</div>

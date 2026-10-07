@@ -5,13 +5,12 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
+import { LEDGER_DIALOG } from '../../ui/dialog';
 import { Icon } from '../../ui/icon';
 import { Toast } from '../../ui/toast';
 import { type ChecklistItemDto, type EnvelopeDto, type RecordDto, ReportsApi } from '../data/finance-api';
 import { BatchRecordDialog, type BatchRecordDialogData } from '../records/batch-record-dialog';
 import { RecordDialog, type RecordDialogData } from '../records/record-dialog';
-
-export const DIALOG_OPTIONS = { panelClass: 'ledger-dialog', backdropClass: 'ledger-backdrop' };
 
 /** Home (requirements §4): what's left in each envelope, this period's checklist, and a new entry. */
 @Component({
@@ -79,7 +78,7 @@ export class HomePage {
   protected recordSelected(): void {
     const data: BatchRecordDialogData = { items: this.selectedItems() };
     this.dialog
-      .open<RecordDto[]>(BatchRecordDialog, { ...DIALOG_OPTIONS, data })
+      .open<RecordDto[]>(BatchRecordDialog, { ...LEDGER_DIALOG, data })
       .closed.subscribe((saved) => {
         if (!saved) return;
         this.selected.set(new Set());
@@ -89,7 +88,7 @@ export class HomePage {
 
   private openRecord(data: RecordDialogData): void {
     this.dialog
-      .open<RecordDto>(RecordDialog, { ...DIALOG_OPTIONS, data })
+      .open<RecordDto>(RecordDialog, { ...LEDGER_DIALOG, data })
       .closed.subscribe((saved) => {
         if (saved) this.refresh($localize`:@@home.saved:Saved.`);
       });

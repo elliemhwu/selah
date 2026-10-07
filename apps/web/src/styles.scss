@@ -364,3 +364,22 @@ h3 {
   gap: 4px;
   padding: 20px var(--gutter) 32px;
 }
+
+.hint {
+  margin: 4px 0 0;
+  text-align: right;
+}
+
+.ledger-row > input.amount {
+  font-family: var(--font-amount);
+}
+
+.danger {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+
+  .btn-quiet {
+    color: var(--error);
+  }
+}
