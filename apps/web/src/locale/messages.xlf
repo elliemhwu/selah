@@ -75,18 +75,36 @@
         <source>Budget</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">30</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="versions.title" datatype="html">
+        <source>Plan versions</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.routeTitle" datatype="html">
+        <source>Budget item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="nav.review" datatype="html">
         <source>Review</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -97,7 +115,7 @@
         <source>Accounts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
@@ -108,7 +126,7 @@
         <source>New account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/account-form-page.html</context>
@@ -119,7 +137,7 @@
         <source>Transfer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/transfer-page.html</context>
@@ -130,7 +148,7 @@
         <source>Adjust balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">65</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/adjust-page.html</context>
@@ -141,7 +159,7 @@
         <source>Edit account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/account-form-page.html</context>
@@ -174,6 +192,10 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/transfer-page.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
           <context context-type="linenumber">3,4</context>
         </context-group>
         <context-group purpose="location">
@@ -215,6 +237,10 @@
           <context context-type="linenumber">8,10</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">45,48</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
           <context context-type="linenumber">11,14</context>
         </context-group>
@@ -235,6 +261,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/account-form-page.html</context>
           <context context-type="linenumber">23,24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">30,31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="account.type" datatype="html">
@@ -454,6 +484,10 @@
           <context context-type="linenumber">72,73</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">53,54</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/batch-record-page.html</context>
           <context context-type="linenumber">53,54</context>
         </context-group>
@@ -560,6 +594,799 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/accounts/transfer-page.ts</context>
           <context context-type="linenumber">103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.newTitle" datatype="html">
+        <source>New item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.done" datatype="html">
+        <source>Done</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">11,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.missing" datatype="html">
+        <source>This item isn&apos;t in the plan you&apos;re editing.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.backToBudget" datatype="html">
+        <source>Back to the budget</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">18,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.section" datatype="html">
+        <source>Section</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.fixed" datatype="html">
+        <source>· fixed</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.partOf" datatype="html">
+        <source>Part of</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="record.none" datatype="html">
+        <source>None</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
+          <context context-type="linenumber">70,71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
+          <context context-type="linenumber">89,90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.howOften" datatype="html">
+        <source>How often</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.inMonth" datatype="html">
+        <source>In</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.onDate" datatype="html">
+        <source>On</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.howMuch" datatype="html">
+        <source>How much</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">76,77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.fixedAmount" datatype="html">
+        <source>Fixed amount</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">79,80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.percentOfIncome" datatype="html">
+        <source>% of income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">81,84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.twdDay" datatype="html">
+        <source>TWD a day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">88,89</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.twdWeek" datatype="html">
+        <source>TWD a week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">89,90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.twdMonth" datatype="html">
+        <source>TWD a month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.twdYear" datatype="html">
+        <source>TWD that month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">91,92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.twdOnce" datatype="html">
+        <source>TWD in total</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">92,94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.percent" datatype="html">
+        <source>Percent</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">99,100</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.ofGross" datatype="html">
+        <source>of gross income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">102,104</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">106,107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.base" datatype="html">
+        <source>Of</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.ofNet" datatype="html">
+        <source>of net income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">105,106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.previewMonth" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ previewMonth() + &apos;-01&apos; | date: &apos;MMMM&apos; }}"/>: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;amount ink&quot;&gt;"/><x id="INTERPOLATION_1" equiv-text="{{ p.monthly | money }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">114,115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.previewShare" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;amount ink&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ p.share | number: &apos;1.0-1&apos; }}"/>%<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> of net income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">116,117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.incomeFixed" datatype="html">
+        <source>Income is always a fixed amount.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">124,126</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.dailyFixed" datatype="html">
+        <source>Daily and weekly items are fixed amounts.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">126,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.overrideMonth" datatype="html">
+        <source>Month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">135,136</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.overrideAmount" datatype="html">
+        <source>Amount that month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">137,138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.removeOverride" datatype="html">
+        <source>Remove this month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">139,141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.addOverride" datatype="html">
+        <source>+ Different amount in a month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">142,145</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.rollover" datatype="html">
+        <source>Rollover</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">149,150</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.rolloverLabel" datatype="html">
+        <source>Carry what&apos;s left to the next <x id="ICU" equiv-text="{value().cadence, select, daily {day} weekly {week} other {month}}" xid="5271985560644098423"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">152,154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5271985560644098423" datatype="html">
+        <source>{VAR_SELECT, select, daily {day} weekly {week} other {month}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.resets" datatype="html">
+        <source>Resets</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">156,157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset.never" datatype="html">
+        <source>Never</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">161,162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset.week" datatype="html">
+        <source>At the end of each week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">162,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset.month" datatype="html">
+        <source>At the end of each month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">163,164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset.year" datatype="html">
+        <source>At the end of each year</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">164,165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.atReset" datatype="html">
+        <source>At reset</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">172,173</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.drop" datatype="html">
+        <source>Let it go</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">174,175</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.carry" datatype="html">
+        <source>Carry it into…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">175,176</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.carryInto" datatype="html">
+        <source>Into</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">180,181</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.choose" datatype="html">
+        <source>Choose an item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">182,183</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.confirmRemoveWithChildren" datatype="html">
+        <source>Tap again to remove it and <x id="INTERPOLATION" equiv-text="{{ childCount() }}"/> items under it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">199,200</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.confirmRemove" datatype="html">
+        <source>Tap again to remove it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">201,203</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.remove" datatype="html">
+        <source>Remove from this version</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">204,206</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.draftHint" datatype="html">
+        <source>Changes stay in the draft until you save the plan.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.html</context>
+          <context context-type="linenumber">209,212</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cadence.daily" datatype="html">
+        <source>Daily</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cadence.weekly" datatype="html">
+        <source>Weekly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cadence.monthly" datatype="html">
+        <source>Monthly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cadence.yearly" datatype="html">
+        <source>Yearly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cadence.once" datatype="html">
+        <source>Once</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.needsName" datatype="html">
+        <source>Give the item a name.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">186</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.needsAmount" datatype="html">
+        <source>Enter the amount in whole TWD.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">188</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.wholeAmount" datatype="html">
+        <source>Plan amounts are whole TWD.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">189</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.needsPercent" datatype="html">
+        <source>Enter a percentage from 0 to 100.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">190</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.needsDate" datatype="html">
+        <source>Choose the date.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.needsCarryTarget" datatype="html">
+        <source>Choose the item to carry into.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">193</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budgetItem.overrideInvalid" datatype="html">
+        <source>Each different month needs a month and a whole amount.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-item-page.ts</context>
+          <context context-type="linenumber">196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.title" datatype="html">
+        <source>Budget</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.versions" datatype="html">
+        <source>Versions</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.planFrom" datatype="html">
+        <source>Plan from <x id="INTERPOLATION" equiv-text="{{ firstOfMonth(s.from) | date: &apos;MMM y&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">8,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.previousMonth" datatype="html">
+        <source>Previous month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.nextMonth" datatype="html">
+        <source>Next month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">15,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.editingNoChanges" datatype="html">
+        <source>Editing · no changes yet</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.editingChanges" datatype="html">
+        <source>Editing · <x id="INTERPOLATION" equiv-text="{{ draft.changes().count }}"/> changes not saved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.confirmDiscard" datatype="html">
+        <source>Tap again to discard</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.discard" datatype="html">
+        <source>Discard</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">33,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.save" datatype="html">
+        <source>Save plan</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">36,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.noPlan" datatype="html">
+        <source>No plan covers this month.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.noPlanHint" datatype="html">
+        <source>Write down what comes in, then give each part of it a job.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.startFirst" datatype="html">
+        <source>Start a plan from this month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">52,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.cantCalculate" datatype="html">
+        <source>The amounts can&apos;t be worked out: <x id="INTERPOLATION" equiv-text="{{ v.error }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">58,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.toAllocate" datatype="html">
+        <source>To allocate · net income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">64,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.addItem" datatype="html">
+        <source>+ Add to <x id="INTERPOLATION" equiv-text="{{ section.label }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">100,101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.unallocated" datatype="html">
+        <source>Unallocated</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">107,108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.ofNetIncome" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ v.unallocatedShare | number: &apos;1.0-1&apos; }}"/>% of net income</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">109,110</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.edit" datatype="html">
+        <source>Edit this plan</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">118,120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.readOnly" datatype="html">
+        <source>This version is read-only; a later version replaced it. Start a new version to change the plan.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">120,125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.tagNew" datatype="html">
+        <source>· New</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">132,134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.tagEdited" datatype="html">
+        <source>· Edited</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">135,138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.percentOf" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.percent | number: &apos;1.0-4&apos; }}"/>% of <x id="ICU" equiv-text="{row.item.percentBase, select, gross_income {gross income} other {net income}}" xid="7406986836606145372"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">141,142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7406986836606145372" datatype="html">
+        <source>{VAR_SELECT, select, gross_income {gross income} other {net income}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.perDay" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.amount | money }}"/> a day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">145,146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.perWeek" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.amount | money }}"/> a week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">148,149</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.perMonth" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.item.amount | money }}"/> a month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">151,152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.yearly" datatype="html">
+        <source>yearly · <x id="INTERPOLATION" equiv-text="{{ row.item.amount | money }}"/> in <x id="INTERPOLATION_1" equiv-text="{{ monthOfYear(row.item.cadenceMonth) | date: &apos;MMMM&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">154,155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.once" datatype="html">
+        <source>once · <x id="INTERPOLATION" equiv-text="{{ row.item.amount | money }}"/> on <x id="INTERPOLATION_1" equiv-text="{{ row.item.cadenceDate | date: &apos;d MMM y&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">157,158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.overrides" datatype="html">
+        <source> · <x id="ICU" equiv-text="{row.item.overrides.length, plural, =1 {1 month differs} other {{{ row.item.overrides.length }} months differ}}" xid="2841507968768519581"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">162,164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1172071203572098536" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 month differs} other {<x id="INTERPOLATION"/> months differ}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.rollsNever" datatype="html">
+        <source> · rolls, never resets</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">167,169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.rollsCarry" datatype="html">
+        <source> · rolls, resets <x id="ICU" equiv-text="{row.item.resetCycle, select, week {weekly} month {monthly} other {yearly}}" xid="8798347437826569488"/> → <x id="INTERPOLATION" equiv-text="{{ itemName(row.item.carryToItemId) }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">171,172</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8798347437826569488" datatype="html">
+        <source>{VAR_SELECT, select, week {weekly} month {monthly} other {yearly}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">171</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">173</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.rollsDrop" datatype="html">
+        <source> · rolls, resets <x id="ICU" equiv-text="{row.item.resetCycle, select, week {weekly} month {monthly} other {yearly}}" xid="8798347437826569488"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.html</context>
+          <context context-type="linenumber">173,174</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.saved" datatype="html">
+        <source>Plan saved.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-page.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.back" datatype="html">
+        <source>‹ Budget</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.intro" datatype="html">
+        <source>Each version applies from its month until the next one starts. Older versions stay as a read-only log.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">10,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.none" datatype="html">
+        <source>No versions yet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">13,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.items" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 item} other {<x id="INTERPOLATION"/> items}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.current" datatype="html">
+        <source>Current · editable</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">36,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.readOnly" datatype="html">
+        <source>Read-only</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">38,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.newTitle" datatype="html">
+        <source>Start a new version</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.newHint" datatype="html">
+        <source>It begins as a copy of the current plan. Months before it keep the old one.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">47,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.from" datatype="html">
+        <source>From</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.notePlaceholder" datatype="html">
+        <source>e.g. New job</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">54,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.start" datatype="html">
+        <source>Copy and start editing</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.html</context>
+          <context context-type="linenumber">59,62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.tooEarly" datatype="html">
+        <source>A new version must start after the newest one.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.ts</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.draftOpen" datatype="html">
+        <source>Save or discard the plan you&apos;re editing first.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="versions.loading" datatype="html">
+        <source>Still loading the current plan; try again in a moment.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/budget-versions-page.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="budget.noDraft" datatype="html">
+        <source>There is nothing to save.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/budget/plan-draft.ts</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.title" datatype="html">
@@ -847,17 +1674,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
           <context context-type="linenumber">68,69</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="record.none" datatype="html">
-        <source>None</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
-          <context context-type="linenumber">70,71</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
-          <context context-type="linenumber">89,90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="record.noPlan" datatype="html">
