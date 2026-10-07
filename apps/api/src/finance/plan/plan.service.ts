@@ -164,6 +164,9 @@ function validateItems(
       if (item.section === 'government' && percentBase !== 'gross_income') {
         fail('percentBase', 'Government items use gross_income; net income is defined after Government.');
       }
+      if (item.cadence === 'daily' || item.cadence === 'weekly') {
+        fail('anchor', `A ${item.cadence} item is a fixed amount; percentages apply to a monthly base (ADR 0019).`);
+      }
     }
 
     // Rollover.
@@ -177,7 +180,8 @@ function validateItems(
       if (carryToItemId !== null) fail('carryToItemId', 'Only rollover items carry.');
     } else {
       const allowed = RESETS_FOR_CADENCE[item.cadence];
-      if (!allowed) fail('rollover', 'Only daily, weekly and monthly items roll over.');
+      if (item.section === 'income') fail('rollover', 'Income items are not budgets; they don\'t roll over (ADR 0019).');
+      else if (!allowed) fail('rollover', 'Only daily, weekly and monthly items roll over.');
       if (resetCycle === null) fail('resetCycle', 'A rollover item needs a reset cycle (or never).');
       else if (allowed && !allowed.includes(resetCycle)) {
         fail('resetCycle', `A ${item.cadence} item can reset: ${allowed.join(', ')}.`);
@@ -191,6 +195,9 @@ function validateItems(
         if (carryToItemId === null) fail('carryToItemId', 'Choose the item to carry into.');
         else if (carryToItemId === item.budgetItemId) fail('carryToItemId', "An item can't carry into itself.");
         else if (!byId.has(carryToItemId)) fail('carryToItemId', 'The carry target must be an item in this version.');
+        else if (byId.get(carryToItemId)?.item.section === 'income') {
+          fail('carryToItemId', "Leftovers can't be carried into an Income item (ADR 0019).");
+        } else if (hasCarryLoop(item.budgetItemId, byId)) fail('carryToItemId', 'These carries form a loop.');
       } else if (carryToItemId !== null) {
         fail('carryToItemId', 'Only `carry` has a target item.');
       }
@@ -238,6 +245,19 @@ function hasLoop(startId: string, byId: ReadonlyMap<string, { item: PlanItemInpu
     if (seen.has(current)) return true;
     seen.add(current);
     current = byId.get(current)?.item.parentItemId;
+  }
+  return false;
+}
+
+/** True if following carry targets from `startId` comes back to it (ADR 0019). */
+function hasCarryLoop(startId: string, byId: ReadonlyMap<string, { item: PlanItemInput }>): boolean {
+  const seen = new Set<string>();
+  let current = byId.get(startId)?.item;
+  while (current?.rollover && current.onReset === 'carry' && current.carryToItemId) {
+    if (current.carryToItemId === startId) return true;
+    if (seen.has(current.carryToItemId)) return false;
+    seen.add(current.carryToItemId);
+    current = byId.get(current.carryToItemId)?.item;
   }
   return false;
 }

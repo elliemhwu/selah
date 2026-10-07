@@ -113,3 +113,9 @@ export function parseYearMonth(value: YearMonth): { year: number; month: number 
 export function daysBetweenInclusive(from: LocalDate, to: LocalDate): number {
   return toDayNumber(to) - toDayNumber(from) + 1;
 }
+
+/** The month after `value`: '2026-12' → '2027-01'. */
+export function nextYearMonth(value: YearMonth): YearMonth {
+  const { year, month } = parseYearMonth(value);
+  return month === 12 ? `${pad(year + 1, 4)}-01` : `${pad(year, 4)}-${pad(month + 1, 2)}`;
+}

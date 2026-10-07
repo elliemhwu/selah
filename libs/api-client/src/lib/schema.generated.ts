@@ -200,6 +200,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/finance/budget-transfers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stored budget transfers in a date range, oldest first (computed resets are in the reports) */
+        get: operations["listBudgetTransfers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/budget-transfers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One budget transfer */
+        get: operations["getBudgetTransfer"];
+        /** Create or replace a manual budget transfer (the client generates the id) */
+        put: operations["upsertBudgetTransfer"];
+        post?: never;
+        /** Soft-delete a manual budget transfer */
+        delete: operations["deleteBudgetTransfer"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/reports/envelopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What is left in every rollover budget on a day, with its current period */
+        get: operations["getEnvelopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/reports/checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The recurring checklist for the periods containing a day: what's recorded and what isn't yet */
+        get: operations["getChecklist"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/reports/monthly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Plan vs. actual per section and item for a month */
+        get: operations["getMonthlyReview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/finance/reports/budget-transfers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Manual budget transfers and computed resets in a date range, in date order */
+        get: operations["getBudgetTransfersReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -586,6 +690,238 @@ export interface components {
             note?: string | null;
             /** @description In display order. */
             items: components["schemas"]["PlanItemInput"][];
+        };
+        /** @enum {string} */
+        BudgetTransferKind: "manual" | "reset";
+        BudgetTransferDto: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["BudgetTransferKind"];
+            /**
+             * Format: date
+             * @example 2026-10-31
+             */
+            occurredOn: string;
+            /** @example 21:00 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            fromItemId: string;
+            /**
+             * Format: uuid
+             * @description Null only for a stored reset that dropped the leftover.
+             */
+            toItemId: string | null;
+            /**
+             * @description Whole TWD.
+             * @example 500.00
+             */
+            amount: string;
+            note: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpsertBudgetTransferDto: {
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt?: string | null;
+            /**
+             * Format: uuid
+             * @description The budget item the amount leaves.
+             */
+            fromItemId: string;
+            /**
+             * Format: uuid
+             * @description The budget item that receives it.
+             */
+            toItemId: string;
+            /**
+             * @description Whole TWD; must be positive.
+             * @example 1234.00
+             */
+            amount: string;
+            note?: string | null;
+        };
+        PeriodDto: {
+            /**
+             * Format: date
+             * @example 2026-10-05
+             */
+            start: string;
+            /**
+             * Format: date
+             * @example 2026-10-11
+             */
+            end: string;
+        };
+        EnvelopeDto: {
+            /** Format: uuid */
+            budgetItemId: string;
+            name: string;
+            section: components["schemas"]["Section"];
+            /** Format: uuid */
+            parentItemId: string | null;
+            cadence: components["schemas"]["Cadence"];
+            resetCycle: components["schemas"]["ResetCycle"];
+            onReset: components["schemas"]["ResetAction"] | null;
+            /** Format: uuid */
+            carryToItemId: string | null;
+            /**
+             * Format: date
+             * @description When this envelope started (ADR 0019).
+             */
+            envelopeStart: string;
+            /**
+             * Format: date
+             * @description The end of the current reset cycle; null if it never resets.
+             */
+            resetsOn: string | null;
+            /** @description The current cadence period. */
+            period: components["schemas"]["PeriodDto"];
+            /**
+             * @description The current period's allotment.
+             * @example 185.00
+             */
+            allotment: string;
+            /**
+             * @description Carried in from earlier periods (negative = overspent).
+             * @example 35.00
+             */
+            carryIn: string;
+            /**
+             * @description Net budget transfers in this period, resets carried in included.
+             * @example 0.00
+             */
+            transfers: string;
+            /**
+             * @description Spent in this period, up to the report date.
+             * @example 0.00
+             */
+            spent: string;
+            /**
+             * @description What is left now (negative = overspent).
+             * @example 220.00
+             */
+            available: string;
+        };
+        ChecklistItemDto: {
+            /** Format: uuid */
+            budgetItemId: string;
+            name: string;
+            section: components["schemas"]["Section"];
+            /** Format: uuid */
+            parentItemId: string | null;
+            cadence: components["schemas"]["Cadence"];
+            period: components["schemas"]["PeriodDto"];
+            /**
+             * @description Planned for the period; pre-fills batch entry.
+             * @example 1200.00
+             */
+            planned: string;
+            /**
+             * @description Recorded in the period, on the item and its descendants.
+             * @example 0.00
+             */
+            recorded: string;
+            /** @description Record lines behind `recorded`. */
+            lineCount: number;
+            /** @description True once any line is recorded. */
+            done: boolean;
+        };
+        PlanBasesDto: {
+            /** @example 60000.00 */
+            grossIncome: string;
+            /** @example 3000.00 */
+            government: string;
+            /**
+             * @description Gross income minus Government: the default base.
+             * @example 57000.00
+             */
+            netIncome: string;
+        };
+        SectionReviewDto: {
+            /** @description Planned for the month. */
+            planned: string;
+            /** @description Net budget transfers in the month, computed resets included. */
+            transfers: string;
+            /** @description Received (income) or spent (other sections). */
+            actual: string;
+            /** @description planned + transfers − actual. */
+            remaining: string;
+            section: components["schemas"]["Section"];
+        };
+        YearToDateDto: {
+            /** @description Planned for the whole year, across versions. */
+            planned: string;
+            /** @description Actual from January to the end of this month. */
+            actual: string;
+        };
+        ItemReviewDto: {
+            /** @description Planned for the month. */
+            planned: string;
+            /** @description Net budget transfers in the month, computed resets included. */
+            transfers: string;
+            /** @description Received (income) or spent (other sections). */
+            actual: string;
+            /** @description planned + transfers − actual. */
+            remaining: string;
+            /** Format: uuid */
+            budgetItemId: string;
+            name: string;
+            section: components["schemas"]["Section"];
+            /** Format: uuid */
+            parentItemId: string | null;
+            cadence: components["schemas"]["Cadence"];
+            /** @description Yearly and one-time items only. */
+            year: components["schemas"]["YearToDateDto"] | null;
+        };
+        UnplannedDto: {
+            /** @description Income on no item, or on an item outside this version. */
+            income: string;
+            /** @description Spending on no item, or on an item outside this version. */
+            expense: string;
+        };
+        MonthlyReviewDto: {
+            /** @example 2026-10 */
+            month: string;
+            /** Format: uuid */
+            planVersionId: string;
+            bases: components["schemas"]["PlanBasesDto"];
+            /** @description Totals of the top-level items, in section order. */
+            sections: components["schemas"]["SectionReviewDto"][];
+            /** @description In plan order. A parent's transfers and actual include its descendants'. */
+            items: components["schemas"]["ItemReviewDto"][];
+            unplanned: components["schemas"]["UnplannedDto"];
+        };
+        BudgetMovementDto: {
+            kind: components["schemas"]["BudgetTransferKind"];
+            /**
+             * Format: uuid
+             * @description Null for a computed reset.
+             */
+            id: string | null;
+            /** Format: date */
+            occurredOn: string;
+            /** @example null */
+            occurredAt: string | null;
+            /** Format: uuid */
+            fromItemId: string;
+            /**
+             * Format: uuid
+             * @description Null when a reset drops the leftover.
+             */
+            toItemId: string | null;
+            /**
+             * @description Negative for a reset that carries an overspend.
+             * @example 620.00
+             */
+            amount: string;
+            note: string | null;
         };
     };
     responses: never;
@@ -1403,6 +1739,388 @@ export interface operations {
             };
             /** @description Not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    listBudgetTransfers: {
+        parameters: {
+            query: {
+                /** @description First day, inclusive. */
+                from: string;
+                /** @description Last day, inclusive. */
+                to: string;
+                /** @description Transfers from or to this item. */
+                budgetItemId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetTransferDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getBudgetTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetTransferDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    upsertBudgetTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertBudgetTransferDto"];
+            };
+        };
+        responses: {
+            /** @description Replaced. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetTransferDto"];
+                };
+            };
+            /** @description Created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetTransferDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    deleteBudgetTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted (or already deleted). */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Conflict: duplicate, deleted, or still in use. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getEnvelopes: {
+        parameters: {
+            query: {
+                /** @description The day to report on, usually today. */
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnvelopeDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getChecklist: {
+        parameters: {
+            query: {
+                /** @description The day to report on, usually today. */
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItemDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getMonthlyReview: {
+        parameters: {
+            query: {
+                month: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MonthlyReviewDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description Not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getBudgetTransfersReport: {
+        parameters: {
+            query: {
+                /** @description First day, inclusive. */
+                from: string;
+                /** @description Last day, inclusive. */
+                to: string;
+                /** @description Transfers from or to this item. */
+                budgetItemId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetMovementDto"][];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+            /** @description A business rule refuses the request. */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };

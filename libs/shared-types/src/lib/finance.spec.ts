@@ -2,9 +2,11 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   ACCOUNT_TYPES,
+  ANCHORS,
   BUDGET_TRANSFER_KINDS,
   CADENCES,
   CURRENCIES,
+  PERCENT_BASES,
   RECORD_TYPES,
   RESET_ACTIONS,
   RESET_CYCLES,
@@ -24,6 +26,8 @@ describe('finance value sets', () => {
     ['RECORD_TYPES', RECORD_TYPES],
     ['SECTIONS', SECTIONS],
     ['CADENCES', CADENCES],
+    ['ANCHORS', ANCHORS],
+    ['PERCENT_BASES', PERCENT_BASES],
     ['RESET_CYCLES', RESET_CYCLES],
     ['RESET_ACTIONS', RESET_ACTIONS],
     ['BUDGET_TRANSFER_KINDS', BUDGET_TRANSFER_KINDS],
