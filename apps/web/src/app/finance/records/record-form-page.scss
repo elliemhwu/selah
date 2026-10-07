@@ -4,4 +4,39 @@
 
 .amount-box {
   margin-bottom: 8px;
+
+  .total {
+    flex: 1;
+    font: 40px var(--font-amount);
+    text-align: right;
+  }
+}
+
+.lines {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+
+  li {
+    padding: 8px 0;
+    border-top: 3px double var(--rule-strong);
+  }
+
+  .line-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .remove {
+    min-width: var(--touch);
+    font-size: 20px;
+  }
+}
+
+.add-line {
+  align-self: flex-start;
+  padding: 0;
+  color: var(--accent);
+  font-size: 14px;
 }

@@ -1,0 +1,119 @@
+<header class="page-header">
+  <div class="title-row">
+    <h1 i18n="@@records.title">Records</h1>
+    <button type="button" class="btn btn-quiet small" (click)="showFilters.set(!showFilters())" [attr.aria-expanded]="showFilters()">
+      @if (filtered()) {
+        <ng-container i18n="@@records.filtered">Filtered</ng-container>
+      } @else {
+        <ng-container i18n="@@records.filter">Filter</ng-container>
+      }
+    </button>
+  </div>
+  <div class="month-row small muted">
+    <span i18n="@@records.totals">Spent <span class="amount ink">{{ totals().spent | money }}</span> · received <span class="amount ink">{{ totals().received | money }}</span></span>
+    <span class="stepper">
+      <button type="button" class="btn btn-quiet" (click)="previousMonth()" i18n-aria-label="@@budget.previousMonth" aria-label="Previous month">‹</button>
+      <span class="month">{{ firstOfMonth(month()) | date: 'MMMM y' }}</span>
+      <button type="button" class="btn btn-quiet" (click)="nextMonth()" i18n-aria-label="@@budget.nextMonth" aria-label="Next month">›</button>
+    </span>
+  </div>
+</header>
+
+@if (showFilters()) {
+  <div class="filters">
+    <div class="ledger-row">
+      <label for="f-account" i18n="@@record.account">Account</label>
+      <select id="f-account" [value]="filters().accountId" (change)="setFilter('accountId', $any($event.target).value)">
+        <option value="" i18n="@@records.any">Any</option>
+        @for (account of accounts.value(); track account.id) {
+          <option [value]="account.id" [selected]="account.id === filters().accountId">{{ account.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="ledger-row">
+      <label for="f-category" i18n="@@record.category">Category</label>
+      <select id="f-category" (change)="setFilter('categoryId', $any($event.target).value)">
+        <option value="" i18n="@@records.any">Any</option>
+        @for (category of categories.value(); track category.id) {
+          <option [value]="category.id" [selected]="category.id === filters().categoryId">{{ category.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="ledger-row">
+      <label for="f-item" i18n="@@record.budgetItem">Budget item</label>
+      <select id="f-item" (change)="setFilter('budgetItemId', $any($event.target).value)">
+        <option value="" i18n="@@records.any">Any</option>
+        @for (item of planItems(); track item.budgetItemId) {
+          <option [value]="item.budgetItemId" [selected]="item.budgetItemId === filters().budgetItemId">{{ item.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="ledger-row">
+      <label for="f-type" i18n="@@record.type">Record type</label>
+      <select id="f-type" (change)="setFilter('type', $any($event.target).value)">
+        <option value="" i18n="@@records.any">Any</option>
+        @for (option of typeOptions; track option.type) {
+          <option [value]="option.type" [selected]="option.type === filters().type">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    @if (filtered()) {
+      <button type="button" class="btn btn-quiet clear" (click)="clearFilters()" i18n="@@records.clear">Clear filters</button>
+    }
+  </div>
+}
+
+<div class="page">
+  @if (records.isLoading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  }
+  @if (records.error()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@records.failed">Couldn't load the records.</p>
+      <button type="button" class="btn" (click)="records.reload()" i18n="@@action.retry">Try again</button>
+    </div>
+  } @else if (records.status() === 'resolved' && days().length === 0) {
+    <div class="empty">
+      @if (filtered()) {
+        <p class="section-title" i18n="@@records.noneFiltered">Nothing matches these filters this month.</p>
+      } @else {
+        <p class="section-title" i18n="@@records.none">Nothing recorded this month.</p>
+      }
+    </div>
+  }
+
+  @for (day of days(); track day.date) {
+    <section [attr.aria-label]="day.date | date: 'fullDate'">
+      <h2 class="section-title day">{{ day.date | date: 'EEE d MMM' }}</h2>
+      <ul class="records">
+        @for (record of day.records; track record.id) {
+          <li>
+            <a class="record" [routerLink]="link(record)">
+              <span class="record-text">
+                <span class="record-title">{{ title(record) }}</span>
+                <span class="small muted">{{ subtitle(record) }}</span>
+              </span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="amount record-amount" [class.income]="record.type === 'income'">
+                @switch (record.type) {
+                  @case ('income') { +{{ amount(record) | money: record.currency }} }
+                  @case ('expense') { −{{ amount(record) | money: record.currency }} }
+                  @case ('adjustment') { ={{ amount(record) | money: record.currency }} }
+                  @default { {{ amount(record) | money: record.currency }} }
+                }
+                @if (record.currency !== 'TWD') {
+                  <span class="small muted">{{ record.currency }}</span>
+                }
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <a class="btn new-entry" routerLink="/records/new">
+    <selah-icon name="add" [size]="16" [weight]="1.8" />
+    <span i18n="@@home.add">New entry</span>
+  </a>
+</div>

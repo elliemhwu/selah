@@ -1,10 +1,22 @@
 <header class="form-header">
   <div class="form-header-inner">
     <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-    <h1 id="adjust-title" i18n="@@adjust.title">Adjust balance</h1>
+    <h1 id="adjust-title">
+      @if (editing) {
+        <ng-container i18n="@@adjust.editTitle">Edit adjustment</ng-container>
+      } @else {
+        <ng-container i18n="@@adjust.title">Adjust balance</ng-container>
+      }
+    </h1>
     <button type="submit" form="adjust-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
   </div>
 </header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@record.notFound">This entry isn't in the ledger.</p>
+}
 
 <form id="adjust-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="adjust-title">
   <div class="ledger-row">
@@ -36,4 +48,16 @@
     <input id="adj-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
   </div>
   <p class="small muted hint" i18n="@@adjust.hint">Enter what the account really holds. Selah records the difference.</p>
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@record.confirmDelete">Tap again to delete this entry</ng-container>
+        } @else {
+          <ng-container i18n="@@record.delete">Delete entry</ng-container>
+        }
+      </button>
+    </div>
+  }
 </form>

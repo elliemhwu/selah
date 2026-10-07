@@ -24,7 +24,17 @@ export const appRoutes: Route[] = [
     data: form,
     loadComponent: () => import('./finance/records/batch-record-page').then((m) => m.BatchRecordPage),
   },
-  { path: 'records', title: $localize`:@@nav.records:Records`, loadComponent: placeholder },
+  {
+    path: 'records',
+    title: $localize`:@@nav.records:Records`,
+    loadComponent: () => import('./finance/records/records-page').then((m) => m.RecordsPage),
+  },
+  {
+    path: 'records/:id',
+    title: $localize`:@@record.editTitle:Edit entry`,
+    data: form,
+    loadComponent: () => import('./finance/records/record-form-page').then((m) => m.RecordFormPage),
+  },
   {
     path: 'budget',
     title: $localize`:@@nav.budget:Budget`,
@@ -63,6 +73,18 @@ export const appRoutes: Route[] = [
   {
     path: 'accounts/adjust',
     title: $localize`:@@adjust.title:Adjust balance`,
+    data: form,
+    loadComponent: () => import('./finance/accounts/adjust-page').then((m) => m.AdjustPage),
+  },
+  {
+    path: 'accounts/transfer/:id',
+    title: $localize`:@@transfer.editTitle:Edit transfer`,
+    data: form,
+    loadComponent: () => import('./finance/accounts/transfer-page').then((m) => m.TransferPage),
+  },
+  {
+    path: 'accounts/adjust/:id',
+    title: $localize`:@@adjust.editTitle:Edit adjustment`,
     data: form,
     loadComponent: () => import('./finance/accounts/adjust-page').then((m) => m.AdjustPage),
   },
