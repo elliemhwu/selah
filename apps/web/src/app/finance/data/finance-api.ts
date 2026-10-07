@@ -14,6 +14,8 @@ export type UpsertAccountDto = ApiSchemas['UpsertAccountDto'];
 export type CategoryDto = ApiSchemas['CategoryDto'];
 export type PlanVersionDto = ApiSchemas['PlanVersionDto'];
 export type PlanItemDto = ApiSchemas['PlanItemDto'];
+export type PlanVersionSummaryDto = ApiSchemas['PlanVersionSummaryDto'];
+export type UpsertPlanVersionDto = ApiSchemas['UpsertPlanVersionDto'];
 export type RecordDto = ApiSchemas['RecordDto'];
 export type UpsertRecordDto = ApiSchemas['UpsertRecordDto'];
 export type BatchRecordInput = ApiSchemas['BatchRecordInput'];
@@ -57,9 +59,32 @@ export class CategoriesApi {
 
 @Injectable({ providedIn: 'root' })
 export class PlanApi {
-  /** The plan version in effect for a month; errors with 404 when none covers it. */
-  active(month: () => YearMonth) {
-    return httpResource<PlanVersionDto>(() => ({ url: `${API}/plan`, params: { month: month() } }));
+  private readonly http = inject(HttpClient);
+
+  /** The plan version in effect for a month; errors with 404 when none covers it. No request while `month` is undefined. */
+  active(month: () => YearMonth | undefined) {
+    return httpResource<PlanVersionDto>(() => {
+      const value = month();
+      return value ? { url: `${API}/plan`, params: { month: value } } : undefined;
+    });
+  }
+
+  /** Every version, oldest first (ADR 0018). */
+  versions() {
+    return httpResource<PlanVersionSummaryDto[]>(() => `${API}/plan-versions`, { defaultValue: [] });
+  }
+
+  /** One version with its items; no request while `id` is undefined. */
+  version(id: () => string | undefined) {
+    return httpResource<PlanVersionDto>(() => {
+      const value = id();
+      return value ? `${API}/plan-versions/${value}` : undefined;
+    });
+  }
+
+  /** Saves a whole version; only the newest one can change (ADR 0018). */
+  saveVersion(id: string, version: UpsertPlanVersionDto): Promise<PlanVersionDto> {
+    return firstValueFrom(this.http.put<PlanVersionDto>(`${API}/plan-versions/${id}`, version));
   }
 }
 

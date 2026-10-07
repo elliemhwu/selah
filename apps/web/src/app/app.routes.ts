@@ -25,7 +25,23 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./finance/records/batch-record-page').then((m) => m.BatchRecordPage),
   },
   { path: 'records', title: $localize`:@@nav.records:Records`, loadComponent: placeholder },
-  { path: 'budget', title: $localize`:@@nav.budget:Budget`, loadComponent: placeholder },
+  {
+    path: 'budget',
+    title: $localize`:@@nav.budget:Budget`,
+    loadComponent: () => import('./finance/budget/budget-page').then((m) => m.BudgetPage),
+  },
+  {
+    path: 'budget/versions',
+    title: $localize`:@@versions.title:Plan versions`,
+    data: form,
+    loadComponent: () => import('./finance/budget/budget-versions-page').then((m) => m.BudgetVersionsPage),
+  },
+  {
+    path: 'budget/items/:id',
+    title: $localize`:@@budgetItem.routeTitle:Budget item`,
+    data: form,
+    loadComponent: () => import('./finance/budget/budget-item-page').then((m) => m.BudgetItemPage),
+  },
   { path: 'review', title: $localize`:@@nav.review:Review`, loadComponent: placeholder },
   {
     path: 'accounts',

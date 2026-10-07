@@ -32,6 +32,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0020](0020-web-ui-foundation.md)                    | Web UI foundation: Angular Material, i18n, app structure                     | Accepted (components superseded by 0021)      |
 | [0021](0021-linen-ledger-ui.md)                      | Linen ledger look on the Angular CDK, without Material components            | Accepted (dialogs superseded by 0022)         |
 | [0022](0022-forms-are-routes.md)                     | Forms are routes: full screen on phones, a centred column on laptops         | Accepted                                      |
+| [0023](0023-budget-editor-draft.md)                  | The budget editor works on one draft kept on the device                      | Accepted                                      |
 
 ## Template
 
