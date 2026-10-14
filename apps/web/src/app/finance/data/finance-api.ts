@@ -12,14 +12,31 @@ const API = '/api/v1/finance';
 export type AccountDto = ApiSchemas['AccountDto'];
 export type UpsertAccountDto = ApiSchemas['UpsertAccountDto'];
 export type CategoryDto = ApiSchemas['CategoryDto'];
+export type UpsertCategoryDto = ApiSchemas['UpsertCategoryDto'];
 export type PlanVersionDto = ApiSchemas['PlanVersionDto'];
 export type PlanItemDto = ApiSchemas['PlanItemDto'];
+export type PlanVersionSummaryDto = ApiSchemas['PlanVersionSummaryDto'];
+export type UpsertPlanVersionDto = ApiSchemas['UpsertPlanVersionDto'];
 export type RecordDto = ApiSchemas['RecordDto'];
 export type UpsertRecordDto = ApiSchemas['UpsertRecordDto'];
 export type BatchRecordInput = ApiSchemas['BatchRecordInput'];
 export type LastUsedRateDto = ApiSchemas['LastUsedRateDto'];
 export type EnvelopeDto = ApiSchemas['EnvelopeDto'];
 export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
+export type MonthlyReviewDto = ApiSchemas['MonthlyReviewDto'];
+export type ItemReviewDto = ApiSchemas['ItemReviewDto'];
+export type BudgetMovementDto = ApiSchemas['BudgetMovementDto'];
+export type BudgetTransferDto = ApiSchemas['BudgetTransferDto'];
+export type UpsertBudgetTransferDto = ApiSchemas['UpsertBudgetTransferDto'];
+
+export interface RecordQuery {
+  from: LocalDate;
+  to: LocalDate;
+  accountId?: string;
+  categoryId?: string;
+  budgetItemId?: string;
+  type?: RecordDto['type'];
+}
 
 @Injectable({ providedIn: 'root' })
 export class AccountsApi {
@@ -50,16 +67,52 @@ export class AccountsApi {
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesApi {
+  private readonly http = inject(HttpClient);
+
+  /** Every category, flat; build the tree with `categoryTree`. */
   list() {
     return httpResource<CategoryDto[]>(() => `${API}/categories`, { defaultValue: [] });
+  }
+
+  /** Creates or replaces a category; the caller generates the id (ADR 0017). */
+  upsert(id: string, category: UpsertCategoryDto): Promise<CategoryDto> {
+    return firstValueFrom(this.http.put<CategoryDto>(`${API}/categories/${id}`, category));
+  }
+
+  /** Soft-deletes a category; refused with 409 while it has subcategories. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/categories/${id}`));
   }
 }
 
 @Injectable({ providedIn: 'root' })
 export class PlanApi {
-  /** The plan version in effect for a month; errors with 404 when none covers it. */
-  active(month: () => YearMonth) {
-    return httpResource<PlanVersionDto>(() => ({ url: `${API}/plan`, params: { month: month() } }));
+  private readonly http = inject(HttpClient);
+
+  /** The plan version in effect for a month; errors with 404 when none covers it. No request while `month` is undefined. */
+  active(month: () => YearMonth | undefined) {
+    return httpResource<PlanVersionDto>(() => {
+      const value = month();
+      return value ? { url: `${API}/plan`, params: { month: value } } : undefined;
+    });
+  }
+
+  /** Every version, oldest first (ADR 0018). */
+  versions() {
+    return httpResource<PlanVersionSummaryDto[]>(() => `${API}/plan-versions`, { defaultValue: [] });
+  }
+
+  /** One version with its items; no request while `id` is undefined. */
+  version(id: () => string | undefined) {
+    return httpResource<PlanVersionDto>(() => {
+      const value = id();
+      return value ? `${API}/plan-versions/${value}` : undefined;
+    });
+  }
+
+  /** Saves a whole version; only the newest one can change (ADR 0018). */
+  saveVersion(id: string, version: UpsertPlanVersionDto): Promise<PlanVersionDto> {
+    return firstValueFrom(this.http.put<PlanVersionDto>(`${API}/plan-versions/${id}`, version));
   }
 }
 
@@ -69,6 +122,35 @@ export class RecordsApi {
 
   lastUsedRates() {
     return httpResource<LastUsedRateDto[]>(() => `${API}/fx-rates/last-used`, { defaultValue: [] });
+  }
+
+  /** Records in a date range, newest first, with optional filters. */
+  list(query: () => RecordQuery) {
+    return httpResource<RecordDto[]>(
+      () => {
+        const q = query();
+        const params: Record<string, string> = { from: q.from, to: q.to };
+        for (const key of ['accountId', 'categoryId', 'budgetItemId', 'type'] as const) {
+          const value = q[key];
+          if (value) params[key] = value;
+        }
+        return { url: `${API}/records`, params };
+      },
+      { defaultValue: [] },
+    );
+  }
+
+  /** One record with its lines; no request while `id` is undefined. */
+  get(id: () => string | undefined) {
+    return httpResource<RecordDto>(() => {
+      const value = id();
+      return value ? `${API}/records/${value}` : undefined;
+    });
+  }
+
+  /** Soft-deletes a record and its lines. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/records/${id}`));
   }
 
   /** Creates or replaces a record; the caller generates the id (ADR 0017). */
@@ -83,9 +165,44 @@ export class RecordsApi {
 }
 
 @Injectable({ providedIn: 'root' })
+export class BudgetTransfersApi {
+  private readonly http = inject(HttpClient);
+
+  /** One manual transfer; no request while `id` is undefined. */
+  get(id: () => string | undefined) {
+    return httpResource<BudgetTransferDto>(() => {
+      const value = id();
+      return value ? `${API}/budget-transfers/${value}` : undefined;
+    });
+  }
+
+  /** Creates or replaces a manual transfer; the caller generates the id (ADR 0017, 0019). */
+  upsert(id: string, transfer: UpsertBudgetTransferDto): Promise<BudgetTransferDto> {
+    return firstValueFrom(this.http.put<BudgetTransferDto>(`${API}/budget-transfers/${id}`, transfer));
+  }
+
+  /** Soft-deletes a manual transfer. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/budget-transfers/${id}`));
+  }
+}
+
+@Injectable({ providedIn: 'root' })
 export class ReportsApi {
   envelopes(date: () => LocalDate) {
     return httpResource<EnvelopeDto[]>(() => ({ url: `${API}/reports/envelopes`, params: { date: date() } }), {
+      defaultValue: [],
+    });
+  }
+
+  /** Plan vs. actual for a month; errors with 404 when no plan covers it. */
+  monthly(month: () => YearMonth) {
+    return httpResource<MonthlyReviewDto>(() => ({ url: `${API}/reports/monthly`, params: { month: month() } }));
+  }
+
+  /** Manual budget transfers and computed resets in a date range, in date order (ADR 0019). */
+  budgetMovements(range: () => { from: LocalDate; to: LocalDate }) {
+    return httpResource<BudgetMovementDto[]>(() => ({ url: `${API}/reports/budget-transfers`, params: range() }), {
       defaultValue: [],
     });
   }

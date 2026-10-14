@@ -21,6 +21,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/core/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The app settings, or the defaults if never saved */
+        get: operations["getSettings"];
+        /** Replace the app settings (a single resource, no id) */
+        put: operations["updateSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/finance/accounts": {
         parameters: {
             query?: never;
@@ -320,29 +338,25 @@ export interface components {
              */
             database: "ok" | "unavailable";
         };
-        /** @enum {string} */
-        AccountType: "cash" | "bank" | "credit_card" | "stored_value" | "gift_card";
-        /** @enum {string} */
+        /**
+         * @description Preselected for new accounts and entries. Reports stay in TWD.
+         * @enum {string}
+         */
         Currency: "TWD" | "JPY" | "EUR" | "GBP" | "USD";
-        AccountDto: {
-            /** Format: uuid */
-            id: string;
-            /** @example Wallet */
-            name: string;
-            type: components["schemas"]["AccountType"];
-            currency: components["schemas"]["Currency"];
-            /** @example 1000.00 */
-            openingBalance: string;
+        SettingsDto: {
             /**
-             * @description Derived from the opening balance and all records (ADR 0011).
-             * @example 850.00
+             * @description ISO day of week: 1 = Monday … 7 = Sunday.
+             * @example 1
+             * @enum {integer}
              */
-            balance: string;
-            sortOrder: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
+            weekStartDay: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+            /** @description Preselected for new accounts and entries. Reports stay in TWD. */
+            defaultCurrency: components["schemas"]["Currency"];
+            /**
+             * Format: date-time
+             * @description Null until the settings are first saved; the defaults apply until then.
+             */
+            updatedAt: string | null;
         };
         ProblemDetailsDto: {
             /** @example about:blank */
@@ -364,6 +378,37 @@ export interface components {
             errors?: {
                 [key: string]: string[];
             };
+        };
+        UpdateSettingsDto: {
+            /**
+             * @description ISO day of week: 1 = Monday … 7 = Sunday.
+             * @example 1
+             * @enum {integer}
+             */
+            weekStartDay: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+            defaultCurrency: components["schemas"]["Currency"];
+        };
+        /** @enum {string} */
+        AccountType: "cash" | "bank" | "credit_card" | "stored_value" | "gift_card";
+        AccountDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example Wallet */
+            name: string;
+            type: components["schemas"]["AccountType"];
+            currency: components["schemas"]["Currency"];
+            /** @example 1000.00 */
+            openingBalance: string;
+            /**
+             * @description Derived from the opening balance and all records (ADR 0011).
+             * @example 850.00
+             */
+            balance: string;
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         UpsertAccountDto: {
             /** @example Wallet */
@@ -947,6 +992,57 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthDto"];
+                };
+            };
+        };
+    };
+    getSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsDto"];
+                };
+            };
+        };
+    };
+    updateSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSettingsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
                 };
             };
         };

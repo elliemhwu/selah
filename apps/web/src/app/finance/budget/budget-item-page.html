@@ -1,0 +1,211 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="item-title">
+      @if (isNew) {
+        <ng-container i18n="@@budgetItem.newTitle">New item</ng-container>
+      } @else {
+        {{ form.controls.name.value || sectionLabel }}
+      }
+    </h1>
+    <button type="submit" form="item-form" class="btn" [disabled]="missing" i18n="@@budgetItem.done">Done</button>
+  </div>
+</header>
+
+@if (missing) {
+  <div class="form-status">
+    <p class="muted" i18n="@@budgetItem.missing">This item isn't in the plan you're editing.</p>
+    <a class="btn" routerLink="/budget" i18n="@@budgetItem.backToBudget">Back to the budget</a>
+  </div>
+} @else {
+  <form id="item-form" class="form-body" [formGroup]="form" (ngSubmit)="done()" aria-labelledby="item-title">
+    @for (message of errors; track $index) {
+      <p class="field-error start">{{ message }}</p>
+    }
+    @for (message of problems(); track $index) {
+      <p class="field-error start">{{ message }}</p>
+    }
+
+    <div class="ledger-row">
+      <label for="bi-name" i18n="@@account.name">Name</label>
+      <input id="bi-name" formControlName="name" autocomplete="off" maxlength="100" cdkFocusInitial />
+    </div>
+    <div class="ledger-row">
+      <span class="label" i18n="@@budgetItem.section">Section</span>
+      <span class="value">{{ sectionLabel }} <span class="small muted" i18n="@@budgetItem.fixed">· fixed</span></span>
+    </div>
+    @if (parents().length > 0) {
+      <div class="ledger-row">
+        <label for="bi-parent" i18n="@@budgetItem.partOf">Part of</label>
+        <select id="bi-parent" formControlName="parentItemId">
+          <option value="" i18n="@@record.none">None</option>
+          @for (row of parents(); track row.item.budgetItemId) {
+            <option [value]="row.item.budgetItemId">{{ row.depth ? '– '.repeat(row.depth) : '' }}{{ row.item.name }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <fieldset class="group">
+      <legend class="section-title" i18n="@@budgetItem.howOften">How often</legend>
+      <div class="segmented cadences">
+        @for (option of cadences; track option.value) {
+          <input type="radio" [id]="'bi-cadence-' + option.value" formControlName="cadence" [value]="option.value" />
+          <label [for]="'bi-cadence-' + option.value">{{ option.label }}</label>
+        }
+      </div>
+      @if (value().cadence === 'yearly') {
+        <div class="ledger-row">
+          <label for="bi-month" i18n="@@budgetItem.inMonth">In</label>
+          <select id="bi-month" formControlName="cadenceMonth">
+            @for (month of months; track month.value) {
+              <option [ngValue]="month.value">{{ month.date | date: 'MMMM' }}</option>
+            }
+          </select>
+        </div>
+      }
+      @if (value().cadence === 'one_time') {
+        <div class="ledger-row">
+          <label for="bi-date" i18n="@@budgetItem.onDate">On</label>
+          <input id="bi-date" type="date" formControlName="cadenceDate" />
+        </div>
+      }
+    </fieldset>
+
+    <fieldset class="group">
+      <legend class="section-title" i18n="@@budgetItem.howMuch">How much</legend>
+      <div class="segmented">
+        <input type="radio" id="bi-anchor-amount" formControlName="anchor" value="amount" />
+        <label for="bi-anchor-amount" i18n="@@budgetItem.fixedAmount">Fixed amount</label>
+        <input type="radio" id="bi-anchor-percent" formControlName="anchor" value="percent" [attr.disabled]="percentAllowed() ? null : ''" />
+        <label for="bi-anchor-percent" i18n="@@budgetItem.percentOfIncome">% of income</label>
+      </div>
+
+      <div class="amount-box">
+        @if (value().anchor === 'amount') {
+          <label for="bi-amount">
+            @switch (value().cadence) {
+              @case ('daily') { <ng-container i18n="@@budgetItem.twdDay">TWD a day</ng-container> }
+              @case ('weekly') { <ng-container i18n="@@budgetItem.twdWeek">TWD a week</ng-container> }
+              @case ('monthly') { <ng-container i18n="@@budgetItem.twdMonth">TWD a month</ng-container> }
+              @case ('yearly') { <ng-container i18n="@@budgetItem.twdYear">TWD that month</ng-container> }
+              @default { <ng-container i18n="@@budgetItem.twdOnce">TWD in total</ng-container> }
+            }
+          </label>
+          <div class="amount-line">
+            <input id="bi-amount" formControlName="amount" inputmode="numeric" autocomplete="off" />
+          </div>
+        } @else {
+          <label for="bi-percent" i18n="@@budgetItem.percent">Percent</label>
+          <div class="amount-line">
+            @if (section === 'government') {
+              <span class="small muted" i18n="@@budgetItem.ofGross">of gross income</span>
+            } @else {
+              <select formControlName="percentBase" i18n-aria-label="@@budgetItem.base" aria-label="Of">
+                <option value="net_income" i18n="@@budgetItem.ofNet">of net income</option>
+                <option value="gross_income" i18n="@@budgetItem.ofGross">of gross income</option>
+              </select>
+            }
+            <input id="bi-percent" formControlName="percent" inputmode="decimal" autocomplete="off" />
+          </div>
+        }
+        @if (preview(); as p) {
+          <div class="preview small muted">
+            <span i18n="@@budgetItem.previewMonth">{{ previewMonth() + '-01' | date: 'MMMM' }}: <span class="amount ink">{{ p.monthly | money }}</span></span>
+            @if (p.share !== null) {
+              <span i18n="@@budgetItem.previewShare"><span class="amount ink">{{ p.share | number: '1.0-1' }}%</span> of net income</span>
+            }
+          </div>
+        }
+      </div>
+      @if (!percentAllowed()) {
+        <p class="small muted hint">
+          @if (section === 'income') {
+            <ng-container i18n="@@budgetItem.incomeFixed">Income is always a fixed amount.</ng-container>
+          } @else {
+            <ng-container i18n="@@budgetItem.dailyFixed">Daily and weekly items are fixed amounts.</ng-container>
+          }
+        </p>
+      }
+
+      @if (value().cadence === 'monthly') {
+        <div formArrayName="overrides" class="overrides">
+          @for (row of form.controls.overrides.controls; track $index; let i = $index) {
+            <div class="ledger-row" [formGroupName]="i">
+              <label class="cdk-visually-hidden" [for]="'bi-override-month-' + i" i18n="@@budgetItem.overrideMonth">Month</label>
+              <input class="override-month" [id]="'bi-override-month-' + i" type="month" formControlName="month" />
+              <label class="cdk-visually-hidden" [for]="'bi-override-amount-' + i" i18n="@@budgetItem.overrideAmount">Amount that month</label>
+              <input class="amount" [id]="'bi-override-amount-' + i" formControlName="amount" inputmode="numeric" autocomplete="off" />
+              <button type="button" class="btn btn-quiet remove" (click)="removeOverride(i)" i18n-aria-label="@@budgetItem.removeOverride" aria-label="Remove this month">×</button>
+            </div>
+          }
+          <button type="button" class="btn btn-quiet add" (click)="addOverride()" i18n="@@budgetItem.addOverride">+ Different amount in a month</button>
+        </div>
+      }
+    </fieldset>
+
+    @if (rolloverAllowed()) {
+      <fieldset class="group">
+        <legend class="section-title" i18n="@@budgetItem.rollover">Rollover</legend>
+        <div class="ledger-row check-row">
+          <input id="bi-rollover" type="checkbox" class="check" formControlName="rollover" />
+          <label for="bi-rollover" i18n="@@budgetItem.rolloverLabel">Carry what's left to the next {value().cadence, select, daily {day} weekly {week} other {month}}</label>
+        </div>
+        @if (value().rollover) {
+          <div class="ledger-row">
+            <label for="bi-reset" i18n="@@budgetItem.resets">Resets</label>
+            <select id="bi-reset" formControlName="resetCycle">
+              @for (cycle of resetOptions(); track cycle) {
+                <option [value]="cycle">
+                  @switch (cycle) {
+                    @case ('never') { <ng-container i18n="@@reset.never">Never</ng-container> }
+                    @case ('week') { <ng-container i18n="@@reset.week">At the end of each week</ng-container> }
+                    @case ('month') { <ng-container i18n="@@reset.month">At the end of each month</ng-container> }
+                    @case ('year') { <ng-container i18n="@@reset.year">At the end of each year</ng-container> }
+                  }
+                </option>
+              }
+            </select>
+          </div>
+          @if (value().resetCycle !== 'never') {
+            <div class="ledger-row">
+              <label for="bi-onreset" i18n="@@budgetItem.atReset">At reset</label>
+              <select id="bi-onreset" formControlName="onReset">
+                <option value="drop" i18n="@@budgetItem.drop">Let it go</option>
+                <option value="carry" i18n="@@budgetItem.carry">Carry it into…</option>
+              </select>
+            </div>
+            @if (value().onReset === 'carry') {
+              <div class="ledger-row">
+                <label for="bi-carry" i18n="@@budgetItem.carryInto">Into</label>
+                <select id="bi-carry" formControlName="carryToItemId">
+                  <option value="" disabled i18n="@@budgetItem.choose">Choose an item</option>
+                  @for (item of carryTargets(); track item.budgetItemId) {
+                    <option [value]="item.budgetItemId">{{ item.name }}</option>
+                  }
+                </select>
+              </div>
+            }
+          }
+        }
+      </fieldset>
+    }
+
+    @if (!isNew) {
+      <div class="danger">
+        <button type="button" class="btn btn-quiet" (click)="remove()">
+          @if (confirmingRemove()) {
+            @if (childCount() > 0) {
+              <ng-container i18n="@@budgetItem.confirmRemoveWithChildren">Tap again to remove it and {{ childCount() }} items under it</ng-container>
+            } @else {
+              <ng-container i18n="@@budgetItem.confirmRemove">Tap again to remove it</ng-container>
+            }
+          } @else {
+            <ng-container i18n="@@budgetItem.remove">Remove from this version</ng-container>
+          }
+        </button>
+      </div>
+    }
+    <p class="small muted center" i18n="@@budgetItem.draftHint">Changes stay in the draft until you save the plan.</p>
+  </form>
+}

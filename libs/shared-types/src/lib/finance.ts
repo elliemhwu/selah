@@ -44,7 +44,8 @@ export const BUDGET_TRANSFER_KINDS = ['manual', 'reset'] as const;
 export type BudgetTransferKind = (typeof BUDGET_TRANSFER_KINDS)[number];
 
 /** ISO day of week: 1 = Monday … 7 = Sunday. */
-export type IsoWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export const ISO_WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+export type IsoWeekday = (typeof ISO_WEEKDAYS)[number];
 
 /** A local calendar date, 'YYYY-MM-DD', with no time zone (ADR 0014). */
 export type LocalDate = string;

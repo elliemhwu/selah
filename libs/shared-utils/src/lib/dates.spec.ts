@@ -9,6 +9,7 @@ import {
   fromDayNumber,
   isoWeekday,
   nextYearMonth,
+  previousYearMonth,
   startOfMonth,
   startOfWeek,
   toDayNumber,
@@ -65,6 +66,8 @@ describe('dates', () => {
   it('steps to the next month', () => {
     expect(nextYearMonth('2026-10')).toBe('2026-11');
     expect(nextYearMonth('2026-12')).toBe('2027-01');
+    expect(previousYearMonth('2027-01')).toBe('2026-12');
+    expect(previousYearMonth('2026-10')).toBe('2026-09');
   });
 
   it.each(['2026-02-29', '2026-13-01', '2026-1-01', '20261001', ''])('rejects "%s"', (date) => {

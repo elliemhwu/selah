@@ -119,3 +119,9 @@ export function nextYearMonth(value: YearMonth): YearMonth {
   const { year, month } = parseYearMonth(value);
   return month === 12 ? `${pad(year + 1, 4)}-01` : `${pad(year, 4)}-${pad(month + 1, 2)}`;
 }
+
+/** The month before `value`: '2027-01' → '2026-12'. */
+export function previousYearMonth(value: YearMonth): YearMonth {
+  const { year, month } = parseYearMonth(value);
+  return month === 1 ? `${pad(year - 1, 4)}-12` : `${pad(year, 4)}-${pad(month - 1, 2)}`;
+}
