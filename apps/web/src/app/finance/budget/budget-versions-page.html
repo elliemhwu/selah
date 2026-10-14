@@ -1,0 +1,61 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="back()" i18n="@@versions.back">‹ Budget</button>
+    <h1 id="versions-title" i18n="@@versions.title">Plan versions</h1>
+    <span class="spacer"></span>
+  </div>
+</header>
+
+<div class="form-body">
+  <p class="muted small intro" i18n="@@versions.intro">Each version applies from its month until the next one starts. Older versions stay as a read-only log.</p>
+
+  @if (versions.status() === 'resolved' && log().length === 0) {
+    <p class="muted" i18n="@@versions.none">No versions yet.</p>
+  }
+  <ul class="log">
+    @for (version of log(); track version.id) {
+      <li>
+        <a class="version" routerLink="/budget" [queryParams]="{ version: version.id, month: version.effectiveFromMonth }">
+          <span class="version-text">
+            <span class="amount range">
+              {{ firstOfMonth(version.effectiveFromMonth) | date: 'MMM y' }}
+              @if (version.until) {
+                – {{ firstOfMonth(version.until) | date: 'MMM y' }}
+              } @else {
+                →
+              }
+            </span>
+            <span class="small muted">
+              @if (version.note) {
+                {{ version.note }} ·
+              }
+              <ng-container i18n="@@versions.items">{version.itemCount, plural, =1 {1 item} other {{{ version.itemCount }} items}}</ng-container>
+            </span>
+          </span>
+          @if (version.editable) {
+            <span class="state current" i18n="@@versions.current">Current · editable</span>
+          } @else {
+            <span class="state" i18n="@@versions.readOnly">Read-only</span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+
+  <form class="new-version" [formGroup]="form" (ngSubmit)="start()" aria-labelledby="new-version-title">
+    <h2 id="new-version-title" class="section-title" i18n="@@versions.newTitle">Start a new version</h2>
+    <p class="small muted" i18n="@@versions.newHint">It begins as a copy of the current plan. Months before it keep the old one.</p>
+    <div class="ledger-row">
+      <label for="nv-month" i18n="@@versions.from">From</label>
+      <input id="nv-month" type="month" formControlName="month" [min]="earliestStart()" [placeholder]="earliestStart()" />
+    </div>
+    <div class="ledger-row">
+      <label for="nv-note" i18n="@@record.note">Note</label>
+      <input id="nv-note" formControlName="note" autocomplete="off" i18n-placeholder="@@versions.notePlaceholder" placeholder="e.g. New job" />
+    </div>
+    @if (problem(); as message) {
+      <p class="field-error">{{ message }}</p>
+    }
+    <button type="submit" class="btn btn-primary" i18n="@@versions.start">Copy and start editing</button>
+  </form>
+</div>

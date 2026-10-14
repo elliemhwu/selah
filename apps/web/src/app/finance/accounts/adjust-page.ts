@@ -9,6 +9,7 @@ import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
 import { type AccountDto, AccountsApi, RecordsApi } from '../data/finance-api';
+import { toInputAmount } from '../records/budget-item-options';
 import { errorText, SIGNED_MONEY_PATTERN } from '../records/form-errors';
 
 /**
@@ -27,7 +28,15 @@ export class AdjustPage {
   private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
-  private readonly id = crypto.randomUUID();
+  /** The adjustment being edited, from `/accounts/adjust/:id`; undefined for a new one. */
+  private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
+  protected readonly editing = !!this.editId;
+  private readonly id = this.editId ?? crypto.randomUUID();
+  private readonly loaded = this.recordsApi.get(() => this.editId);
+  private filled = false;
+  protected readonly loading = computed(() => this.editing && this.loaded.isLoading());
+  protected readonly notFound = computed(() => this.editing && !!this.loaded.error());
+  protected readonly confirmingDelete = signal(false);
   private readonly allAccounts = inject(AccountsApi).list();
   protected readonly accounts = computed(() => this.allAccounts.value());
 
@@ -45,6 +54,18 @@ export class AdjustPage {
   protected readonly errorText = errorText;
 
   constructor() {
+    // Editing: fill the form once the adjustment arrives.
+    effect(() => {
+      if (this.filled || !this.loaded.hasValue()) return;
+      const record = this.loaded.value();
+      this.filled = true;
+      this.form.patchValue({
+        accountId: record.accountId,
+        occurredOn: record.occurredOn,
+        targetBalance: toInputAmount(record.targetBalance ?? ''),
+        note: record.note ?? '',
+      });
+    });
     effect(() => {
       const list = this.accounts();
       const control = this.form.controls.accountId;
@@ -53,12 +74,30 @@ export class AdjustPage {
     });
   }
 
+  async remove(): Promise<void> {
+    if (!this.editId) return;
+    if (!this.confirmingDelete()) {
+      this.confirmingDelete.set(true);
+      return;
+    }
+    this.saving.set(true);
+    try {
+      await this.recordsApi.remove(this.editId);
+      this.nav.leave('/records', $localize`:@@record.deleted:Entry deleted.`);
+    } catch (error) {
+      this.toast.show(problemOf(error).message);
+      this.confirmingDelete.set(false);
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
   protected cancel(): void {
     this.nav.leave('/accounts');
   }
 
   async save(): Promise<void> {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.loading() || this.notFound()) {
       this.form.markAllAsTouched();
       return;
     }

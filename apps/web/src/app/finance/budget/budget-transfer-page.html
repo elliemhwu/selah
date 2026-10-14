@@ -1,0 +1,94 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="budget-transfer-title">
+      @if (editing) {
+        <ng-container i18n="@@budgetTransfer.editTitle">Edit budget move</ng-container>
+      } @else {
+        <ng-container i18n="@@budgetTransfer.title">Move budget</ng-container>
+      }
+    </h1>
+    <button type="submit" form="budget-transfer-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@budgetTransfer.notFound">This budget move isn't in the ledger.</p>
+}
+
+<form id="budget-transfer-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="budget-transfer-title">
+  <div class="ledger-row">
+    <label for="bt-date" i18n="@@record.date">Date</label>
+    <input id="bt-date" type="date" formControlName="occurredOn" />
+  </div>
+  @if (form.controls.occurredOn.invalid) {
+    <p class="field-error">{{ errorText(form.controls.occurredOn) }}</p>
+  }
+  @if (noPlan()) {
+    <p class="small muted hint" i18n="@@budgetTransfer.noPlan">No budget plan covers this month, so there's nothing to move.</p>
+  }
+
+  <div class="ledger-row">
+    <label for="bt-from" i18n="@@budgetTransfer.from">From</label>
+    <select id="bt-from" formControlName="fromItemId">
+      <option value="" disabled i18n="@@budgetTransfer.choose">Choose a budget</option>
+      @for (group of itemGroups(); track group.section) {
+        <optgroup [label]="group.label">
+          @for (item of group.items; track item.id) {
+            <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+          }
+        </optgroup>
+      }
+    </select>
+  </div>
+  @if (form.controls.fromItemId.touched && form.controls.fromItemId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.fromItemId) }}</p>
+  } @else if (fromEnvelope(); as envelope) {
+    <p class="small muted hint" i18n="@@budgetTransfer.left">Left in this envelope that day: <span class="amount">{{ envelope.available | money }}</span></p>
+  }
+
+  <div class="ledger-row">
+    <label for="bt-to" i18n="@@budgetTransfer.to">To</label>
+    <select id="bt-to" formControlName="toItemId">
+      <option value="" disabled i18n="@@budgetTransfer.choose">Choose a budget</option>
+      @for (group of itemGroups(); track group.section) {
+        <optgroup [label]="group.label">
+          @for (item of group.items; track item.id) {
+            <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+          }
+        </optgroup>
+      }
+    </select>
+  </div>
+  @if (form.controls.toItemId.touched && form.controls.toItemId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.toItemId) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="bt-amount" i18n="@@record.amount">Amount</label>
+    <input id="bt-amount" class="amount" formControlName="amount" inputmode="numeric" autocomplete="off" />
+  </div>
+  @if (form.controls.amount.touched && form.controls.amount.invalid) {
+    <p class="field-error">{{ errorText(form.controls.amount) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="bt-note" i18n="@@record.note">Note</label>
+    <input id="bt-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+  </div>
+  <p class="small muted hint" i18n="@@budgetTransfer.hint">Moves budget between items, in TWD. Accounts don't change.</p>
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@budgetTransfer.confirmDelete">Tap again to delete this move</ng-container>
+        } @else {
+          <ng-container i18n="@@budgetTransfer.delete">Delete move</ng-container>
+        }
+      </button>
+    </div>
+  }
+</form>

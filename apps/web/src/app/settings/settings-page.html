@@ -1,0 +1,65 @@
+<header class="page-header">
+  <h1 i18n="@@settings.title">Settings</h1>
+  <p class="small muted subtitle" i18n="@@settings.subtitle">How this ledger is kept.</p>
+</header>
+
+<div class="page">
+  <section aria-labelledby="preferences-heading">
+    <h2 id="preferences-heading" class="section-title" i18n="@@settings.preferences">Preferences</h2>
+    @if (settings.status() === 'error') {
+      <div class="empty">
+        <p class="muted" i18n="@@settings.failed">Couldn't load your settings.</p>
+        <button type="button" class="btn" (click)="settings.load()" i18n="@@action.retry">Try again</button>
+      </div>
+    } @else {
+      <form [formGroup]="form">
+        <div class="ledger-row">
+          <label for="set-week" i18n="@@settings.weekStart">Weeks start on</label>
+          <select id="set-week" formControlName="weekStartDay">
+            @for (weekday of weekdays; track weekday.day) {
+              <option [ngValue]="weekday.day">{{ weekday.label }}</option>
+            }
+          </select>
+        </div>
+        <p class="small muted hint" i18n="@@settings.weekStartHint">Weekly budgets, the checklist and weekly resets follow this day.</p>
+
+        <div class="ledger-row">
+          <label for="set-currency" i18n="@@settings.defaultCurrency">Default currency</label>
+          <select id="set-currency" formControlName="defaultCurrency">
+            @for (currency of currencies; track currency) {
+              <option [value]="currency">{{ currency }}</option>
+            }
+          </select>
+        </div>
+        <p class="small muted hint" i18n="@@settings.defaultCurrencyHint">New accounts and entries start in this currency. Budgets and reports stay in TWD.</p>
+      </form>
+    }
+  </section>
+
+  <section aria-labelledby="categories-heading">
+    <h2 id="categories-heading" class="section-title" i18n="@@settings.categories">Categories</h2>
+    @if (categories.isLoading()) {
+      <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+    }
+    @if (categories.error()) {
+      <div class="empty">
+        <p class="muted" i18n="@@settings.categoriesFailed">Couldn't load your categories.</p>
+        <button type="button" class="btn" (click)="categories.reload()" i18n="@@action.retry">Try again</button>
+      </div>
+    } @else if (categories.status() === 'resolved' && tree().length === 0) {
+      <p class="muted" i18n="@@settings.noCategories">No categories yet. They describe what an entry was for, such as Food › Lunch, apart from the budget.</p>
+    } @else {
+      <ul class="categories">
+        @for (category of tree(); track category.id) {
+          <li [style.--depth]="category.depth">
+            <a class="category" [class.sub]="category.depth > 0" [routerLink]="['/settings/categories', category.id]">{{ category.name }}</a>
+          </li>
+        }
+      </ul>
+    }
+    <a class="btn new-category" routerLink="/settings/categories/new">
+      <selah-icon name="add" [size]="16" [weight]="1.8" />
+      <span i18n="@@settings.newCategory">New category</span>
+    </a>
+  </section>
+</div>

@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { type AccountType, CURRENCIES, type Currency } from '@selah/shared-types';
+import { AppSettings } from '../../core/app-settings';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
@@ -40,7 +41,8 @@ export class AccountFormPage {
   protected readonly form = inject(NonNullableFormBuilder).group({
     name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(/\S/)]],
     type: 'cash' as AccountType,
-    currency: 'TWD' as Currency,
+    // A new account starts in the default currency (ADR 0024).
+    currency: inject(AppSettings).value().defaultCurrency as Currency,
     openingBalance: ['0', [Validators.required, Validators.pattern(SIGNED_MONEY_PATTERN)]],
   });
   protected readonly saving = signal(false);

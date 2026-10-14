@@ -23,6 +23,68 @@
         ]
       }
     },
+    "/api/v1/core/settings": {
+      "get": {
+        "operationId": "getSettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "The app settings, or the defaults if never saved",
+        "tags": [
+          "core: settings"
+        ]
+      },
+      "put": {
+        "operationId": "updateSettings",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Replace the app settings (a single resource, no id)",
+        "tags": [
+          "core: settings"
+        ]
+      }
+    },
     "/api/v1/finance/accounts": {
       "get": {
         "operationId": "listAccounts",
@@ -1648,16 +1710,6 @@
           "database"
         ]
       },
-      "AccountType": {
-        "type": "string",
-        "enum": [
-          "cash",
-          "bank",
-          "credit_card",
-          "stored_value",
-          "gift_card"
-        ]
-      },
       "Currency": {
         "type": "string",
         "enum": [
@@ -1666,6 +1718,126 @@
           "EUR",
           "GBP",
           "USD"
+        ],
+        "description": "Preselected for new accounts and entries. Reports stay in TWD."
+      },
+      "SettingsDto": {
+        "type": "object",
+        "properties": {
+          "weekStartDay": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "example": 1,
+            "description": "ISO day of week: 1 = Monday … 7 = Sunday."
+          },
+          "defaultCurrency": {
+            "description": "Preselected for new accounts and entries. Reports stay in TWD.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Null until the settings are first saved; the defaults apply until then."
+          }
+        },
+        "required": [
+          "weekStartDay",
+          "defaultCurrency",
+          "updatedAt"
+        ]
+      },
+      "ProblemDetailsDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "detail": {
+            "type": "string",
+            "example": "The request is invalid."
+          },
+          "errors": {
+            "type": "object",
+            "description": "Messages per field (400 and 422).",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "name": [
+                "name should not be empty"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status"
+        ]
+      },
+      "UpdateSettingsDto": {
+        "type": "object",
+        "properties": {
+          "weekStartDay": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "example": 1,
+            "description": "ISO day of week: 1 = Monday … 7 = Sunday."
+          },
+          "defaultCurrency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          }
+        },
+        "required": [
+          "weekStartDay",
+          "defaultCurrency"
+        ]
+      },
+      "AccountType": {
+        "type": "string",
+        "enum": [
+          "cash",
+          "bank",
+          "credit_card",
+          "stored_value",
+          "gift_card"
         ]
       },
       "AccountDto": {
@@ -1724,47 +1896,6 @@
           "sortOrder",
           "createdAt",
           "updatedAt"
-        ]
-      },
-      "ProblemDetailsDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "example": "about:blank"
-          },
-          "title": {
-            "type": "string",
-            "example": "Bad Request"
-          },
-          "status": {
-            "type": "number",
-            "example": 400
-          },
-          "detail": {
-            "type": "string",
-            "example": "The request is invalid."
-          },
-          "errors": {
-            "type": "object",
-            "description": "Messages per field (400 and 422).",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "example": {
-              "name": [
-                "name should not be empty"
-              ]
-            }
-          }
-        },
-        "required": [
-          "type",
-          "title",
-          "status"
         ]
       },
       "UpsertAccountDto": {

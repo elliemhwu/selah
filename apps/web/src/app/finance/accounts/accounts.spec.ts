@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { Type } from '@angular/core';
+import { signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { AppSettings } from '../../core/app-settings';
 import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import type { AccountDto } from '../data/finance-api';
@@ -113,6 +114,14 @@ describe('account form pages', () => {
       expect(leave).toHaveBeenCalledWith('/accounts', 'Account saved.');
     });
 
+    it('starts a new account in the default currency', () => {
+      TestBed.overrideProvider(AppSettings, {
+        useValue: { value: signal({ weekStartDay: 1, defaultCurrency: 'JPY', updatedAt: null }) },
+      });
+      const fixture = setup(AccountFormPage);
+      expect(formOf<AccountFormPage['form']>(fixture).controls.currency.value).toBe('JPY');
+    });
+
     it('loads the account to edit and shows a refused currency change on its field', async () => {
       const fixture = setup(AccountFormPage, { params: { id: 'Cash' } });
       http.expectOne(`${API}/accounts/Cash`).flush(accounts[0]);
@@ -208,6 +217,38 @@ describe('account form pages', () => {
         lines: [{ amount: '100', fxRate: '32.1' }],
       });
       req.flush({});
+    });
+  });
+
+  describe('editing transfers and adjustments', () => {
+    it('loads a transfer, saves it under the same id, and deletes it after a second tap', async () => {
+      const fixture = setup(TransferPage, { params: { id: 't1' } });
+      http.expectOne(`${API}/records/t1`).flush({
+        id: 't1', type: 'transfer', occurredOn: '2026-10-03', occurredAt: null, accountId: 'Cash', currency: 'TWD',
+        counterAccountId: 'Card', counterAmount: '3200.00', targetBalance: null, note: 'Card bill',
+        lines: [{ id: 'l1', amount: '3200.00', twdAmount: '3200.00', fxRate: null, categoryId: null, budgetItemId: null, note: null }],
+      });
+      http.expectOne(`${API}/fx-rates/last-used`).flush([]);
+      http.expectOne(`${API}/accounts`).flush(accounts);
+      await fixture.whenStable();
+      const form = formOf<TransferPage['form']>(fixture);
+      expect(form.getRawValue()).toMatchObject({ fromAccountId: 'Cash', toAccountId: 'Card', occurredOn: '2026-10-03', amount: '3200', note: 'Card bill' });
+
+      form.patchValue({ amount: '3300' });
+      await submit(fixture);
+      const req = http.expectOne({ method: 'PUT', url: `${API}/records/t1` });
+      expect(req.request.body).toMatchObject({ counterAmount: '3300', lines: [{ amount: '3300' }] });
+      req.flush({});
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const button = () => fixture.nativeElement.querySelector('.danger button') as HTMLButtonElement;
+      button().click();
+      fixture.detectChanges();
+      button().click();
+      http.expectOne({ method: 'DELETE', url: `${API}/records/t1` }).flush(null);
+      await fixture.whenStable();
+      expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
     });
   });
 
