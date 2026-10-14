@@ -112,8 +112,11 @@
     </section>
   }
 
-  <a class="btn new-entry" routerLink="/records/new">
-    <selah-icon name="add" [size]="16" [weight]="1.8" />
-    <span i18n="@@home.add">New entry</span>
-  </a>
+  <div class="actions">
+    <a class="btn" routerLink="/records/catch-up" i18n="@@records.catchUp">Catch up on past days</a>
+    <a class="btn new-entry" routerLink="/records/new">
+      <selah-icon name="add" [size]="16" [weight]="1.8" />
+      <span i18n="@@home.add">New entry</span>
+    </a>
+  </div>
 </div>

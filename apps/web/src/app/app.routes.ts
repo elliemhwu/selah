@@ -24,6 +24,12 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./finance/records/batch-record-page').then((m) => m.BatchRecordPage),
   },
   {
+    path: 'records/catch-up',
+    title: $localize`:@@catchUp.title:Catch up`,
+    data: form,
+    loadComponent: () => import('./finance/records/catch-up-page').then((m) => m.CatchUpPage),
+  },
+  {
     path: 'records',
     title: $localize`:@@nav.records:Records`,
     loadComponent: () => import('./finance/records/records-page').then((m) => m.RecordsPage),
