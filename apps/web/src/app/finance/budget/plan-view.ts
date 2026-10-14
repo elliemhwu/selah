@@ -58,15 +58,21 @@ export function toPlanItem(item: PlanItemDto): PlanItem {
   };
 }
 
-/** Items in tree order within each section: every child right after its parent. */
-export function treeRows(items: readonly PlanItemDto[]): { item: PlanItemDto; depth: number }[] {
+/** Anything placed in the plan's item tree. */
+export interface TreeItem {
+  budgetItemId: string;
+  parentItemId: string | null;
+}
+
+/** Items in tree order: every child right after its parent. */
+export function treeRows<T extends TreeItem>(items: readonly T[]): { item: T; depth: number }[] {
   const ids = new Set(items.map((i) => i.budgetItemId));
-  const children = new Map<string | null, PlanItemDto[]>();
+  const children = new Map<string | null, T[]>();
   for (const item of items) {
     const parent = item.parentItemId && ids.has(item.parentItemId) ? item.parentItemId : null;
     children.set(parent, [...(children.get(parent) ?? []), item]);
   }
-  const rows: { item: PlanItemDto; depth: number }[] = [];
+  const rows: { item: T; depth: number }[] = [];
   const seen = new Set<string>();
   const visit = (parent: string | null, depth: number) => {
     for (const item of children.get(parent) ?? []) {

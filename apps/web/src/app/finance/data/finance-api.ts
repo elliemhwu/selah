@@ -22,6 +22,9 @@ export type BatchRecordInput = ApiSchemas['BatchRecordInput'];
 export type LastUsedRateDto = ApiSchemas['LastUsedRateDto'];
 export type EnvelopeDto = ApiSchemas['EnvelopeDto'];
 export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
+export type MonthlyReviewDto = ApiSchemas['MonthlyReviewDto'];
+export type ItemReviewDto = ApiSchemas['ItemReviewDto'];
+export type BudgetMovementDto = ApiSchemas['BudgetMovementDto'];
 
 export interface RecordQuery {
   from: LocalDate;
@@ -149,6 +152,18 @@ export class RecordsApi {
 export class ReportsApi {
   envelopes(date: () => LocalDate) {
     return httpResource<EnvelopeDto[]>(() => ({ url: `${API}/reports/envelopes`, params: { date: date() } }), {
+      defaultValue: [],
+    });
+  }
+
+  /** Plan vs. actual for a month; errors with 404 when no plan covers it. */
+  monthly(month: () => YearMonth) {
+    return httpResource<MonthlyReviewDto>(() => ({ url: `${API}/reports/monthly`, params: { month: month() } }));
+  }
+
+  /** Manual budget transfers and computed resets in a date range, in date order (ADR 0019). */
+  budgetMovements(range: () => { from: LocalDate; to: LocalDate }) {
+    return httpResource<BudgetMovementDto[]>(() => ({ url: `${API}/reports/budget-transfers`, params: range() }), {
       defaultValue: [],
     });
   }

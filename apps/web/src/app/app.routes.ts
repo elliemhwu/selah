@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-const placeholder = () => import('./shell/placeholder-page').then((m) => m.PlaceholderPage);
 /** Form routes hide the bottom navigation and fill the screen on a phone (ADR 0022). */
 const form = { form: true };
 
@@ -52,7 +51,11 @@ export const appRoutes: Route[] = [
     data: form,
     loadComponent: () => import('./finance/budget/budget-item-page').then((m) => m.BudgetItemPage),
   },
-  { path: 'review', title: $localize`:@@nav.review:Review`, loadComponent: placeholder },
+  {
+    path: 'review',
+    title: $localize`:@@nav.review:Review`,
+    loadComponent: () => import('./finance/review/review-page').then((m) => m.ReviewPage),
+  },
   {
     path: 'accounts',
     title: $localize`:@@nav.accounts:Accounts`,
