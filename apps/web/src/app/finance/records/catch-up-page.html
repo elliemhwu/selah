@@ -1,0 +1,110 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="catch-up-title" i18n="@@catchUp.title">Catch up</h1>
+    <button type="submit" form="catch-up-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+<form id="catch-up-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="catch-up-title">
+  <div class="day">
+    <button type="button" class="btn btn-quiet" (click)="shiftDay(-1)" i18n-aria-label="@@catchUp.previousDay" aria-label="Previous day">‹</button>
+    <label for="cu-date" class="cdk-visually-hidden" i18n="@@record.date">Date</label>
+    <input id="cu-date" type="date" formControlName="occurredOn" [max]="today" />
+    <button type="button" class="btn btn-quiet" (click)="shiftDay(1)" [disabled]="!canGoForward()" i18n-aria-label="@@catchUp.nextDay" aria-label="Next day">›</button>
+  </div>
+  <p class="small muted recorded" role="status">
+    {{ date() | date: 'EEEE d MMMM' }} ·
+    @if (recorded().count === 0) {
+      <ng-container i18n="@@catchUp.nothingYet">nothing recorded yet</ng-container>
+    } @else {
+      <ng-container i18n="@@catchUp.already">already {recorded().count, plural, =1 {1 entry} other {{{ recorded().count }} entries}}, <span class="amount">{{ recorded().spent | money }}</span> spent</ng-container>
+    }
+  </p>
+
+  <div class="ledger-row">
+    <label for="cu-account" i18n="@@record.account">Account</label>
+    <select id="cu-account" formControlName="accountId">
+      @for (a of accountList(); track a.id) {
+        <option [value]="a.id">{{ a.name }}{{ a.currency === 'TWD' ? '' : ' · ' + a.currency }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.accountId.touched && form.controls.accountId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.accountId) }}</p>
+  }
+  @if (foreign()) {
+    <div class="ledger-row">
+      <label for="cu-rate" i18n="@@catchUp.rate">{{ currency() }} rate</label>
+      <input id="cu-rate" class="amount" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+    </div>
+    @if (form.controls.fxRate.touched && form.controls.fxRate.invalid) {
+      <p class="field-error">{{ errorText(form.controls.fxRate) }}</p>
+    } @else {
+      <p class="small muted hint" i18n="@@catchUp.rateHint">TWD for one {{ currency() }}, used for every entry this day.</p>
+    }
+  }
+
+  <ul class="rows" formArrayName="rows">
+    @for (row of form.controls.rows.controls; track row.controls.id.value; let i = $index) {
+      <li [formGroupName]="i">
+        <div class="row-main">
+          <label class="cdk-visually-hidden" [for]="'cu-type-' + i" i18n="@@catchUp.type">Type</label>
+          <select [id]="'cu-type-' + i" formControlName="type" (change)="typeChanged(i)">
+            <option value="expense" i18n="@@record.type.expense">Expense</option>
+            <option value="income" i18n="@@record.type.income">Income</option>
+          </select>
+          <label class="cdk-visually-hidden" [for]="'cu-amount-' + i" i18n="@@record.amount">Amount</label>
+          <input class="amount" [id]="'cu-amount-' + i" formControlName="amount" inputmode="decimal" autocomplete="off" i18n-placeholder="@@record.amount" placeholder="Amount" />
+          <button type="button" class="btn btn-quiet remove" (click)="removeRow(i)" i18n-aria-label="@@catchUp.removeRow" aria-label="Remove this entry">×</button>
+        </div>
+        @if (row.controls.amount.touched && row.controls.amount.invalid) {
+          <p class="field-error">{{ errorText(row.controls.amount) }}</p>
+        }
+        <div class="row-details">
+          <label class="cdk-visually-hidden" [for]="'cu-item-' + i" i18n="@@record.budgetItem">Budget item</label>
+          <select [id]="'cu-item-' + i" formControlName="budgetItemId">
+            <option value="" i18n="@@catchUp.noItem">No budget item</option>
+            @for (group of itemGroups()[row.controls.type.value]; track group.section) {
+              <optgroup [label]="group.label">
+                @for (item of group.items; track item.id) {
+                  <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+                }
+              </optgroup>
+            }
+          </select>
+          <label class="cdk-visually-hidden" [for]="'cu-category-' + i" i18n="@@record.category">Category</label>
+          <select [id]="'cu-category-' + i" formControlName="categoryId">
+            <option value="" i18n="@@catchUp.noCategory">No category</option>
+            @for (category of categoryOptions(); track category.id) {
+              <option [value]="category.id">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
+            }
+          </select>
+          <label class="cdk-visually-hidden" [for]="'cu-note-' + i" i18n="@@record.note">Note</label>
+          <input class="note" [id]="'cu-note-' + i" formControlName="note" autocomplete="off" i18n-placeholder="@@record.note" placeholder="Note" />
+        </div>
+        @for (control of [row.controls.budgetItemId, row.controls.categoryId, row.controls.note]; track $index) {
+          @if (control.invalid) {
+            <p class="field-error">{{ errorText(control) }}</p>
+          }
+        }
+      </li>
+    }
+  </ul>
+
+  <button type="button" class="btn add-row" (click)="addRow()">
+    <selah-icon name="add" [size]="16" [weight]="1.8" />
+    <span i18n="@@catchUp.addRow">Another entry</span>
+  </button>
+
+  @if (canGoForward()) {
+    <button type="button" class="btn btn-primary next-day" [disabled]="saving()" (click)="saveAndNextDay()">
+      @if (filledCount() > 0) {
+        <ng-container i18n="@@catchUp.saveNext">Save {{ filledCount() }} and go to the next day</ng-container>
+      } @else {
+        <ng-container i18n="@@catchUp.next">Nothing to add · next day</ng-container>
+      }
+    </button>
+  }
+  <p class="small muted hint" i18n="@@catchUp.hint">Entries without an amount are skipped. Split receipts and transfers have their own forms.</p>
+</form>
