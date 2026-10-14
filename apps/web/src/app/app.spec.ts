@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { App } from './app';
 
 describe('App', () => {
@@ -12,39 +13,37 @@ describe('App', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     http = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => http.verify());
 
-  function render() {
+  async function render(health: () => void) {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    return fixture;
+    health();
+    await fixture.whenStable();
+    return fixture.nativeElement as HTMLElement;
   }
 
-  it('shows the API health status', async () => {
-    const fixture = render();
-    http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'ok' });
-    await fixture.whenStable();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('h1')?.textContent).toContain('Selah');
-    expect(el.querySelector('.status')?.textContent).toContain(
-      'API ok, database ok',
-    );
+  it('shows the navigation', async () => {
+    const el = await render(() => http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'ok' }));
+    const labels = [...el.querySelectorAll('.bottom-nav .label')].map((l) => l.textContent?.trim());
+    expect(labels).toEqual(['Home', 'Records', 'Budget', 'Review', 'Accounts']);
+    expect(el.querySelector('.offline')).toBeNull();
   });
 
   it('says when the API is unreachable', async () => {
-    const fixture = render();
-    http
-      .expectOne('/api/v1/health')
-      .flush(null, { status: 502, statusText: 'Bad Gateway' });
-    await fixture.whenStable();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.status')?.textContent).toContain(
-      'API unreachable',
+    const el = await render(() =>
+      http.expectOne('/api/v1/health').flush(null, { status: 502, statusText: 'Bad Gateway' }),
     );
+    expect(el.querySelector('.offline')?.textContent).toContain("Can't reach the server");
+  });
+
+  it('says when the database is down', async () => {
+    const el = await render(() => http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'unavailable' }));
+    expect(el.querySelector('.offline')).not.toBeNull();
   });
 });

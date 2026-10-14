@@ -6,6 +6,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
+    "lib": ["es2023", "dom"],
     "emitDecoratorMetadata": false,
     "module": "preserve"
   },
