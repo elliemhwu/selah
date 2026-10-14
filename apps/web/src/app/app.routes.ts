@@ -52,6 +52,18 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./finance/budget/budget-item-page').then((m) => m.BudgetItemPage),
   },
   {
+    path: 'budget/transfers/new',
+    title: $localize`:@@budgetTransfer.title:Move budget`,
+    data: form,
+    loadComponent: () => import('./finance/budget/budget-transfer-page').then((m) => m.BudgetTransferPage),
+  },
+  {
+    path: 'budget/transfers/:id',
+    title: $localize`:@@budgetTransfer.editTitle:Edit budget move`,
+    data: form,
+    loadComponent: () => import('./finance/budget/budget-transfer-page').then((m) => m.BudgetTransferPage),
+  },
+  {
     path: 'review',
     title: $localize`:@@nav.review:Review`,
     loadComponent: () => import('./finance/review/review-page').then((m) => m.ReviewPage),

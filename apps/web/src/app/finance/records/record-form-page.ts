@@ -108,7 +108,7 @@ export class RecordFormPage {
     this.plan.hasValue() ? budgetItemGroups(this.plan.value().items, this.value().type) : [],
   );
   protected readonly noPlan = computed(() => this.plan.status() === 'error');
-  protected readonly categoryOptions = computed(() => categoryTree(this.categories.value()));
+  protected readonly categoryOptions = computed(() => (this.categories.hasValue() ? categoryTree(this.categories.value()) : []));
   private readonly settings = inject(AppSettings);
   private readonly defaultCurrency = computed(() => this.settings.value().defaultCurrency);
 

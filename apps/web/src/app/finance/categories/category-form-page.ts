@@ -32,14 +32,16 @@ export class CategoryFormPage {
   protected readonly categories = this.categoriesApi.list();
 
   protected readonly editing = !!this.editId;
-  protected readonly category = computed(() => this.categories.value().find((c) => c.id === this.editId));
+  /** Guarded: a resource's value() throws while it is in an error state. */
+  private readonly list = computed(() => (this.categories.hasValue() ? this.categories.value() : []));
+  protected readonly category = computed(() => this.list().find((c) => c.id === this.editId));
   protected readonly loading = computed(() => this.categories.isLoading());
   protected readonly notFound = computed(
     () => this.editing && (!!this.categories.error() || (this.categories.status() === 'resolved' && !this.category())),
   );
   /** Any category except this one and its subcategories, which would make a loop. */
   protected readonly parentOptions = computed(() => {
-    const list = this.categories.value();
+    const list = this.list();
     const excluded = this.editId ? categoryWithDescendants(list, this.editId) : new Set<string>();
     return categoryTree(list).filter((c) => !excluded.has(c.id));
   });

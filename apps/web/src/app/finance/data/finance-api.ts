@@ -26,6 +26,8 @@ export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
 export type MonthlyReviewDto = ApiSchemas['MonthlyReviewDto'];
 export type ItemReviewDto = ApiSchemas['ItemReviewDto'];
 export type BudgetMovementDto = ApiSchemas['BudgetMovementDto'];
+export type BudgetTransferDto = ApiSchemas['BudgetTransferDto'];
+export type UpsertBudgetTransferDto = ApiSchemas['UpsertBudgetTransferDto'];
 
 export interface RecordQuery {
   from: LocalDate;
@@ -159,6 +161,29 @@ export class RecordsApi {
   /** Saves several records, all or nothing. */
   upsertBatch(records: BatchRecordInput[]): Promise<RecordDto[]> {
     return firstValueFrom(this.http.put<RecordDto[]>(`${API}/records`, { records }));
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class BudgetTransfersApi {
+  private readonly http = inject(HttpClient);
+
+  /** One manual transfer; no request while `id` is undefined. */
+  get(id: () => string | undefined) {
+    return httpResource<BudgetTransferDto>(() => {
+      const value = id();
+      return value ? `${API}/budget-transfers/${value}` : undefined;
+    });
+  }
+
+  /** Creates or replaces a manual transfer; the caller generates the id (ADR 0017, 0019). */
+  upsert(id: string, transfer: UpsertBudgetTransferDto): Promise<BudgetTransferDto> {
+    return firstValueFrom(this.http.put<BudgetTransferDto>(`${API}/budget-transfers/${id}`, transfer));
+  }
+
+  /** Soft-deletes a manual transfer. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/budget-transfers/${id}`));
   }
 }
 
