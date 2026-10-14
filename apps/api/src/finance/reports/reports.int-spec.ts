@@ -107,7 +107,7 @@ describe('reports API', () => {
     });
 
     it('uses the week start setting', async () => {
-      await t.db.insertInto('core.settings').values({ weekStartDay: 7 }).execute();
+      await t.http().put('/api/v1/core/settings').send({ weekStartDay: 7, defaultCurrency: 'TWD' }).expect(200);
       const envelopes = await get('envelopes?date=2026-10-13');
       expect(byItem(envelopes, ids.daily)).toMatchObject({ resetsOn: '2026-10-17' });
       expect(byItem(envelopes, ids.allowance)).toMatchObject({ period: { start: '2026-10-11', end: '2026-10-17' } });

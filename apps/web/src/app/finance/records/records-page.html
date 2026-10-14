@@ -34,8 +34,8 @@
       <label for="f-category" i18n="@@record.category">Category</label>
       <select id="f-category" (change)="setFilter('categoryId', $any($event.target).value)">
         <option value="" i18n="@@records.any">Any</option>
-        @for (category of categories.value(); track category.id) {
-          <option [value]="category.id" [selected]="category.id === filters().categoryId">{{ category.name }}</option>
+        @for (category of categoryOptions(); track category.id) {
+          <option [value]="category.id" [selected]="category.id === filters().categoryId">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
         }
       </select>
     </div>

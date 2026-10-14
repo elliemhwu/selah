@@ -1,0 +1,55 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="category-title">
+      @if (editing) {
+        <ng-container i18n="@@category.editTitle">Edit category</ng-container>
+      } @else {
+        <ng-container i18n="@@category.newTitle">New category</ng-container>
+      }
+    </h1>
+    <button type="submit" form="category-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@category.notFound">This category isn't in the ledger.</p>
+}
+
+<form id="category-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="category-title">
+  <div class="ledger-row">
+    <label for="cat-name" i18n="@@category.name">Name</label>
+    <input id="cat-name" formControlName="name" autocomplete="off" />
+  </div>
+  @if (form.controls.name.touched && form.controls.name.invalid) {
+    <p class="field-error">{{ errorText(form.controls.name) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="cat-parent" i18n="@@category.parent">Under</label>
+    <select id="cat-parent" formControlName="parentId">
+      <option value="" i18n="@@category.topLevel">Nothing (top level)</option>
+      @for (option of parentOptions(); track option.id) {
+        <option [value]="option.id">{{ option.depth ? '– '.repeat(option.depth) : '' }}{{ option.name }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.parentId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.parentId) }}</p>
+  }
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet delete" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@category.confirmDelete">Tap again to delete {{ category()?.name }}</ng-container>
+        } @else {
+          <ng-container i18n="@@category.delete">Delete category</ng-container>
+        }
+      </button>
+    </div>
+    <p class="small muted hint" i18n="@@category.deleteHint">Entries already filed here keep their amounts, but no longer show this category.</p>
+  }
+</form>

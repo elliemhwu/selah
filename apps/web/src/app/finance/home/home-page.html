@@ -1,7 +1,12 @@
 <header class="page-header">
   <div class="masthead small muted">
     <span>{{ today() | date: 'EEE d MMM y' }}</span>
-    <span class="brand">Selah</span>
+    <span class="masthead-end">
+      <span class="brand">Selah</span>
+      <a class="settings-link" routerLink="/settings">
+        <selah-icon name="settings" [size]="20" i18n-label="@@settings.title" label="Settings" />
+      </a>
+    </span>
   </div>
   <h1 i18n="@@home.title">Pause, and take stock.</h1>
 </header>

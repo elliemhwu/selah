@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { type ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import type { ApiSchemas } from '@selah/api-client';
 import { filter, map } from 'rxjs';
+import { AppSettings } from './core/app-settings';
 import { Icon, type IconName } from './ui/icon';
 import { ToastOutlet } from './ui/toast';
 
@@ -41,6 +42,12 @@ export class App {
   );
 
   private readonly health = httpResource<ApiSchemas['HealthDto']>(() => '/api/v1/health');
+  private readonly settings = inject(AppSettings);
+
+  constructor() {
+    // Loaded once, so forms can read the default currency without a request (ADR 0024).
+    void this.settings.load();
+  }
 
   /** Shown when the API or its database can't be reached. */
   protected readonly offline = computed(
@@ -49,6 +56,7 @@ export class App {
 
   protected retry(): void {
     this.health.reload();
+    if (this.settings.status() === 'error') void this.settings.load();
   }
 }
 

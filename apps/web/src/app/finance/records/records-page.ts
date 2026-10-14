@@ -14,6 +14,7 @@ import {
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
 import { Icon } from '../../ui/icon';
+import { categoryTree } from '../categories/category-tree';
 import { AccountsApi, CategoriesApi, PlanApi, type RecordDto, type RecordQuery, RecordsApi } from '../data/finance-api';
 
 const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -73,6 +74,7 @@ export class RecordsPage {
   protected readonly records = inject(RecordsApi).list(this.request);
   protected readonly accounts = inject(AccountsApi).list();
   protected readonly categories = inject(CategoriesApi).list();
+  protected readonly categoryOptions = computed(() => categoryTree(this.categories.value()));
   private readonly plan = inject(PlanApi).active(this.month);
 
   private readonly accountNames = computed(() => new Map(this.accounts.value().map((a) => [a.id, a.name])));

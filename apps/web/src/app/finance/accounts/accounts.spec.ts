@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { Type } from '@angular/core';
+import { signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { AppSettings } from '../../core/app-settings';
 import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import type { AccountDto } from '../data/finance-api';
@@ -111,6 +112,14 @@ describe('account form pages', () => {
       req.flush({});
       await fixture.whenStable();
       expect(leave).toHaveBeenCalledWith('/accounts', 'Account saved.');
+    });
+
+    it('starts a new account in the default currency', () => {
+      TestBed.overrideProvider(AppSettings, {
+        useValue: { value: signal({ weekStartDay: 1, defaultCurrency: 'JPY', updatedAt: null }) },
+      });
+      const fixture = setup(AccountFormPage);
+      expect(formOf<AccountFormPage['form']>(fixture).controls.currency.value).toBe('JPY');
     });
 
     it('loads the account to edit and shows a refused currency change on its field', async () => {

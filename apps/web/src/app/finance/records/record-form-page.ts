@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,11 +14,13 @@ import {
   yearMonthOf,
 } from '@selah/shared-utils';
 import { map } from 'rxjs';
+import { AppSettings } from '../../core/app-settings';
 import { MoneyPipe } from '../../core/money.pipe';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
+import { categoryTree } from '../categories/category-tree';
 import { AccountsApi, CategoriesApi, PlanApi, type RecordDto, RecordsApi } from '../data/finance-api';
 import { budgetItemGroups, toInputAmount } from './budget-item-options';
 import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from './form-errors';
@@ -106,16 +108,9 @@ export class RecordFormPage {
     this.plan.hasValue() ? budgetItemGroups(this.plan.value().items, this.value().type) : [],
   );
   protected readonly noPlan = computed(() => this.plan.status() === 'error');
-  protected readonly categoryOptions = computed(() => {
-    const list = this.categories.value();
-    const parents = new Map(list.map((c) => [c.id, c.parentId]));
-    const depth = (id: string) => {
-      let d = 0;
-      for (let p = parents.get(id); p && d < list.length; p = parents.get(p)) d++;
-      return d;
-    };
-    return list.map((c) => ({ id: c.id, name: c.name, depth: depth(c.id) }));
-  });
+  protected readonly categoryOptions = computed(() => categoryTree(this.categories.value()));
+  private readonly settings = inject(AppSettings);
+  private readonly defaultCurrency = computed(() => this.settings.value().defaultCurrency);
 
   constructor() {
     // Editing: fill the form once the record arrives; transfers and adjustments have their own forms.
@@ -134,6 +129,13 @@ export class RecordFormPage {
     effect(() => {
       const first = this.accounts.value()[0];
       if (first && !this.editing && !this.form.controls.accountId.value) this.form.controls.accountId.setValue(first.id);
+    });
+    // A new entry starts in the default currency when the account takes it (ADR 0016, 0024).
+    effect(() => {
+      const preferred = this.defaultCurrency();
+      const currency = this.form.controls.currency;
+      if (this.editing || currency.dirty || currency.value === preferred) return;
+      if (this.currencies().includes(preferred)) currency.setValue(preferred);
     });
     // Keep the currency valid for the account.
     effect(() => {
@@ -155,6 +157,15 @@ export class RecordFormPage {
     this.form.controls.currency.valueChanges.pipe(takeUntilDestroyed()).subscribe((currency) => {
       const rate = this.rates.value().find((r) => r.currency === currency)?.rate ?? '';
       this.form.controls.fxRate.setValue(currency === 'TWD' ? '' : rate);
+    });
+    // A foreign default currency can be set before the last-used rates arrive; fill the rate when they do.
+    effect(() => {
+      const rates = this.rates.value();
+      untracked(() => {
+        const { currency, fxRate } = this.form.controls;
+        const rate = rates.find((r) => r.currency === currency.value)?.rate;
+        if (rate && !this.editing && !fxRate.value) fxRate.setValue(rate);
+      });
     });
   }
 
