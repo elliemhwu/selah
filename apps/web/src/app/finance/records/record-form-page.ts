@@ -1,37 +1,37 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { type AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CURRENCIES, type Currency } from '@selah/shared-types';
 import { formatMoney, isRecordCurrencyAllowed, parseMoney, parseRate, toTwd, yearMonthOf } from '@selah/shared-utils';
+import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MoneyPipe } from '../../core/money.pipe';
 import { applyFieldErrors, problemOf } from '../../core/problem';
 import { TODAY } from '../../core/today';
+import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
-import { AccountsApi, CategoriesApi, PlanApi, type RecordDto, RecordsApi } from '../data/finance-api';
+import { AccountsApi, CategoriesApi, PlanApi, RecordsApi } from '../data/finance-api';
 import { budgetItemGroups, toInputAmount } from './budget-item-options';
 import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from './form-errors';
 
-/** What a record starts with, e.g. from a checklist item (requirements §2). */
-export interface RecordDialogData {
-  type?: 'income' | 'expense';
-  budgetItemId?: string | null;
-  amount?: string | null;
-}
 
 const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** The quick record form: one income or expense line. */
+/**
+ * The quick record form: one income or expense line (requirements §2).
+ * Route: `/records/new?type=income&item=<budget item id>&amount=1200.00`,
+ * every parameter optional; a checklist item fills them in (ADR 0022).
+ */
 @Component({
-  selector: 'selah-record-dialog',
+  selector: 'selah-record-form-page',
+  host: { class: 'form-page' },
   imports: [ReactiveFormsModule, MoneyPipe],
-  templateUrl: './record-dialog.html',
-  styleUrl: './record-dialog.scss',
+  templateUrl: './record-form-page.html',
+  styleUrl: './record-form-page.scss',
 })
-export class RecordDialog {
-  private readonly data: RecordDialogData = inject<RecordDialogData | null>(DIALOG_DATA, { optional: true }) ?? {};
-  private readonly dialogRef = inject<DialogRef<RecordDto, RecordDialog>>(DialogRef);
+export class RecordFormPage {
+  private readonly params = inject(ActivatedRoute).snapshot.queryParamMap;
+  private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
   /** Generated once, so saving again after an error never duplicates the record (ADR 0017). */
@@ -39,16 +39,16 @@ export class RecordDialog {
   private readonly today = inject(TODAY)();
 
   protected readonly form = inject(NonNullableFormBuilder).group({
-    type: this.data.type ?? ('expense' as 'income' | 'expense'),
+    type: (this.params.get('type') === 'income' ? 'income' : 'expense') as 'income' | 'expense',
     occurredOn: [this.today, Validators.required],
     accountId: ['', Validators.required],
     currency: 'TWD' as Currency,
     amount: [
-      this.data.amount ? toInputAmount(this.data.amount) : '',
+      toInputAmount(this.params.get('amount') ?? ''),
       [Validators.required, Validators.pattern(MONEY_PATTERN), positiveAmount],
     ],
     fxRate: ['', Validators.pattern(RATE_PATTERN)],
-    budgetItemId: this.data.budgetItemId ?? '',
+    budgetItemId: this.params.get('item') ?? '',
     categoryId: '',
     note: ['', Validators.maxLength(500)],
   });
@@ -124,7 +124,7 @@ export class RecordDialog {
   }
 
   protected cancel(): void {
-    this.dialogRef.close();
+    this.nav.leave('/');
   }
 
   async save(): Promise<void> {
@@ -136,7 +136,7 @@ export class RecordDialog {
     }
     this.saving.set(true);
     try {
-      const record = await this.recordsApi.upsert(this.id, {
+      await this.recordsApi.upsert(this.id, {
         type: v.type,
         occurredOn: v.occurredOn,
         accountId: v.accountId,
@@ -151,7 +151,7 @@ export class RecordDialog {
           },
         ],
       });
-      this.dialogRef.close(record);
+      this.nav.leave('/', $localize`:@@record.saved:Saved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));

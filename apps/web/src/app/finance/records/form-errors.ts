@@ -2,6 +2,8 @@ import type { AbstractControl } from '@angular/forms';
 
 /** Money as the API accepts it: positive, up to 2 decimals (ADR 0006). */
 export const MONEY_PATTERN = /^\d{1,12}(\.\d{1,2})?$/;
+/** Money that may be negative, such as an opening balance or an actual balance. */
+export const SIGNED_MONEY_PATTERN = /^-?\d{1,12}(\.\d{1,2})?$/;
 /** An exchange rate: up to 8 decimals. */
 export const RATE_PATTERN = /^\d{1,10}(\.\d{1,8})?$/;
 

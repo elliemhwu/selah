@@ -1,0 +1,72 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="account-title">
+      @if (editing) {
+        <ng-container i18n="@@account.editTitle">Edit account</ng-container>
+      } @else {
+        <ng-container i18n="@@account.newTitle">New account</ng-container>
+      }
+    </h1>
+    <button type="submit" form="account-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@account.notFound">This account isn't in the ledger.</p>
+}
+
+<form id="account-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="account-title">
+  <div class="ledger-row">
+    <label for="acc-name" i18n="@@account.name">Name</label>
+    <input id="acc-name" formControlName="name" autocomplete="off" cdkFocusInitial />
+  </div>
+  @if (form.controls.name.touched && form.controls.name.invalid) {
+    <p class="field-error">{{ errorText(form.controls.name) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="acc-type" i18n="@@account.type">Type</label>
+    <select id="acc-type" formControlName="type">
+      @for (option of types; track option.type) {
+        <option [value]="option.type">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="ledger-row">
+    <label for="acc-currency" i18n="@@record.currency">Currency</label>
+    <select id="acc-currency" formControlName="currency">
+      @for (currency of currencies; track currency) {
+        <option [value]="currency">{{ currency }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.currency.invalid) {
+    <p class="field-error">{{ errorText(form.controls.currency) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="acc-opening" i18n="@@account.openingBalance">Opening balance</label>
+    <input id="acc-opening" class="amount" formControlName="openingBalance" inputmode="decimal" autocomplete="off" />
+  </div>
+  @if (form.controls.openingBalance.touched && form.controls.openingBalance.invalid) {
+    <p class="field-error">{{ errorText(form.controls.openingBalance) }}</p>
+  } @else {
+    <p class="small muted hint" i18n="@@account.openingHint">Negative for a card that starts with debt.</p>
+  }
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet delete" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@account.confirmDelete">Tap again to delete {{ account()?.name }}</ng-container>
+        } @else {
+          <ng-container i18n="@@account.delete">Delete account</ng-container>
+        }
+      </button>
+    </div>
+  }
+</form>

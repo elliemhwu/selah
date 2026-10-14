@@ -1,10 +1,12 @@
-<header class="dialog-header">
-  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
-  <h2 id="record-title" i18n="@@record.title">New entry</h2>
-  <button type="submit" form="record-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="record-title" i18n="@@record.title">New entry</h1>
+    <button type="submit" form="record-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+  </div>
 </header>
 
-<form id="record-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="record-title">
+<form id="record-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="record-title">
   <fieldset class="segmented type">
     <legend class="cdk-visually-hidden" i18n="@@record.type">Record type</legend>
     <input type="radio" id="rec-expense" formControlName="type" value="expense" />
@@ -56,7 +58,7 @@
       }
     </select>
   </div>
-  @if (accounts.hasValue() && accounts.value().length === 0) {
+  @if (accounts.status() === 'resolved' && accounts.value().length === 0) {
     <p class="hint small muted" i18n="@@record.noAccounts">Add an account first.</p>
   } @else if (form.controls.accountId.touched && form.controls.accountId.invalid) {
     <p class="field-error">{{ errorText(form.controls.accountId) }}</p>

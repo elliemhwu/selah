@@ -1,13 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Dialog } from '@angular/cdk/dialog';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
 import { TODAY } from '../../core/today';
 import type { ChecklistItemDto, EnvelopeDto } from '../data/finance-api';
-import { BatchRecordDialog } from '../records/batch-record-dialog';
-import { RecordDialog } from '../records/record-dialog';
 import { HomePage } from './home-page';
 
 const envelope: EnvelopeDto = {
@@ -44,10 +40,8 @@ const checklistItem = (budgetItemId: string, name: string, done = false): Checkl
 
 describe('HomePage', () => {
   let http: HttpTestingController;
-  let open: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    open = vi.fn(() => ({ closed: of(undefined) }));
     TestBed.configureTestingModule({
       imports: [HomePage],
       providers: [
@@ -55,7 +49,6 @@ describe('HomePage', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: TODAY, useValue: () => '2026-10-07' },
-        { provide: Dialog, useValue: { open } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -92,31 +85,26 @@ describe('HomePage', () => {
     expect(rows[1].querySelector('input.check')).toBeNull();
   });
 
-  it('opens the record form pre-filled from a checklist item', async () => {
+  it('links a checklist item to the entry form, pre-filled', async () => {
     const { el } = await render([], [checklistItem('salary', 'Salary')]);
-    el.querySelector<HTMLButtonElement>('.checklist .item')?.click();
-    expect(open).toHaveBeenCalledWith(
-      RecordDialog,
-      expect.objectContaining({ data: { type: 'income', budgetItemId: 'salary', amount: '1200.00' } }),
-    );
+    const href = el.querySelector<HTMLAnchorElement>('.checklist .item')?.getAttribute('href');
+    expect(href).toBe('/records/new?type=income&item=salary&amount=1200.00');
   });
 
-  it('records the selected items together', async () => {
+  it('links the selected items to batch entry', async () => {
     const items = [checklistItem('rent', 'Rent'), checklistItem('power', 'Electricity'), checklistItem('water', 'Water')];
     const { el, fixture } = await render([], items);
     const boxes = el.querySelectorAll<HTMLInputElement>('.checklist input[type=checkbox]');
-    boxes[0].click();
     boxes[2].click();
+    boxes[0].click();
     fixture.detectChanges();
-    const button = [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Record 2 selected'));
-    button?.click();
-    expect(open).toHaveBeenCalledWith(BatchRecordDialog, expect.objectContaining({ data: { items: [items[0], items[2]] } }));
+    const link = [...el.querySelectorAll('a')].find((a) => a.textContent?.includes('Record 2 selected'));
+    expect(link?.getAttribute('href')).toBe('/records/batch?items=rent,water&date=2026-10-07');
   });
 
-  it('opens an empty record form from the + button', async () => {
+  it('links New entry to an empty form', async () => {
     const { el } = await render([], []);
-    el.querySelector<HTMLButtonElement>('.new-entry')?.click();
-    expect(open).toHaveBeenCalledWith(RecordDialog, expect.objectContaining({ data: {} }));
+    expect(el.querySelector('.new-entry')?.getAttribute('href')).toBe('/records/new');
   });
 
   it('says when no plan covers this month', async () => {

@@ -1,10 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { FormNavigation } from '../../ui/form-navigation';
 import { TODAY } from '../../core/today';
 import type { AccountDto, PlanVersionDto } from '../data/finance-api';
-import { RecordDialog, type RecordDialogData } from './record-dialog';
+import { RecordFormPage } from './record-form-page';
 
 const API = '/api/v1/finance';
 const account = (id: string, currency: AccountDto['currency']) =>
@@ -18,20 +19,20 @@ const plan = {
   ],
 } as PlanVersionDto;
 
-describe('RecordDialog', () => {
+describe('RecordFormPage', () => {
   let http: HttpTestingController;
-  let close: ReturnType<typeof vi.fn>;
+  let leave: ReturnType<typeof vi.fn>;
 
-  function setup(data: RecordDialogData = {}) {
-    close = vi.fn();
+  function setup(query: Record<string, string> = {}) {
+    leave = vi.fn();
     TestBed.configureTestingModule({
-      imports: [RecordDialog],
+      imports: [RecordFormPage],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: TODAY, useValue: () => '2026-10-07' },
-        { provide: DIALOG_DATA, useValue: data },
-        { provide: DialogRef, useValue: { close } },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(query) } } },
+        { provide: FormNavigation, useValue: { leave } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -40,7 +41,7 @@ describe('RecordDialog', () => {
   afterEach(() => http.verify());
 
   async function render() {
-    const fixture = TestBed.createComponent(RecordDialog);
+    const fixture = TestBed.createComponent(RecordFormPage);
     fixture.detectChanges();
     http.expectOne(`${API}/accounts`).flush([account('cash', 'TWD'), account('usd', 'USD')]);
     http.expectOne(`${API}/categories`).flush([]);
@@ -58,10 +59,10 @@ describe('RecordDialog', () => {
       el.querySelector('form')?.dispatchEvent(new Event('submit'));
       await fixture.whenStable();
     };
-    return { fixture, el, type, submit, component: fixture.componentInstance as unknown as { form: RecordDialog['form'] } };
+    return { fixture, el, type, submit, component: fixture.componentInstance as unknown as { form: RecordFormPage['form'] } };
   }
 
-  it('saves an expense on the first account, then closes with it', async () => {
+  it('saves an expense on the first account, then leaves the form', async () => {
     setup();
     const { type, submit } = await render();
     type('amount', '150');
@@ -78,11 +79,11 @@ describe('RecordDialog', () => {
     });
     req.flush({ id: 'saved' });
     await Promise.resolve();
-    expect(close).toHaveBeenCalledWith({ id: 'saved' });
+    expect(leave).toHaveBeenCalledWith('/', 'Saved.');
   });
 
   it('starts from a checklist item and keeps the id when saving again', async () => {
-    setup({ type: 'income', budgetItemId: 'salary', amount: '60000.00' });
+    setup({ type: 'income', item: 'salary', amount: '60000.00' });
     const { submit, component, fixture } = await render();
     expect(component.form.getRawValue()).toMatchObject({ type: 'income', budgetItemId: 'salary', amount: '60000' });
 
@@ -103,7 +104,7 @@ describe('RecordDialog', () => {
   });
 
   it('drops a budget item that does not fit the record type', async () => {
-    setup({ budgetItemId: 'salary' });
+    setup({ item: 'salary' });
     const { component } = await render();
     expect(component.form.controls.budgetItemId.value).toBe('');
   });

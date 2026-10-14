@@ -1,7 +1,9 @@
 import { httpResource } from '@angular/common/http';
-import { Component, computed } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { type ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import type { ApiSchemas } from '@selah/api-client';
+import { filter, map } from 'rxjs';
 import { Icon, type IconName } from './ui/icon';
 import { ToastOutlet } from './ui/toast';
 
@@ -11,7 +13,7 @@ interface NavItem {
   label: string;
 }
 
-/** The app shell: the current screen, the bottom navigation, and toasts (ADR 0021). */
+/** The app shell: the current screen, the bottom navigation, and toasts (ADR 0021, 0022). */
 @Component({
   imports: [Icon, RouterLink, RouterLinkActive, RouterOutlet, ToastOutlet],
   selector: 'selah-root',
@@ -27,6 +29,17 @@ export class App {
     { path: '/accounts', icon: 'accounts', label: $localize`:@@nav.accounts:Accounts` },
   ];
 
+  private readonly router = inject(Router);
+
+  /** Form routes fill the screen, so the bottom navigation steps aside (ADR 0022). */
+  protected readonly onForm = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => isFormRoute(this.router.routerState.snapshot.root)),
+    ),
+    { initialValue: false },
+  );
+
   private readonly health = httpResource<ApiSchemas['HealthDto']>(() => '/api/v1/health');
 
   /** Shown when the API or its database can't be reached. */
@@ -37,4 +50,11 @@ export class App {
   protected retry(): void {
     this.health.reload();
   }
+}
+
+/** True when the deepest active route is marked `data: { form: true }`. */
+function isFormRoute(route: ActivatedRouteSnapshot): boolean {
+  let deepest = route;
+  while (deepest.firstChild) deepest = deepest.firstChild;
+  return deepest.data['form'] === true;
 }
