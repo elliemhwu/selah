@@ -116,6 +116,15 @@ describe('ReviewPage', () => {
     expect(text(el.querySelector('.movements'))).toContain('Resets later this month assume nothing more is spent.');
   });
 
+  it('opens manual budget moves for editing, but not computed resets', async () => {
+    const el = await render(review);
+    const movements = [...el.querySelectorAll('.movement')];
+    expect(movements[0].getAttribute('href')).toBeNull();
+    expect(movements[1].getAttribute('href')).toBe('/budget/transfers/m1');
+    // In the current month, a new move is dated today.
+    expect(el.querySelector('.move-budget')?.getAttribute('href')).toBe('/budget/transfers/new?date=2026-10-07');
+  });
+
   it('says when no plan covers the month', async () => {
     const el = await render(404);
     expect(el.textContent).toContain('No plan covers this month');

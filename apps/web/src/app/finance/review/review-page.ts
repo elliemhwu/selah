@@ -27,7 +27,8 @@ export class ReviewPage {
   private readonly router = inject(Router);
   private readonly reports = inject(ReportsApi);
   private readonly query = inject(ActivatedRoute).snapshot.queryParamMap;
-  private readonly todayMonth = yearMonthOf(inject(TODAY)());
+  private readonly today = inject(TODAY)();
+  private readonly todayMonth = yearMonthOf(this.today);
   protected readonly month = signal<YearMonth>(this.monthFromQuery());
 
   protected readonly review = this.reports.monthly(this.month);
@@ -36,6 +37,12 @@ export class ReviewPage {
     to: endOfMonth(`${this.month()}-01`),
   }));
 
+  /** A new budget move is dated inside the month shown: its last day once it's over, else today or its first day. */
+  protected readonly transferDate = computed(() => {
+    const month = this.month();
+    if (month < this.todayMonth) return endOfMonth(`${month}-01`);
+    return month === this.todayMonth ? this.today : `${month}-01`;
+  });
   /** A month that hasn't ended yet: its resets are projections (ADR 0019). */
   protected readonly monthOpen = computed(() => this.month() >= this.todayMonth);
   protected readonly noPlan = computed(() => {

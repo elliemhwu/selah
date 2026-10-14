@@ -93,30 +93,34 @@
       }
       <ul class="items">
         @for (movement of movements.value(); track $index) {
-          <li class="movement">
-            <span class="item-text">
-              <span>
-                {{ itemName(movement.fromItemId) }} →
-                @if (movement.toItemId) {
-                  {{ itemName(movement.toItemId) }}
-                } @else {
-                  <span class="muted" i18n="@@review.letGo">let go</span>
-                }
+          <li>
+            <!-- Manual transfers open for editing; computed resets have no id and no link. -->
+            <a class="movement" [routerLink]="movement.kind === 'manual' && movement.id ? ['/budget/transfers', movement.id] : null">
+              <span class="item-text">
+                <span>
+                  {{ itemName(movement.fromItemId) }} →
+                  @if (movement.toItemId) {
+                    {{ itemName(movement.toItemId) }}
+                  } @else {
+                    <span class="muted" i18n="@@review.letGo">let go</span>
+                  }
+                </span>
+                <span class="small muted">
+                  {{ movement.occurredOn | date: 'EEE d MMM' }}
+                  @if (movement.kind === 'reset') {
+                    <ng-container i18n="@@review.reset"> · reset</ng-container>
+                  } @else if (movement.note) {
+                    · {{ movement.note }}
+                  }
+                </span>
               </span>
-              <span class="small muted">
-                {{ movement.occurredOn | date: 'EEE d MMM' }}
-                @if (movement.kind === 'reset') {
-                  <ng-container i18n="@@review.reset"> · reset</ng-container>
-                } @else if (movement.note) {
-                  · {{ movement.note }}
-                }
-              </span>
-            </span>
-            <span class="leader" aria-hidden="true"></span>
-            <span class="amount item-amount" [class.negative]="isNegative(movement.amount)">{{ movement.amount | money }}</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="amount item-amount" [class.negative]="isNegative(movement.amount)">{{ movement.amount | money }}</span>
+            </a>
           </li>
         }
       </ul>
+      <a class="btn move-budget" routerLink="/budget/transfers/new" [queryParams]="{ date: transferDate() }" i18n="@@review.moveBudget">Move between budgets</a>
       @if (monthOpen()) {
         <p class="small muted note" i18n="@@review.resetNote">Resets later this month assume nothing more is spent.</p>
       }

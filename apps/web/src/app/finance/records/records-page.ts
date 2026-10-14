@@ -74,7 +74,7 @@ export class RecordsPage {
   protected readonly records = inject(RecordsApi).list(this.request);
   protected readonly accounts = inject(AccountsApi).list();
   protected readonly categories = inject(CategoriesApi).list();
-  protected readonly categoryOptions = computed(() => categoryTree(this.categories.value()));
+  protected readonly categoryOptions = computed(() => (this.categories.hasValue() ? categoryTree(this.categories.value()) : []));
   private readonly plan = inject(PlanApi).active(this.month);
 
   private readonly accountNames = computed(() => new Map(this.accounts.value().map((a) => [a.id, a.name])));
