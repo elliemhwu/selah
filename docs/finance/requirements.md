@@ -1,6 +1,6 @@
 # Finance Module — MVP Requirements
 
-Status: **agreed** (2026-10-05). Single user, running locally; deployment comes later.
+Status: **agreed** (2026-10-05). Single user. **Offline-first** (2026-10-14): the device holds all the data, and a server for sync and backup comes later ([ADR 0025](../decisions/0025-offline-first.md)).
 
 The module separates two layers of money:
 
@@ -118,10 +118,11 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ## 6. Out of scope
 
-Tax filing, multiple users and sharing, Moze import, investments, loans, receipt photos, live exchange rates, offline sync.
+Tax filing, multiple users and sharing, Moze import, investments, loans, receipt photos, live exchange rates.
 
 ## 7. Technical notes
 
+- **Offline-first** ([ADR 0025](../decisions/0025-offline-first.md)): every view and every kind of entry works with no connection. Data is kept on the device and can be exported and imported as a file; sync between devices comes once a server is chosen.
 - **Offline-ready schema:** client-generated UUIDs, `created_at` / `updated_at` on every row, soft deletes.
 - **Finance math** (rounding, percentage splits, cadence conversion, rollover and reset calculation, FX) lives in `libs/shared-utils` as pure functions, so it can be ported to C# later.
 - **API:** OpenAPI/Swagger from day one, for the planned migration of `apps/api` to .NET.
