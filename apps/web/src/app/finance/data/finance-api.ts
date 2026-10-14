@@ -23,6 +23,15 @@ export type LastUsedRateDto = ApiSchemas['LastUsedRateDto'];
 export type EnvelopeDto = ApiSchemas['EnvelopeDto'];
 export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
 
+export interface RecordQuery {
+  from: LocalDate;
+  to: LocalDate;
+  accountId?: string;
+  categoryId?: string;
+  budgetItemId?: string;
+  type?: RecordDto['type'];
+}
+
 @Injectable({ providedIn: 'root' })
 export class AccountsApi {
   private readonly http = inject(HttpClient);
@@ -94,6 +103,35 @@ export class RecordsApi {
 
   lastUsedRates() {
     return httpResource<LastUsedRateDto[]>(() => `${API}/fx-rates/last-used`, { defaultValue: [] });
+  }
+
+  /** Records in a date range, newest first, with optional filters. */
+  list(query: () => RecordQuery) {
+    return httpResource<RecordDto[]>(
+      () => {
+        const q = query();
+        const params: Record<string, string> = { from: q.from, to: q.to };
+        for (const key of ['accountId', 'categoryId', 'budgetItemId', 'type'] as const) {
+          const value = q[key];
+          if (value) params[key] = value;
+        }
+        return { url: `${API}/records`, params };
+      },
+      { defaultValue: [] },
+    );
+  }
+
+  /** One record with its lines; no request while `id` is undefined. */
+  get(id: () => string | undefined) {
+    return httpResource<RecordDto>(() => {
+      const value = id();
+      return value ? `${API}/records/${value}` : undefined;
+    });
+  }
+
+  /** Soft-deletes a record and its lines. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/records/${id}`));
   }
 
   /** Creates or replaces a record; the caller generates the id (ADR 0017). */

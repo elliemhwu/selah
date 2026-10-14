@@ -211,6 +211,38 @@ describe('account form pages', () => {
     });
   });
 
+  describe('editing transfers and adjustments', () => {
+    it('loads a transfer, saves it under the same id, and deletes it after a second tap', async () => {
+      const fixture = setup(TransferPage, { params: { id: 't1' } });
+      http.expectOne(`${API}/records/t1`).flush({
+        id: 't1', type: 'transfer', occurredOn: '2026-10-03', occurredAt: null, accountId: 'Cash', currency: 'TWD',
+        counterAccountId: 'Card', counterAmount: '3200.00', targetBalance: null, note: 'Card bill',
+        lines: [{ id: 'l1', amount: '3200.00', twdAmount: '3200.00', fxRate: null, categoryId: null, budgetItemId: null, note: null }],
+      });
+      http.expectOne(`${API}/fx-rates/last-used`).flush([]);
+      http.expectOne(`${API}/accounts`).flush(accounts);
+      await fixture.whenStable();
+      const form = formOf<TransferPage['form']>(fixture);
+      expect(form.getRawValue()).toMatchObject({ fromAccountId: 'Cash', toAccountId: 'Card', occurredOn: '2026-10-03', amount: '3200', note: 'Card bill' });
+
+      form.patchValue({ amount: '3300' });
+      await submit(fixture);
+      const req = http.expectOne({ method: 'PUT', url: `${API}/records/t1` });
+      expect(req.request.body).toMatchObject({ counterAmount: '3300', lines: [{ amount: '3300' }] });
+      req.flush({});
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const button = () => fixture.nativeElement.querySelector('.danger button') as HTMLButtonElement;
+      button().click();
+      fixture.detectChanges();
+      button().click();
+      http.expectOne({ method: 'DELETE', url: `${API}/records/t1` }).flush(null);
+      await fixture.whenStable();
+      expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
+    });
+  });
+
   describe('AdjustPage', () => {
     it('adjusts to the actual balance with no lines', async () => {
       const fixture = setup(AdjustPage, { query: { account: 'USD' } });
