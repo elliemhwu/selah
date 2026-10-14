@@ -8,7 +8,7 @@ Context for AI assistants (and humans) working in this repo. Keep it short and c
 
 - Current status and next steps: [docs/roadmap.md](docs/roadmap.md). **Read this first** and update it when a phase moves.
 - Finance requirements: [docs/finance/requirements.md](docs/finance/requirements.md)
-- Architecture decisions: [docs/decisions/](docs/decisions/). Follow the decisions marked *Accepted*. *Proposed* ones still need the owner's confirmation.
+- Architecture decisions: [docs/decisions/](docs/decisions/). Follow the decisions marked _Accepted_. _Proposed_ ones still need the owner's confirmation.
 
 ## Stack
 
@@ -27,6 +27,12 @@ Nx monorepo:
   - Every endpoint has full OpenAPI decorators.
   - Business logic lives in services, not controllers.
   - Avoid NestJS-only magic in domain logic.
+- **Regenerate after changing the contract:** run `pnpm db:codegen` after a migration and `pnpm openapi` after changing endpoints or DTOs (it also regenerates `libs/api-client`). Commit the generated files.
+- **Web → API calls** ([ADR 0015](docs/decisions/0015-api-client-generation.md)): plain `HttpClient` / `httpResource`, typed with DTOs from `@selah/api-client` (never hand-written or from `shared-types`). Put calls in per-feature services, not components.
+- **Every UI string is translatable** ([ADR 0020](docs/decisions/0020-web-ui-foundation.md)): use `i18n` attributes in templates and `$localize` in code, each with an `@@id`. Run `pnpm nx run web:extract-i18n` after changing UI text and commit `apps/web/src/locale/messages.xlf`. Show money with the `money` pipe, never as a JS `number`.
+- **The Linen ledger look** ([ADR 0021](docs/decisions/0021-linen-ledger-ui.md)): no Angular Material. Use the CDK for behaviour, the classes and CSS tokens in `apps/web/src/styles.scss` for the look, and `apps/web/src/app/ui/` for shared pieces. Never hard-code a colour or font.
+- **Nx loads `.env` into every task**, the Angular dev server included. Use prefixed env names (`API_PORT`, not `PORT`).
+- **API conventions** ([ADR 0017](docs/decisions/0017-api-conventions.md)): `PUT /{id}` upserts with client ids, `DELETE` soft-deletes, errors are Problem Details. Services throw the errors in `apps/api/src/common/errors.ts`, never NestJS HTTP exceptions. Cover endpoints with `*.int-spec.ts` tests (`pnpm nx run api:integration`).
 - **Finance math only in `libs/shared-utils`** ([ADR 0005](docs/decisions/0005-finance-math-in-shared-utils.md)): rounding, percentages, cadence conversion, rollover, FX.
   - Pure functions with no framework imports, each with unit tests.
   - Other code calls these functions and never reimplements the math inline.

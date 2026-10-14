@@ -1,0 +1,104 @@
+<header class="dialog-header">
+  <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+  <h2 id="record-title" i18n="@@record.title">New entry</h2>
+  <button type="submit" form="record-form" class="btn btn-primary" [disabled]="saving()" i18n="@@action.save">Save</button>
+</header>
+
+<form id="record-form" class="dialog-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="record-title">
+  <fieldset class="segmented type">
+    <legend class="cdk-visually-hidden" i18n="@@record.type">Record type</legend>
+    <input type="radio" id="rec-expense" formControlName="type" value="expense" />
+    <label for="rec-expense" i18n="@@record.type.expense">Expense</label>
+    <input type="radio" id="rec-income" formControlName="type" value="income" />
+    <label for="rec-income" i18n="@@record.type.income">Income</label>
+  </fieldset>
+
+  <div class="amount-box">
+    <label for="rec-amount" i18n="@@record.amount">Amount</label>
+    <div class="amount-line">
+      <select formControlName="currency" i18n-aria-label="@@record.currency" aria-label="Currency">
+        @for (currency of currencies(); track currency) {
+          <option [value]="currency">{{ currency }}</option>
+        }
+      </select>
+      <input id="rec-amount" formControlName="amount" inputmode="decimal" autocomplete="off" cdkFocusInitial />
+    </div>
+  </div>
+  @if (form.controls.amount.touched && form.controls.amount.invalid) {
+    <p class="field-error">{{ errorText(form.controls.amount) }}</p>
+  }
+
+  @if (foreign()) {
+    <div class="ledger-row">
+      <label for="rec-rate" i18n="@@record.fxRate">TWD per {{ form.controls.currency.value }}</label>
+      <input id="rec-rate" formControlName="fxRate" inputmode="decimal" autocomplete="off" />
+    </div>
+    @if (form.controls.fxRate.touched && form.controls.fxRate.invalid) {
+      <p class="field-error">{{ errorText(form.controls.fxRate) }}</p>
+    } @else if (twdPreview(); as twd) {
+      <p class="hint small muted" i18n="@@record.twdPreview">= <span class="amount">{{ twd | money }}</span> TWD</p>
+    }
+  }
+
+  <div class="ledger-row">
+    <label for="rec-date" i18n="@@record.date">Date</label>
+    <input id="rec-date" type="date" formControlName="occurredOn" />
+  </div>
+  @if (form.controls.occurredOn.touched && form.controls.occurredOn.invalid) {
+    <p class="field-error">{{ errorText(form.controls.occurredOn) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="rec-account" i18n="@@record.account">Account</label>
+    <select id="rec-account" formControlName="accountId">
+      @for (account of accounts.value(); track account.id) {
+        <option [value]="account.id">{{ account.name }} · {{ account.currency }}</option>
+      }
+    </select>
+  </div>
+  @if (accounts.hasValue() && accounts.value().length === 0) {
+    <p class="hint small muted" i18n="@@record.noAccounts">Add an account first.</p>
+  } @else if (form.controls.accountId.touched && form.controls.accountId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.accountId) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="rec-item" i18n="@@record.budgetItem">Budget item</label>
+    <select id="rec-item" formControlName="budgetItemId">
+      <option value="" i18n="@@record.none">None</option>
+      @for (group of itemGroups(); track group.section) {
+        <optgroup [label]="group.label">
+          @for (item of group.items; track item.id) {
+            <option [value]="item.id">{{ item.depth ? '– '.repeat(item.depth) : '' }}{{ item.name }}</option>
+          }
+        </optgroup>
+      }
+    </select>
+  </div>
+  @if (noPlan()) {
+    <p class="hint small muted" i18n="@@record.noPlan">No plan covers this month.</p>
+  } @else if (form.controls.budgetItemId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.budgetItemId) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="rec-category" i18n="@@record.category">Category</label>
+    <select id="rec-category" formControlName="categoryId">
+      <option value="" i18n="@@record.none">None</option>
+      @for (category of categoryOptions(); track category.id) {
+        <option [value]="category.id">{{ category.depth ? '– '.repeat(category.depth) : '' }}{{ category.name }}</option>
+      }
+    </select>
+  </div>
+  @if (form.controls.categoryId.invalid) {
+    <p class="field-error">{{ errorText(form.controls.categoryId) }}</p>
+  }
+
+  <div class="ledger-row">
+    <label for="rec-note" i18n="@@record.note">Note</label>
+    <input id="rec-note" formControlName="note" autocomplete="off" i18n-placeholder="@@record.optional" placeholder="Optional" />
+  </div>
+  @if (form.controls.note.invalid) {
+    <p class="field-error">{{ errorText(form.controls.note) }}</p>
+  }
+</form>

@@ -20,23 +20,25 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ## 2. Records
 
-| Type | Accounts | Budget |
-|---|---|---|
-| `income` | + one account | links to an Income plan item |
-| `expense` | − one account | optional budget item |
-| `transfer` | − from-account, + to-account | none |
-| `adjustment` | set the balance to an actual value; the difference is recorded | none |
+| Type         | Accounts                                                                                                                         | Budget                    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `income`     | + one account                                                                                                                    | optional Income plan item |
+| `expense`    | − one account                                                                                                                    | optional budget item      |
+| `transfer`   | − from-account, + to-account                                                                                                     | none                      |
+| `adjustment` | set the balance to an actual value; the difference is calculated ([ADR 0014](../decisions/0014-record-dates-and-adjustments.md)) | none                      |
 
 - **Structure:** a record has one or more **lines**.
   - The record holds the shared fields: date/time, type, account(s), currency, note.
   - Each line holds amount, category, budget item and note.
   - A normal entry has one line. A split receipt has several.
   - Reports total **lines**, not records.
+- **Budget item:** optional on income and expense lines; not all income or spending is planned. A linked item must be in the matching section: Income items for income, any other section for expenses. Transfers and adjustments have none.
 - **Category:** optional, from a separate category tree. When a line has no category, the UI shows its budget item instead.
 - **Currency:**
   - Every record has a currency (default TWD). The UI always shows a currency button labelled `TWD` that opens the full list when tapped.
   - Supported currencies: **TWD, JPY, EUR, GBP, USD**.
   - A foreign-currency line stores its original amount **and** its TWD amount. The rate field is pre-filled with the last rate used for that currency and can be edited.
+  - A record's currency must equal its account's currency, unless the account is TWD ([ADR 0016](../decisions/0016-record-currency-and-account-currency.md)).
   - Transfers store both the amount out and the amount in, so currency exchanges keep the exact rate.
   - Budgets are always in TWD.
 - **Ways to enter records:**
@@ -48,13 +50,13 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 ## 3. Budget plan
 
 - **Versions:**
-  - A plan has versions, each taking effect from a chosen month. Old versions are kept read-only.
+  - A plan has versions, each taking effect from a chosen month. Only the newest version can change; older versions are kept read-only, as a log of how the plan changed ([ADR 0018](../decisions/0018-plan-api.md)).
   - Plans are typically revised annually, half-yearly, or when the salary structure changes.
   - Plan items keep a **stable identity across versions**, so reports can compare "Food" between versions.
 - **Sections, in order:**
   1. **Income** — expected income
   2. **Government** — government insurance, income tax, health insurance, etc.
-  3. *Remaining amount = the allocation base*
+  3. _Remaining amount = the allocation base_
   4. **Offerings**, **Savings**, **Expenses**
 - **Item tree:** any item may have an optional parent item. Item depth is not fixed.
 - **Cadence:**
@@ -67,6 +69,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
   - In the editor, changing either field updates the other.
   - When the base changes, percentage-anchored items are recalculated and fixed items keep their amount.
   - The default base is income after government expenses; the backend supports other bases.
+  - Percentages apply to a month's base, so daily and weekly items are always fixed amounts ([ADR 0019](../decisions/0019-budget-transfers-and-reports.md)).
   - Percentages are shown mainly at section and top level. Sub-items focus on amounts.
 - **Converting cadences** for monthly totals: `monthly = weekly × 52 / 12`, `daily × days in the month`.
 - **Plans and records are stored independently.** They are compared only in the review views.
@@ -90,7 +93,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ### 3.2 Budget transfers
 
-- A budget transfer moves an amount between budget items. It **never touches accounts**.
+- A budget transfer moves an amount between budget items. It **never touches accounts**. Income items are not budgets, so they take no transfers, don't roll over, and receive no carried resets ([ADR 0019](../decisions/0019-budget-transfers-and-reports.md)).
   - Example: 500 of leftover allowance moved to Travel or Savings.
 - It has a date/time and a kind: `manual`, or `reset` (computed in the MVP).
 - In the form, the period defaults to the previous month.
