@@ -20,10 +20,28 @@
   display: flex;
   justify-content: space-between;
 
+  align-items: center;
+
   .brand {
     font-family: var(--font-title);
     font-style: italic;
   }
+}
+
+.masthead-end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  margin-right: -12px;
+  color: var(--ink-muted);
 }
 
 .page {

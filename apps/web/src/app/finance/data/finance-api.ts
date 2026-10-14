@@ -12,6 +12,7 @@ const API = '/api/v1/finance';
 export type AccountDto = ApiSchemas['AccountDto'];
 export type UpsertAccountDto = ApiSchemas['UpsertAccountDto'];
 export type CategoryDto = ApiSchemas['CategoryDto'];
+export type UpsertCategoryDto = ApiSchemas['UpsertCategoryDto'];
 export type PlanVersionDto = ApiSchemas['PlanVersionDto'];
 export type PlanItemDto = ApiSchemas['PlanItemDto'];
 export type PlanVersionSummaryDto = ApiSchemas['PlanVersionSummaryDto'];
@@ -64,8 +65,21 @@ export class AccountsApi {
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesApi {
+  private readonly http = inject(HttpClient);
+
+  /** Every category, flat; build the tree with `categoryTree`. */
   list() {
     return httpResource<CategoryDto[]>(() => `${API}/categories`, { defaultValue: [] });
+  }
+
+  /** Creates or replaces a category; the caller generates the id (ADR 0017). */
+  upsert(id: string, category: UpsertCategoryDto): Promise<CategoryDto> {
+    return firstValueFrom(this.http.put<CategoryDto>(`${API}/categories/${id}`, category));
+  }
+
+  /** Soft-deletes a category; refused with 409 while it has subcategories. */
+  remove(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${API}/categories/${id}`));
   }
 }
 

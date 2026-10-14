@@ -97,5 +97,22 @@ export const appRoutes: Route[] = [
     data: form,
     loadComponent: () => import('./finance/accounts/account-form-page').then((m) => m.AccountFormPage),
   },
+  {
+    path: 'settings',
+    title: $localize`:@@settings.title:Settings`,
+    loadComponent: () => import('./settings/settings-page').then((m) => m.SettingsPage),
+  },
+  {
+    path: 'settings/categories/new',
+    title: $localize`:@@category.newTitle:New category`,
+    data: form,
+    loadComponent: () => import('./finance/categories/category-form-page').then((m) => m.CategoryFormPage),
+  },
+  {
+    path: 'settings/categories/:id',
+    title: $localize`:@@category.editTitle:Edit category`,
+    data: form,
+    loadComponent: () => import('./finance/categories/category-form-page').then((m) => m.CategoryFormPage),
+  },
   { path: '**', redirectTo: '' },
 ];

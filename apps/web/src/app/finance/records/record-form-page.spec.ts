@@ -1,7 +1,10 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
+import type { Currency } from '@selah/shared-types';
+import { AppSettings } from '../../core/app-settings';
 import { TODAY } from '../../core/today';
 import { FormNavigation } from '../../ui/form-navigation';
 import type { AccountDto, PlanVersionDto, RecordDto } from '../data/finance-api';
@@ -42,11 +45,12 @@ describe('RecordFormPage', () => {
   let http: HttpTestingController;
   let leave: ReturnType<typeof vi.fn>;
 
-  function setup(route: { query?: Record<string, string>; params?: Record<string, string> } = {}) {
+  function setup(route: { query?: Record<string, string>; params?: Record<string, string> } = {}, defaultCurrency: Currency = 'TWD') {
     leave = vi.fn();
     TestBed.configureTestingModule({
       imports: [RecordFormPage],
       providers: [
+        { provide: AppSettings, useValue: { value: signal({ weekStartDay: 1, defaultCurrency, updatedAt: null }) } },
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: TODAY, useValue: () => '2026-10-07' },
@@ -212,5 +216,22 @@ describe('RecordFormPage', () => {
     await submit();
     http.expectNone((r) => r.method === 'PUT');
     expect(form.controls.fxRate.errors).toEqual({ required: true });
+  });
+
+  it('starts a new entry in the default currency, with its last rate', async () => {
+    setup({}, 'USD');
+    const { form, fixture } = await render();
+    // The first account is TWD, which takes a USD entry (ADR 0016).
+    expect(form.getRawValue()).toMatchObject({ accountId: 'cash', currency: 'USD', fxRate: '32.5' });
+
+    form.controls.accountId.setValue('usd');
+    fixture.detectChanges();
+    expect(form.controls.currency.value).toBe('USD');
+  });
+
+  it('keeps the currency of an entry being edited', async () => {
+    setup({ params: { id: 'r1' } }, 'USD');
+    const { form } = await render(saved);
+    expect(form.controls.currency.value).toBe('TWD');
   });
 });
