@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Selectable } from 'kysely';
-import { ConflictError } from '../../common/errors';
+import { duplicateAccountName } from '@selah/finance-core';
 import { isUniqueViolation } from '../../common/database-errors';
 import { DATABASE } from '../../database/database.module';
 import type { Database } from '../../database/database';
@@ -60,7 +60,7 @@ export class AccountsRepository {
     try {
       await write();
     } catch (error) {
-      if (isUniqueViolation(error)) throw new ConflictError(`An account named "${name}" already exists.`);
+      if (isUniqueViolation(error)) throw duplicateAccountName(name);
       throw error;
     }
   }

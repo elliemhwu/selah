@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Selectable } from 'kysely';
 import { isUniqueViolation } from '../../common/database-errors';
-import { ConflictError } from '../../common/errors';
+import { duplicateCategoryName } from '@selah/finance-core';
 import { DATABASE } from '../../database/database.module';
 import type { Database } from '../../database/database';
 import type { FinanceCategories } from '../../database/db.generated';
@@ -26,6 +26,11 @@ export class CategoriesRepository {
       .orderBy('sortOrder')
       .orderBy('name')
       .execute();
+  }
+
+  /** Every category, soft-deleted ones included; the tree rules walk it (ADR 0025). */
+  listAll(): Promise<CategoryRow[]> {
+    return this.db.selectFrom('finance.categories').selectAll().execute();
   }
 
   /** Includes soft-deleted rows. */
@@ -70,7 +75,7 @@ export class CategoriesRepository {
       await write();
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new ConflictError(`A category named "${name}" already exists at this level.`);
+        throw duplicateCategoryName(name);
       }
       throw error;
     }

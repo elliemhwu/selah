@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ConflictError, NotFoundError, RuleViolationError } from '../../common/errors';
+import { assertCategoryDeletable, prepareCategory } from '@selah/finance-core';
+import { NotFoundError } from '../../common/errors';
 import type { CategoryDto, UpsertCategoryDto } from './categories.dto';
 import { CategoriesRepository, type CategoryRow } from './categories.repository';
 
-/** Deeper than any real category tree; stops a corrupted loop from spinning. */
-const MAX_DEPTH = 100;
-
+/** The category tree; the rules are in finance-core (ADR 0025). */
 @Injectable()
 export class CategoriesService {
   constructor(private readonly categories: CategoriesRepository) {}
@@ -23,13 +22,9 @@ export class CategoriesService {
 
   /** Creates or replaces a category (ADR 0017). */
   async upsert(id: string, input: UpsertCategoryDto): Promise<{ category: CategoryDto; created: boolean }> {
-    const existing = await this.categories.findById(id);
-    if (existing?.deletedAt) throw new ConflictError(`Category ${id} was deleted.`);
-
-    const parentId = input.parentId ?? null;
-    if (parentId) await this.assertValidParent(id, parentId);
-
-    const values = { name: input.name.trim(), parentId, sortOrder: input.sortOrder ?? 0 };
+    const all = new Map((await this.categories.listAll()).map((c) => [c.id, c]));
+    const existing = all.get(id);
+    const values = prepareCategory(id, input, (categoryId) => all.get(categoryId));
     if (existing) await this.categories.update(id, values);
     else await this.categories.insert(id, values);
     return { category: await this.get(id), created: !existing };
@@ -40,24 +35,8 @@ export class CategoriesService {
     const existing = await this.categories.findById(id);
     if (!existing) throw new NotFoundError(`Category ${id} not found.`);
     if (existing.deletedAt) return;
-    if (await this.categories.hasLiveChildren(id)) {
-      throw new ConflictError('The category still has subcategories. Delete or move them first.');
-    }
+    assertCategoryDeletable(await this.categories.hasLiveChildren(id));
     await this.categories.softDelete(id);
-  }
-
-  /** The parent must be live, and must not be the category or one of its descendants. */
-  private async assertValidParent(id: string, parentId: string): Promise<void> {
-    const invalid = (message: string) => new RuleViolationError(message, { parentId: [message] });
-    let ancestorId: string | null = parentId;
-    for (let depth = 0; ancestorId && depth < MAX_DEPTH; depth++) {
-      if (ancestorId === id) throw invalid("A category can't be moved under itself or one of its subcategories.");
-      const ancestor = await this.categories.findById(ancestorId);
-      if (!ancestor || ancestor.deletedAt) {
-        throw invalid(depth === 0 ? 'The parent category does not exist.' : 'The category tree is broken.');
-      }
-      ancestorId = ancestor.parentId;
-    }
   }
 }
 

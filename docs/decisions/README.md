@@ -34,7 +34,8 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0022](0022-forms-are-routes.md)                     | Forms are routes: full screen on phones, a centred column on laptops         | Accepted                                      |
 | [0023](0023-budget-editor-draft.md)                  | The budget editor works on one draft kept on the device                      | Accepted                                      |
 | [0024](0024-settings-resource.md)                    | Settings are one resource with no id, loaded once by the web app             | Accepted                                      |
-| [0025](0025-offline-first.md)                        | Offline-first: the device holds all the data                                 | Proposed                                      |
+| [0025](0025-offline-first.md)                        | Offline-first: the device holds all the data                                 | Accepted                                      |
+| [0026](0026-finance-core-and-device-store.md)        | Rules and reports in libs/finance-core; the device store uses Dexie          | Accepted                                      |
 
 ## Template
 

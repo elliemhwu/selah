@@ -34,6 +34,11 @@ export default [
               sourceTag: 'type:client',
               onlyDependOnLibsWithTags: ['type:types'],
             },
+            // Finance rules and reports, shared by the device and the API (ADR 0025).
+            {
+              sourceTag: 'type:domain',
+              onlyDependOnLibsWithTags: ['type:types', 'type:util'],
+            },
             // The API must not use the web's client; the web can use anything shared.
             {
               sourceTag: 'scope:api',
