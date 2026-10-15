@@ -23,22 +23,24 @@ _Last updated: 2026-10-14_
 
 - **Phase 6a, step 1 (shared finance core):** done. `libs/finance-core` holds the rules and reports as pure functions ([ADR 0026](decisions/0026-finance-core-and-device-store.md)), and the API services only load data, call them, and save. All 123 integration tests pass unchanged.
 
-**Next step:** Phase 6a, step 2: the device store (Dexie on IndexedDB), with `finance-api.ts` reading and writing the device through `finance-core`. Then step 3: settings on the device and no API needed. No Phase 5 screen has been checked on a real phone yet. The open questions below are still waiting for the owner.
+- **Phase 6a, step 2 (device store):** done. Every row lives in IndexedDB through Dexie; `DeviceStore` loads it into memory at start and follows changes from other tabs. `finance-api.ts` keeps its shape but reads the device and runs the `finance-core` rules before saving, and settings moved to the device too. The app no longer needs the API: the "can't reach the server" banner became a warning that shows only if the device's storage can't be opened. Web tests seed an in-memory store instead of stubbing HTTP.
+
+**Next step:** Phase 6b, backup and hosting: export and import all data as a file (also the way to bring over anything entered into the local Postgres while testing), persistent storage, install polish, and free static hosting. Until then, data entered in the app lives only in that browser. No screen has been checked on a real phone yet. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
-| #   | Phase                                                                                                                                                   | Branch                      | Status         |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | -------------- |
-| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                                    | `feat/finance-requirements` | ✅ Done        |
-| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                                       | `feat/finance-requirements` | ✅ Done        |
-| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                                                 | `feat/finance-schema`       | ✅ Done        |
-| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                                       | `feat/workspace-setup`      | ✅ Done        |
-| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                                            | `feat/finance-utils`        | ✅ Done        |
-| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports                               | `feat/finance-api-*`        | ✅ Done        |
-| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings                   | `feat/finance-web-*`        | ✅ Done        |
-| 6a  | Offline-first, device storage: IndexedDB, rules and reports in shared functions, every screen off the API ([ADR 0025](decisions/0025-offline-first.md)) | `feat/offline-*`            | 🟡 In progress |
-| 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ⬜             |
-| 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | ⬜             |
+| #   | Phase                                                                                                                                                   | Branch                      | Status  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------- |
+| 0   | Requirements discussion → [requirements.md](finance/requirements.md)                                                                                    | `feat/finance-requirements` | ✅ Done |
+| 0b  | Project docs for multi-device development (README, CLAUDE.md, CONTRIBUTING, ADRs)                                                                       | `feat/finance-requirements` | ✅ Done |
+| 1   | DB schema decisions and DDL (`finance`, `core` schemas)                                                                                                 | `feat/finance-schema`       | ✅ Done |
+| 2   | Workspace scaffold: Nx, Angular, NestJS, libs, Docker Postgres, `.nvmrc`, `.env.example`, Swagger                                                       | `feat/workspace-setup`      | ✅ Done |
+| 3   | `libs/shared-utils` finance math with tests: money, percentages, cadence, rollover/reset, FX                                                            | `feat/finance-utils`        | ✅ Done |
+| 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports                               | `feat/finance-api-*`        | ✅ Done |
+| 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings                   | `feat/finance-web-*`        | ✅ Done |
+| 6a  | Offline-first, device storage: IndexedDB, rules and reports in shared functions, every screen off the API ([ADR 0025](decisions/0025-offline-first.md)) | `feat/offline-*`            | ✅ Done |
+| 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ⬜ Next |
+| 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | ⬜      |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 

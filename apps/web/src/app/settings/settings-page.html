@@ -9,7 +9,7 @@
     @if (settings.status() === 'error') {
       <div class="empty">
         <p class="muted" i18n="@@settings.failed">Couldn't load your settings.</p>
-        <button type="button" class="btn" (click)="settings.load()" i18n="@@action.retry">Try again</button>
+        <button type="button" class="btn" (click)="settings.reload()" i18n="@@action.retry">Try again</button>
       </div>
     } @else {
       <form [formGroup]="form">

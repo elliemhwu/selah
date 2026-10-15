@@ -1,6 +1,6 @@
-@if (offline()) {
-  <div class="offline" role="status">
-    <span i18n="@@shell.offline">Can't reach the server. Your data may be out of date.</span>
+@if (storageFailed()) {
+  <div class="offline" role="alert">
+    <span i18n="@@shell.storageFailed">Couldn't open the data on this device. Try again, or reload the app.</span>
     <button type="button" class="btn btn-quiet" (click)="retry()" i18n="@@action.retry">Try again</button>
   </div>
 }

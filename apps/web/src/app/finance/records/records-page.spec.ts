@@ -1,79 +1,43 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { TODAY } from '../../core/today';
-import type { PlanVersionDto, RecordDto } from '../data/finance-api';
+import type { StoredRecord } from '../../data/device-storage';
+import { deviceData, planItem, settle, storedAccount, storedLine, storedRecord, storedVersion } from '../../data/testing';
 import { RecordsPage } from './records-page';
 
-const API = '/api/v1/finance';
-const record = (id: string, fields: Partial<RecordDto>): RecordDto => ({
-  id,
-  type: 'expense',
-  occurredOn: '2026-10-05',
-  occurredAt: null,
-  accountId: 'cash',
-  currency: 'TWD',
-  counterAccountId: null,
-  counterAmount: null,
-  targetBalance: null,
-  note: null,
-  lines: [],
-  createdAt: '2026-10-05T00:00:00Z',
-  updatedAt: '2026-10-05T00:00:00Z',
-  ...fields,
-});
-const line = (amount: string, fields: object = {}) => ({ id: amount, amount, twdAmount: amount, fxRate: null, categoryId: null, budgetItemId: null, note: null, ...fields });
+const line = (amount: string, fields: object = {}) => storedLine(amount, amount, fields);
 const records = [
-  record('salary', { type: 'income', occurredOn: '2026-10-07', lines: [line('60000.00', { budgetItemId: 'salary' })] }),
-  record('lunch', { occurredOn: '2026-10-07', occurredAt: '12:30', lines: [line('150.00', { budgetItemId: 'food' }), line('80.00', { note: 'Drinks' })] }),
-  record('card', { type: 'transfer', counterAccountId: 'card', counterAmount: '3200.00', lines: [line('3200.00')] }),
-  record('fix', { type: 'adjustment', targetBalance: '1500.00' }),
+  storedRecord('salary', { type: 'income', occurredOn: '2026-10-07', lines: [line('60000.00', { budgetItemId: 'salary' })] }),
+  storedRecord('lunch', { occurredOn: '2026-10-07', occurredAt: '12:30', lines: [line('150.00', { budgetItemId: 'food' }), line('80.00', { note: 'Drinks' })] }),
+  storedRecord('card', { type: 'transfer', counterAccountId: 'card', counterAmount: '3200.00', lines: [line('3200.00')] }),
+  storedRecord('fix', { type: 'adjustment', targetBalance: '1500.00' }),
+  // Outside the month, and deleted: never listed.
+  storedRecord('sept', { occurredOn: '2026-09-30', lines: [line('5.00')] }),
+  storedRecord('gone', { occurredOn: '2026-10-06', lines: [line('9.00')], deletedAt: 'x' }),
 ];
 
 describe('RecordsPage', () => {
-  let http: HttpTestingController;
-
-  function setup(query: Record<string, string> = {}) {
+  async function render(query: Record<string, string> = {}, seed: StoredRecord[] = records) {
     TestBed.configureTestingModule({
       imports: [RecordsPage],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
         provideRouter([]),
+        ...deviceData({
+          accounts: [storedAccount('cash', 'TWD', { name: 'Cash' }), storedAccount('card', 'TWD', { name: 'Card' })],
+          planVersions: [storedVersion('v1', '2026-10', [planItem('salary', { section: 'income', name: 'Salary' }), planItem('food', { name: 'Food' })])],
+          records: seed,
+        }).providers,
         { provide: TODAY, useValue: () => '2026-10-07' },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(query) } } },
       ],
     });
-    http = TestBed.inject(HttpTestingController);
-  }
-  afterEach(() => http.verify());
-
-  async function render(list: RecordDto[], match: (params: URLSearchParams) => boolean = () => true) {
     const fixture = TestBed.createComponent(RecordsPage);
-    fixture.detectChanges();
-    http
-      .expectOne((r) => r.url === `${API}/records` && match(new URLSearchParams(r.params.toString())))
-      .flush(list);
-    http.expectOne(`${API}/accounts`).flush([
-      { id: 'cash', name: 'Cash', currency: 'TWD' },
-      { id: 'card', name: 'Card', currency: 'TWD' },
-    ]);
-    http.expectOne(`${API}/categories`).flush([]);
-    http.expectOne((r) => r.url === `${API}/plan`).flush({
-      items: [
-        { budgetItemId: 'salary', name: 'Salary' },
-        { budgetItemId: 'food', name: 'Food' },
-      ],
-    } as PlanVersionDto);
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await settle(fixture);
     return { fixture, el: fixture.nativeElement as HTMLElement };
   }
 
   it("lists the month's records by day with totals", async () => {
-    setup();
-    const { el } = await render(records, (p) => p.get('from') === '2026-10-01' && p.get('to') === '2026-10-31');
+    const { el } = await render();
     expect([...el.querySelectorAll('.day')].map((d) => d.textContent?.trim())).toEqual(['Wed 7 Oct', 'Mon 5 Oct']);
     const rows = [...el.querySelectorAll('.record')];
     expect(rows.map((r) => r.querySelector('.record-title')?.textContent?.trim())).toEqual([
@@ -100,12 +64,8 @@ describe('RecordsPage', () => {
   });
 
   it('reads the month and filters from the address and keeps them there', async () => {
-    setup({ month: '2026-09', account: 'cash', type: 'expense' });
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    const { el, fixture } = await render(
-      [],
-      (p) => p.get('from') === '2026-09-01' && p.get('accountId') === 'cash' && p.get('type') === 'expense',
-    );
+    const navigate = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
+    const { el, fixture } = await render({ month: '2026-09', account: 'card', type: 'expense' });
     expect(el.textContent).toContain('Nothing matches these filters this month.');
 
     [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Clear filters'))?.click();
@@ -114,7 +74,7 @@ describe('RecordsPage', () => {
       queryParams: { month: '2026-09', account: null, category: null, item: null, type: null },
       replaceUrl: true,
     });
-    http.expectOne((r) => r.url === `${API}/records` && !r.params.has('accountId')).flush([]);
-    http.match(`${API}/plan`).forEach((r) => r.flush({ items: [] }));
+    expect([...el.querySelectorAll('.record')].map((r) => r.getAttribute('href'))).toEqual(['/records/sept']);
+    navigate.mockRestore();
   });
 });

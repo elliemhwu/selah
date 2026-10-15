@@ -1,50 +1,41 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { signal, type Type } from '@angular/core';
+import type { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { AppSettings } from '../../core/app-settings';
 import { TODAY } from '../../core/today';
+import type { DeviceSnapshot } from '../../data/device-storage';
+import { deviceData, flushSaves, settle, storedAccount, storedLine, storedRecord } from '../../data/testing';
 import { FormNavigation } from '../../ui/form-navigation';
-import type { AccountDto } from '../data/finance-api';
 import { AccountFormPage } from './account-form-page';
 import { AccountsPage } from './accounts-page';
 import { AdjustPage } from './adjust-page';
 import { TransferPage } from './transfer-page';
 
-const API = '/api/v1/finance';
-const account = (id: string, currency: AccountDto['currency'], balance: string, type: AccountDto['type'] = 'cash') =>
-  ({ id, name: id, type, currency, openingBalance: '0.00', balance, sortOrder: 0 }) as AccountDto;
-const accounts = [account('Cash', 'TWD', '1500.00'), account('Card', 'TWD', '-3200.00', 'credit_card'), account('USD', 'USD', '120.50', 'bank')];
+// Balances are derived (ADR 0011); here they come from the opening balances.
+const accounts = [
+  storedAccount('Cash', 'TWD', { openingBalance: '1500.00', sortOrder: 0 }),
+  storedAccount('Card', 'TWD', { openingBalance: '-3200.00', type: 'credit_card', sortOrder: 1 }),
+  storedAccount('USD', 'USD', { openingBalance: '120.50', type: 'bank', sortOrder: 2 }),
+];
 
 async function submit(fixture: { nativeElement: HTMLElement; whenStable: () => Promise<unknown> }) {
   fixture.nativeElement.querySelector('form')?.dispatchEvent(new Event('submit'));
+  await flushSaves();
   await fixture.whenStable();
 }
 
 describe('AccountsPage', () => {
-  let http: HttpTestingController;
-
-  beforeEach(() => {
+  async function render(seed: Partial<DeviceSnapshot>) {
     TestBed.configureTestingModule({
       imports: [AccountsPage],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [provideRouter([]), ...deviceData(seed).providers],
     });
-    http = TestBed.inject(HttpTestingController);
-  });
-  afterEach(() => http.verify());
-
-  async function render(list: AccountDto[]) {
     const fixture = TestBed.createComponent(AccountsPage);
-    fixture.detectChanges();
-    http.expectOne(`${API}/accounts`).flush(list);
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await settle(fixture);
     return fixture.nativeElement as HTMLElement;
   }
 
   it('lists balances and a total per currency', async () => {
-    const el = await render(accounts);
+    const el = await render({ accounts: [...accounts, storedAccount('Closed', 'TWD', { deletedAt: 'x' })] });
     const rows = [...el.querySelectorAll('.account')];
     expect(rows.map((r) => r.querySelector('.account-name')?.firstChild?.textContent?.trim())).toEqual(['Cash', 'Card', 'USD']);
     expect(rows[1].textContent).toContain('Credit card');
@@ -60,31 +51,40 @@ describe('AccountsPage', () => {
     ]);
   });
 
+  it('derives a balance from the records', async () => {
+    const lunch = storedRecord('r1', { accountId: 'Cash', lines: [storedLine('l1', '185.00')] });
+    const el = await render({ accounts: [accounts[0]], records: [lunch] });
+    expect(el.querySelector('.balance')?.textContent).toContain('1,315');
+  });
+
   it('links to the account forms', async () => {
-    const el = await render(accounts);
+    const el = await render({ accounts });
     expect(el.querySelector('.account')?.getAttribute('href')).toBe('/accounts/Cash');
     const hrefs = [...el.querySelectorAll('.actions a')].map((a) => a.getAttribute('href'));
     expect(hrefs).toEqual(['/accounts/transfer', '/accounts/adjust', '/accounts/new']);
   });
 
   it('invites a first account', async () => {
-    const el = await render([]);
+    const el = await render({});
     expect(el.textContent).toContain('No accounts yet.');
     expect([...el.querySelectorAll('.actions a')].map((a) => a.textContent?.trim())).toEqual(['New account']);
   });
 });
 
 describe('account form pages', () => {
-  let http: HttpTestingController;
   let leave: ReturnType<typeof vi.fn>;
 
-  function setup<T>(component: Type<T>, route: { params?: Record<string, string>; query?: Record<string, string> } = {}) {
+  async function setup<T, F = unknown>(
+    component: Type<T>,
+    seed: Partial<DeviceSnapshot> = { accounts },
+    route: { params?: Record<string, string>; query?: Record<string, string> } = {},
+  ) {
     leave = vi.fn();
+    const device = deviceData(seed);
     TestBed.configureTestingModule({
       imports: [component],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
+        ...device.providers,
         { provide: TODAY, useValue: () => '2026-10-07' },
         {
           provide: ActivatedRoute,
@@ -93,187 +93,168 @@ describe('account form pages', () => {
         { provide: FormNavigation, useValue: { leave } },
       ],
     });
-    http = TestBed.inject(HttpTestingController);
     const fixture = TestBed.createComponent(component);
-    fixture.detectChanges();
-    return fixture;
+    await settle(fixture);
+    const form = (fixture.componentInstance as unknown as { form: F }).form;
+    return { fixture, form, storage: device.storage };
   }
-  const formOf = <F>(fixture: { componentInstance: unknown }) => (fixture.componentInstance as { form: F }).form;
-  afterEach(() => http.verify());
 
   describe('AccountFormPage', () => {
     it('creates an account with a negative opening balance', async () => {
-      const fixture = setup(AccountFormPage);
-      const form = formOf<AccountFormPage['form']>(fixture);
+      const { fixture, form, storage } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, {});
       form.patchValue({ name: ' Card ', type: 'credit_card', openingBalance: '-3200' });
       await submit(fixture);
-      const req = http.expectOne((r) => r.method === 'PUT' && r.url.startsWith(`${API}/accounts/`));
-      expect(req.request.body).toEqual({ name: 'Card', type: 'credit_card', currency: 'TWD', openingBalance: '-3200', sortOrder: 0 });
-      req.flush({});
-      await fixture.whenStable();
+      expect(storage.snapshot().accounts).toEqual([
+        expect.objectContaining({ name: 'Card', type: 'credit_card', currency: 'TWD', openingBalance: '-3200.00', sortOrder: 0, deletedAt: null }),
+      ]);
       expect(leave).toHaveBeenCalledWith('/accounts', 'Account saved.');
     });
 
-    it('starts a new account in the default currency', () => {
-      TestBed.overrideProvider(AppSettings, {
-        useValue: { value: signal({ weekStartDay: 1, defaultCurrency: 'JPY', updatedAt: null }) },
+    it('starts a new account in the default currency', async () => {
+      const { form } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, {
+        settings: { id: 'settings', weekStartDay: 1, defaultCurrency: 'JPY', updatedAt: 'x' },
       });
-      const fixture = setup(AccountFormPage);
-      expect(formOf<AccountFormPage['form']>(fixture).controls.currency.value).toBe('JPY');
+      expect(form.controls.currency.value).toBe('JPY');
+    });
+
+    it('refuses a second account with the same name', async () => {
+      const { fixture, form, storage } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage);
+      form.patchValue({ name: 'Cash' });
+      await submit(fixture);
+      expect(storage.snapshot().accounts).toHaveLength(3);
+      expect(leave).not.toHaveBeenCalled();
     });
 
     it('loads the account to edit and shows a refused currency change on its field', async () => {
-      const fixture = setup(AccountFormPage, { params: { id: 'Cash' } });
-      http.expectOne(`${API}/accounts/Cash`).flush(accounts[0]);
-      await fixture.whenStable();
-      const form = formOf<AccountFormPage['form']>(fixture);
-      expect(form.getRawValue()).toEqual({ name: 'Cash', type: 'cash', currency: 'TWD', openingBalance: '0' });
+      const used = storedRecord('r1', { accountId: 'Cash', lines: [storedLine('l1', '10.00')] });
+      const { fixture, form } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, { accounts, records: [used] }, { params: { id: 'Cash' } });
+      expect(form.getRawValue()).toEqual({ name: 'Cash', type: 'cash', currency: 'TWD', openingBalance: '1500' });
 
       form.patchValue({ currency: 'JPY' });
       await submit(fixture);
-      http.expectOne((r) => r.method === 'PUT' && r.url === `${API}/accounts/Cash`).flush(
-        { status: 422, errors: { currency: ["The currency can't change once the account has records."] } },
-        { status: 422, statusText: 'Unprocessable Entity' },
-      );
-      await fixture.whenStable();
       expect(form.controls.currency.errors).toEqual({ server: "The currency can't change once the account has records." });
+      expect(leave).not.toHaveBeenCalled();
     });
 
     it('says when the account does not exist', async () => {
-      const fixture = setup(AccountFormPage, { params: { id: 'gone' } });
-      http.expectOne(`${API}/accounts/gone`).flush({ status: 404 }, { status: 404, statusText: 'Not Found' });
-      await fixture.whenStable();
-      fixture.detectChanges();
+      const { fixture } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, { accounts }, { params: { id: 'gone' } });
       expect(fixture.nativeElement.textContent).toContain("This account isn't in the ledger.");
     });
 
     it('asks twice before deleting', async () => {
-      const fixture = setup(AccountFormPage, { params: { id: 'Cash' } });
-      http.expectOne(`${API}/accounts/Cash`).flush(accounts[0]);
-      await fixture.whenStable();
-      fixture.detectChanges();
+      const { fixture, storage } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, { accounts }, { params: { id: 'Cash' } });
       const button = () => fixture.nativeElement.querySelector('.danger button') as HTMLButtonElement;
       button().click();
       fixture.detectChanges();
       expect(button().textContent).toContain('Tap again to delete Cash');
-      http.expectNone({ method: 'DELETE' });
+      expect(storage.snapshot().accounts[0].deletedAt).toBeNull();
       button().click();
-      http.expectOne({ method: 'DELETE', url: `${API}/accounts/Cash` }).flush(null);
-      await fixture.whenStable();
+      await flushSaves();
+      expect(storage.snapshot().accounts[0].deletedAt).not.toBeNull();
       expect(leave).toHaveBeenCalledWith('/accounts', 'Account deleted.');
     });
 
-    it('cancels back to the accounts', () => {
-      const fixture = setup(AccountFormPage);
+    it('cancels back to the accounts', async () => {
+      const { fixture } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, {});
       (fixture.nativeElement.querySelector('.form-header .btn-quiet') as HTMLButtonElement).click();
       expect(leave).toHaveBeenCalledWith('/accounts');
     });
   });
 
   describe('TransferPage', () => {
-    async function render(query: Record<string, string> = {}, rates: object[] = []) {
-      const fixture = setup(TransferPage, { query });
-      http.expectOne(`${API}/fx-rates/last-used`).flush(rates);
-      http.expectOne(`${API}/accounts`).flush(accounts);
-      await fixture.whenStable();
-      return { fixture, form: formOf<TransferPage['form']>(fixture) };
-    }
+    const rate = storedRecord('old', {
+      accountId: 'USD',
+      currency: 'USD',
+      occurredOn: '2026-10-01',
+      lines: [storedLine('l0', '1.00', { twdAmount: '32.00', fxRate: '32.10000000' })],
+    });
 
     it('transfers between TWD accounts with one amount', async () => {
-      const { fixture, form } = await render();
+      const { fixture, form, storage } = await setup<TransferPage, TransferPage['form']>(TransferPage);
       expect(form.getRawValue()).toMatchObject({ fromAccountId: 'Cash', toAccountId: 'Card' });
       form.patchValue({ amount: '3200' });
       await submit(fixture);
-      const req = http.expectOne((r) => r.method === 'PUT');
-      expect(req.request.body).toMatchObject({
-        type: 'transfer',
-        accountId: 'Cash',
-        currency: 'TWD',
-        counterAccountId: 'Card',
-        counterAmount: '3200',
-        lines: [{ amount: '3200' }],
-      });
-      req.flush({});
-      await fixture.whenStable();
+      expect(storage.snapshot().records).toEqual([
+        expect.objectContaining({
+          type: 'transfer',
+          accountId: 'Cash',
+          currency: 'TWD',
+          counterAccountId: 'Card',
+          counterAmount: '3200.00',
+          lines: [expect.objectContaining({ amount: '3200.00', twdAmount: '3200.00' })],
+        }),
+      ]);
       expect(leave).toHaveBeenCalledWith('/accounts', 'Transfer saved.');
     });
 
     it('asks for the amount received and the rate in an exchange', async () => {
-      const { fixture, form } = await render({ from: 'USD' }, [{ currency: 'USD', rate: '32.1', occurredOn: '2026-10-01' }]);
-      expect(form.getRawValue()).toMatchObject({ fromAccountId: 'USD', toAccountId: 'Cash', fxRate: '32.1' });
+      const { fixture, form, storage } = await setup<TransferPage, TransferPage['form']>(TransferPage, { accounts, records: [rate] }, { query: { from: 'USD' } });
+      expect(form.getRawValue()).toMatchObject({ fromAccountId: 'USD', toAccountId: 'Cash', fxRate: '32.10000000' });
       form.patchValue({ amount: '100' });
       await submit(fixture);
-      http.expectNone({ method: 'PUT' });
       expect(form.controls.counterAmount.errors).toEqual({ required: true });
+      expect(storage.snapshot().records).toHaveLength(1);
 
       form.patchValue({ counterAmount: '3205' });
       await submit(fixture);
-      const req = http.expectOne((r) => r.method === 'PUT');
-      expect(req.request.body).toMatchObject({
+      expect(storage.snapshot().records.find((r) => r.type === 'transfer')).toMatchObject({
         accountId: 'USD',
         currency: 'USD',
         counterAccountId: 'Cash',
-        counterAmount: '3205',
-        lines: [{ amount: '100', fxRate: '32.1' }],
+        counterAmount: '3205.00',
+        lines: [{ amount: '100.00', fxRate: '32.10000000', twdAmount: '3210.00' }],
       });
-      req.flush({});
     });
   });
 
   describe('editing transfers and adjustments', () => {
     it('loads a transfer, saves it under the same id, and deletes it after a second tap', async () => {
-      const fixture = setup(TransferPage, { params: { id: 't1' } });
-      http.expectOne(`${API}/records/t1`).flush({
-        id: 't1', type: 'transfer', occurredOn: '2026-10-03', occurredAt: null, accountId: 'Cash', currency: 'TWD',
-        counterAccountId: 'Card', counterAmount: '3200.00', targetBalance: null, note: 'Card bill',
-        lines: [{ id: 'l1', amount: '3200.00', twdAmount: '3200.00', fxRate: null, categoryId: null, budgetItemId: null, note: null }],
+      const transfer = storedRecord('t1', {
+        type: 'transfer',
+        occurredOn: '2026-10-03',
+        accountId: 'Cash',
+        counterAccountId: 'Card',
+        counterAmount: '3200.00',
+        note: 'Card bill',
+        lines: [storedLine('l1', '3200.00')],
       });
-      http.expectOne(`${API}/fx-rates/last-used`).flush([]);
-      http.expectOne(`${API}/accounts`).flush(accounts);
-      await fixture.whenStable();
-      const form = formOf<TransferPage['form']>(fixture);
+      const { fixture, form, storage } = await setup<TransferPage, TransferPage['form']>(TransferPage, { accounts, records: [transfer] }, { params: { id: 't1' } });
       expect(form.getRawValue()).toMatchObject({ fromAccountId: 'Cash', toAccountId: 'Card', occurredOn: '2026-10-03', amount: '3200', note: 'Card bill' });
 
       form.patchValue({ amount: '3300' });
       await submit(fixture);
-      const req = http.expectOne({ method: 'PUT', url: `${API}/records/t1` });
-      expect(req.request.body).toMatchObject({ counterAmount: '3300', lines: [{ amount: '3300' }] });
-      req.flush({});
-      await fixture.whenStable();
+      expect(storage.snapshot().records).toEqual([
+        expect.objectContaining({ id: 't1', counterAmount: '3300.00', lines: [expect.objectContaining({ id: 'l1', amount: '3300.00' })] }),
+      ]);
       fixture.detectChanges();
 
       const button = () => fixture.nativeElement.querySelector('.danger button') as HTMLButtonElement;
       button().click();
       fixture.detectChanges();
       button().click();
-      http.expectOne({ method: 'DELETE', url: `${API}/records/t1` }).flush(null);
-      await fixture.whenStable();
+      await flushSaves();
+      expect(storage.snapshot().records[0].deletedAt).not.toBeNull();
       expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
     });
   });
 
   describe('AdjustPage', () => {
     it('adjusts to the actual balance with no lines', async () => {
-      const fixture = setup(AdjustPage, { query: { account: 'USD' } });
-      http.expectOne(`${API}/accounts`).flush(accounts);
-      await fixture.whenStable();
-      fixture.detectChanges();
+      const { fixture, form, storage } = await setup<AdjustPage, AdjustPage['form']>(AdjustPage, { accounts }, { query: { account: 'USD' } });
       expect(fixture.nativeElement.textContent).toContain('120.50');
-      const form = formOf<AdjustPage['form']>(fixture);
       form.patchValue({ targetBalance: '118.75' });
       await submit(fixture);
-      const req = http.expectOne((r) => r.method === 'PUT');
-      expect(req.request.body).toEqual({
-        type: 'adjustment',
-        occurredOn: '2026-10-07',
-        accountId: 'USD',
-        currency: 'USD',
-        targetBalance: '118.75',
-        note: null,
-        lines: [],
-      });
-      req.flush({});
-      await fixture.whenStable();
+      expect(storage.snapshot().records).toEqual([
+        expect.objectContaining({
+          type: 'adjustment',
+          occurredOn: '2026-10-07',
+          accountId: 'USD',
+          currency: 'USD',
+          targetBalance: '118.75',
+          note: null,
+          lines: [],
+        }),
+      ]);
       expect(leave).toHaveBeenCalledWith('/accounts', 'Balance adjusted.');
     });
   });

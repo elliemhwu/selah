@@ -33,6 +33,8 @@ export class TransferPage {
   private readonly id = this.editId ?? crypto.randomUUID();
   private readonly loaded = this.recordsApi.get(() => this.editId);
   private filled = false;
+  /** The transfer's one line keeps its id across edits (ADR 0017). */
+  private lineId: string | undefined;
   protected readonly loading = computed(() => this.editing && this.loaded.isLoading());
   protected readonly notFound = computed(() => this.editing && !!this.loaded.error());
   protected readonly confirmingDelete = signal(false);
@@ -68,6 +70,7 @@ export class TransferPage {
       if (this.filled || !this.loaded.hasValue()) return;
       const record = this.loaded.value();
       this.filled = true;
+      this.lineId = record.lines[0]?.id;
       this.form.patchValue({
         fromAccountId: record.accountId,
         toAccountId: record.counterAccountId ?? '',
@@ -140,7 +143,7 @@ export class TransferPage {
         counterAccountId: v.toAccountId,
         counterAmount: this.exchange() ? v.counterAmount : v.amount,
         note: v.note.trim() || null,
-        lines: [{ amount: v.amount, fxRate: this.needsRate() ? v.fxRate : undefined }],
+        lines: [{ id: this.lineId, amount: v.amount, fxRate: this.needsRate() ? v.fxRate : undefined }],
       });
       this.nav.leave('/accounts', $localize`:@@accounts.transferSaved:Transfer saved.`);
     } catch (error) {

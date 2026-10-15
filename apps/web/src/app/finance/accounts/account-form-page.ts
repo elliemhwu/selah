@@ -29,6 +29,7 @@ export class AccountFormPage {
   private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
   /** A new account's id is generated once, so a retry never duplicates it (ADR 0017). */
   private readonly id = this.editId ?? crypto.randomUUID();
+  private readonly settings = inject(AppSettings);
   private readonly loaded = this.accountsApi.get(() => this.editId);
 
   protected readonly editing = !!this.editId;
@@ -42,7 +43,7 @@ export class AccountFormPage {
     name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(/\S/)]],
     type: 'cash' as AccountType,
     // A new account starts in the default currency (ADR 0024).
-    currency: inject(AppSettings).value().defaultCurrency as Currency,
+    currency: this.settings.value().defaultCurrency as Currency,
     openingBalance: ['0', [Validators.required, Validators.pattern(SIGNED_MONEY_PATTERN)]],
   });
   protected readonly saving = signal(false);
@@ -50,6 +51,12 @@ export class AccountFormPage {
   protected readonly errorText = errorText;
 
   constructor() {
+    // A new account starts in the default currency (ADR 0024), which may load after the form opens.
+    effect(() => {
+      const preferred = this.settings.value().defaultCurrency;
+      const currency = this.form.controls.currency;
+      if (!this.editing && !currency.dirty) currency.setValue(preferred);
+    });
     // Fill the form once the account arrives, unless the user already typed.
     effect(() => {
       const account = this.account();
