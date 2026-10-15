@@ -29,7 +29,7 @@ On 2026-10-15 the owner chose **GitHub Pages** for hosting and to **start fresh*
 
 ## Consequences
 
-- The data survives a reset or lost phone only as well as the user keeps backups: the reminder helps, but nothing enforces it. Sync (6c) removes this risk.
+- The data survives a reset or lost phone only as well as the user keeps backups: the reminder helps, but nothing enforces it. There is no sync for now ([0028](0028-local-only.md)).
 - Restoring replaces rather than merges, so restoring an old backup loses newer entries. The confirmation says so plainly. Merging belongs with sync.
 - Only the app's code is public. Every visitor gets an empty app, and their data never leaves their device.
 - The local Postgres stays a development database. The API is unused by the app until sync.

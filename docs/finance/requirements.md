@@ -1,6 +1,6 @@
 # Finance Module — MVP Requirements
 
-Status: **agreed** (2026-10-05). Single user. **Offline-first** (2026-10-14): the device holds all the data, and a server for sync and backup comes later ([ADR 0025](../decisions/0025-offline-first.md)).
+Status: **agreed** (2026-10-05). Single user. **Offline-first** (2026-10-14): the device holds all the data ([ADR 0025](../decisions/0025-offline-first.md)). **Local only** (2026-10-15): no sync, server or accounts for now; a hosted service is a later stage ([ADR 0028](../decisions/0028-local-only.md)).
 
 The module separates two layers of money:
 
@@ -122,7 +122,7 @@ Tax filing, multiple users and sharing, Moze import, investments, loans, receipt
 
 ## 7. Technical notes
 
-- **Offline-first** ([ADR 0025](../decisions/0025-offline-first.md)): every view and every kind of entry works with no connection. Data is kept on the device and can be exported and imported as a file; sync between devices comes once a server is chosen.
+- **Offline-first** ([ADR 0025](../decisions/0025-offline-first.md)): every view and every kind of entry works with no connection. Data is kept on the device and can be exported and imported as a file; there is no sync between devices ([ADR 0028](../decisions/0028-local-only.md)).
 - **Offline-ready schema:** client-generated UUIDs, `created_at` / `updated_at` on every row, soft deletes.
 - **Finance math** (rounding, percentage splits, cadence conversion, rollover and reset calculation, FX) lives in `libs/shared-utils` as pure functions, so it can be ported to C# later.
 - **API:** OpenAPI/Swagger from day one, for the planned migration of `apps/api` to .NET.

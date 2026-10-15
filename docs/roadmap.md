@@ -2,7 +2,7 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-14_
+_Last updated: 2026-10-15_
 
 ## Current state
 
@@ -19,7 +19,9 @@ _Last updated: 2026-10-14_
 
 - **Phase 5 (web UI):** done and merged into `develop`. The UI foundation is in [ADR 0020](decisions/0020-web-ui-foundation.md) (`@angular/localize` with English as the only locale so far, lazy-loaded feature routes), and the look is the **Linen ledger** style in [ADR 0021](decisions/0021-linen-ledger-ui.md): the Angular CDK with our own small components, no Material. Done: the app shell (top bar, bottom navigation, offline banner) and the home screen. It shows what's left in each envelope and this period's checklist (tap to record one item, or select several for batch entry), and has a quick "+" record form for single-line income and expenses, foreign currencies included. The Accounts screen lists derived balances with a total per currency, and adds, edits and deletes accounts, records transfers (with separate sent and received amounts for exchanges) and adjusts balances. Every form is a route that fills the phone screen and is a centred column on a laptop ([ADR 0022](decisions/0022-forms-are-routes.md)). The budget editor shows the plan for any month (sections, the item tree, net income, Unallocated), edits a draft kept on the device and saves it as a whole version, edits items (cadence, amount or percentage, rollover and reset, different-month amounts), and starts new versions from the version log ([ADR 0023](decisions/0023-budget-editor-draft.md)). The Records screen lists a month's records by day (spent and received totals, filters for account, category, budget item and type, kept in the address), and every record opens for editing: income and expenses in the entry form, which now splits a receipt into lines and takes an optional time, and transfers and adjustments in their own forms; all can be deleted. The monthly review compares plan and actual per section and item (left, over, still to come, moved, and the year so far for yearly and one-time items), links each item to its records, and lists what no item covers and the month's budget transfers with computed resets. Settings ([ADR 0024](decisions/0024-settings-resource.md)) has a small API (`GET`/`PUT /api/v1/core/settings`, one resource with no id) and a screen linked from the home masthead. The week start day and the default currency save as soon as they change, and each category in the tree opens in its own form route. New accounts and entries start in the default currency, and category pickers list categories in tree order. Manual budget transfers have their own form (`/budget/transfers/new`, `/budget/transfers/:id`): whole TWD between two non-income items of the plan for that date, showing what's left in the "from" envelope. A new transfer is dated the last day of the previous month (requirements §3.2). From the review, it is dated inside the month shown, and the review's manual transfers open for editing. Catch-up entry (`/records/catch-up`, from the Records screen) goes one day at a time, starting yesterday. Each day shows what's already recorded, takes rows of income and expenses on one account (in its currency, with one rate for the day), and saves them all or nothing before moving to the next day. Rows without an amount are skipped.
 
-- **Offline-first** (decided 2026-10-14, [ADR 0025](decisions/0025-offline-first.md), accepted): the device holds all the data, and the rules and reports run on the device. The server becomes a sync hub and backup. The work goes in three steps: device storage, then backup and hosting, then sync.
+- **Offline-first** (decided 2026-10-14, [ADR 0025](decisions/0025-offline-first.md), accepted): the device holds all the data, and the rules and reports run on the device. The work went in two steps: device storage, then backup and hosting.
+
+- **Local only** (decided 2026-10-15, [ADR 0028](decisions/0028-local-only.md), accepted): Selah stays a phone app with no sync, server or accounts. When it outgrows one device, it becomes a hosted service with accounts, as a stage of its own, not self-hosting. The drafted sync work (closed PRs #25 and #26) is kept on its branches for reference.
 
 - **Phase 6a, step 1 (shared finance core):** done. `libs/finance-core` holds the rules and reports as pure functions ([ADR 0026](decisions/0026-finance-core-and-device-store.md)), and the API services only load data, call them, and save. All 123 integration tests pass unchanged.
 
@@ -27,7 +29,7 @@ _Last updated: 2026-10-14_
 
 - **Phase 6b (backup and hosting):** done ([ADR 0027](decisions/0027-backups-and-hosting.md)). Settings downloads a backup file of everything on the device and restores one, replacing everything after a second tap; Home reminds to back up after 30 days without one. The app asks the browser to keep its storage and says whether it did. Selah has its own icon (a fermata over a ledger rule, `pnpm icons`), and a GitHub Action publishes the app to https://elliemhwu.github.io/selah/ on every push to `main`. The owner chose to start fresh: nothing from the local Postgres is brought over.
 
-**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). Then Phase 6c, sync, once a free cloud or home server is chosen. The open questions below are still waiting for the owner.
+**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). The Finance MVP is then complete. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -42,7 +44,6 @@ _Last updated: 2026-10-14_
 | 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings                   | `feat/finance-web-*`        | ✅ Done |
 | 6a  | Offline-first, device storage: IndexedDB, rules and reports in shared functions, every screen off the API ([ADR 0025](decisions/0025-offline-first.md)) | `feat/offline-*`            | ✅ Done |
 | 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ✅ Done |
-| 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | ⬜      |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 
@@ -51,7 +52,7 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 - Switchable themes: the Paper (light) and Evening (dark) directions from the UI comparison, as extra token sets ([ADR 0021](decisions/0021-linen-ledger-ui.md)). An idea only, not planned.
 - Close Week / Close Month: persist computed resets as `reset` budget transfers. See requirements §5.
 - Migrating `apps/api` to .NET.
-- Revisit the API client approach ([ADR 0015](decisions/0015-api-client-generation.md)) when sync is built (6c). Under [ADR 0025](decisions/0025-offline-first.md), screens read the device store and only sync calls the API.
+- **Hosted service** ([ADR 0028](decisions/0028-local-only.md)): accounts, sync between devices, and where it runs; its own stage and ADRs. Revisit the API client approach ([ADR 0015](decisions/0015-api-client-generation.md)) then.
 
 ## Open questions
 
