@@ -1,9 +1,11 @@
 import type { Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import type { ApiSchemas } from '@selah/api-client';
 import type { Currency } from '@selah/shared-types';
 import type { PlanItemDto } from '../finance/data/finance-api';
 import {
   type DeviceSnapshot,
+  type DeviceStorage,
   MemoryStorage,
   type StoredAccount,
   type StoredBudgetTransfer,
@@ -12,6 +14,7 @@ import {
   type StoredRecord,
 } from './device-storage';
 import { DEVICE_STORAGE, DeviceStore } from './device-store';
+import type { SyncError, SyncResponse, SyncServer } from './sync-server';
 
 export { planItem } from '../finance/budget/plan-item.testing';
 
@@ -24,6 +27,24 @@ const CREATED = '2026-10-01T00:00:00.000Z';
 export function deviceData(seed: Partial<DeviceSnapshot> = {}): { providers: Provider[]; storage: MemoryStorage } {
   const storage = new MemoryStorage(seed);
   return { providers: [{ provide: DEVICE_STORAGE, useValue: storage }], storage };
+}
+
+/** Storage that can't be opened, like IndexedDB blocked by the browser. */
+export function brokenStorage(): DeviceStorage {
+  const fail = () => Promise.reject(new Error('blocked'));
+  return {
+    load: fail,
+    save: fail,
+    saveFromServer: fail,
+    replace: fail,
+    watch: () => () => undefined,
+    outbox: fail,
+    settleOutbox: fail,
+    requeue: fail,
+    dropFromOutbox: fail,
+    connection: fail,
+    setConnection: fail,
+  };
 }
 
 /** Waits for the store to load, then lets the fixture render. */
@@ -105,4 +126,54 @@ export function storedTransfer(id: string, fields: Partial<StoredBudgetTransfer>
     deletedAt: null,
     ...fields,
   };
+}
+
+type SyncChanges = ApiSchemas['SyncChangesDto'];
+
+/**
+ * A sync server for tests (ADR 0028): it accepts every push unless `refuse`
+ * says otherwise, logs requests as `METHOD path`, and pulls `changes`.
+ */
+export class FakeSyncServer implements SyncServer {
+  readonly log: string[] = [];
+  readonly bodies = new Map<string, unknown>();
+  changes: Partial<SyncChanges> = {};
+  cursor = '2026-10-15T00:00:00.000Z';
+  /** Answers a request with another status; return undefined to accept it. */
+  refuse: (method: string, path: string, body: unknown) => SyncResponse | undefined = () => undefined;
+  /** Throws instead of answering, such as SyncError('offline'). */
+  fail: SyncError | null = null;
+  /** The addresses and tokens it was opened with. */
+  readonly opened: [string, string][] = [];
+
+  /** Provide as SYNC_SERVER. */
+  readonly factory = (server: string, token: string): SyncServer => {
+    this.opened.push([server, token]);
+    return this;
+  };
+
+  async send(method: 'GET' | 'PUT' | 'DELETE', path: string, body?: unknown): Promise<SyncResponse> {
+    if (this.fail) throw this.fail;
+    this.log.push(`${method} ${path}`);
+    if (body !== undefined) this.bodies.set(`${method} ${path}`, body);
+    const refused = this.refuse(method, path, body);
+    if (refused) return refused;
+    if (method === 'GET') {
+      return {
+        status: 200,
+        body: { cursor: this.cursor, accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], settings: null, ...this.changes },
+      };
+    }
+    return { status: method === 'DELETE' ? 204 : 200, body: null };
+  }
+
+  /** The pushes it received, in order. */
+  pushes(): string[] {
+    return this.log.filter((line) => !line.startsWith('GET'));
+  }
+}
+
+/** A Problem Details refusal (ADR 0017). */
+export function problem(status: number, detail: string): SyncResponse {
+  return { status, body: { type: 'about:blank', title: 'Refused', status, detail } };
 }

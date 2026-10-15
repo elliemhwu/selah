@@ -5,6 +5,13 @@
   </div>
 }
 
+@if (sync.attention().length && !onForm()) {
+  <div class="offline" role="status">
+    <span i18n="@@shell.syncAttention">Some changes couldn't sync.</span>
+    <a class="btn btn-quiet" routerLink="/settings" fragment="sync" i18n="@@shell.syncAttentionLink">See what happened</a>
+  </div>
+}
+
 <main [class.form]="onForm()">
   <router-outlet />
 </main>

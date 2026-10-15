@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { NotFoundError } from '@selah/finance-core';
 import { IDBFactory, IDBKeyRange } from 'fake-indexeddb';
 import { deviceResource, IDLE } from './device-resource';
-import { applyChanges, DexieStorage, EMPTY_SNAPSHOT, MemoryStorage } from './device-storage';
+import { applyChanges, type DeviceStorage, DexieStorage, EMPTY_SNAPSHOT, MemoryStorage } from './device-storage';
 import { DEVICE_STORAGE, DeviceStore } from './device-store';
 import { storedAccount, storedRecord } from './testing';
 
@@ -22,6 +22,79 @@ describe('DexieStorage', () => {
     expect(reopened.records.map((r) => r.id)).toEqual(['r1']);
     expect(reopened.settings).toMatchObject({ weekStartDay: 7, defaultCurrency: 'JPY' });
     expect(reopened.planVersions).toEqual([]);
+  });
+});
+
+describe.each([
+  ['DexieStorage', () => new DexieStorage({ indexedDB: new IDBFactory(), IDBKeyRange })],
+  ['MemoryStorage', () => new MemoryStorage()],
+] as [string, () => DeviceStorage][])('%s outbox (ADR 0028)', (_, create) => {
+  const keys = async (storage: DeviceStorage) => (await storage.outbox()).map((e) => [e.key, e.rev, e.state]).sort();
+
+  it('queues every local save, once per row', async () => {
+    const storage = create();
+    await storage.save({ accounts: [storedAccount('cash')], settings: { id: 'settings', weekStartDay: 1, defaultCurrency: 'TWD', updatedAt: 'x' } });
+    await storage.save({ accounts: [storedAccount('cash', 'TWD', { name: 'Wallet' })] });
+    expect(await keys(storage)).toEqual([
+      ['accounts:cash', 2, 'pending'],
+      ['settings:settings', 1, 'pending'],
+    ]);
+  });
+
+  it("saves the server's rows without queueing them, except rows still waiting to be pushed", async () => {
+    const storage = create();
+    await storage.save({ accounts: [storedAccount('cash', 'TWD', { name: 'Mine' })] });
+    const applied = await storage.saveFromServer({
+      accounts: [storedAccount('cash', 'TWD', { name: 'Theirs' }), storedAccount('bank')],
+    });
+    expect(applied.accounts?.map((a) => a.id)).toEqual(['bank']);
+    expect((await storage.load()).accounts.map((a) => a.name).sort()).toEqual(['Mine', 'bank']);
+    expect(await keys(storage)).toEqual([['accounts:cash', 1, 'pending']]);
+  });
+
+  it('settles only the save it sent: a row saved again stays queued', async () => {
+    const storage = create();
+    await storage.save({ accounts: [storedAccount('a'), storedAccount('b'), storedAccount('c')] });
+    const sent = await storage.outbox();
+    await storage.save({ accounts: [storedAccount('b', 'JPY')] });
+    const rev = (key: string) => sent.find((e) => e.key === key)?.rev ?? 0;
+    await storage.settleOutbox({
+      done: [{ key: 'accounts:a', rev: rev('accounts:a') }, { key: 'accounts:b', rev: rev('accounts:b') }],
+      refused: [{ key: 'accounts:c', rev: rev('accounts:c'), message: 'No.' }],
+    });
+    expect(await keys(storage)).toEqual([
+      ['accounts:b', 2, 'pending'],
+      ['accounts:c', 1, 'attention'],
+    ]);
+    expect((await storage.outbox()).find((e) => e.key === 'accounts:c')?.message).toBe('No.');
+  });
+
+  it('requeues one entry or every row, and drops entries', async () => {
+    const storage = create();
+    await storage.saveFromServer({ accounts: [storedAccount('a')], records: [storedRecord('r1')] });
+    expect(await storage.outbox()).toEqual([]);
+    await storage.requeue(['accounts:a']);
+    expect(await keys(storage)).toEqual([['accounts:a', 1, 'pending']]);
+    await storage.requeue();
+    expect(await keys(storage)).toEqual([
+      ['accounts:a', 2, 'pending'],
+      ['records:r1', 1, 'pending'],
+    ]);
+    await storage.dropFromOutbox(['records:r1']);
+    expect(await keys(storage)).toEqual([['accounts:a', 2, 'pending']]);
+    await storage.dropFromOutbox();
+    expect(await storage.outbox()).toEqual([]);
+  });
+
+  it('keeps the connection apart from the data', async () => {
+    const storage = create();
+    expect(await storage.connection()).toBeNull();
+    const connection = { id: 'sync' as const, server: 'https://s', token: 't', cursor: null, lastSyncedAt: null };
+    await storage.setConnection(connection);
+    expect(await storage.connection()).toEqual(connection);
+    expect(await storage.load()).toEqual(EMPTY_SNAPSHOT);
+    await storage.setConnection(null);
+    expect(await storage.connection()).toBeNull();
   });
 });
 

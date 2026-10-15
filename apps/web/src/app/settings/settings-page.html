@@ -39,7 +39,9 @@
   <section id="backup" aria-labelledby="backup-heading">
     <h2 id="backup-heading" class="section-title" i18n="@@backup.title">Backup</h2>
     <p class="muted backup-status">
-      @if (backups.persistence() === 'persisted') {
+      @if (sync.server()) {
+        <ng-container i18n="@@backup.synced">Your data lives on this device and on your sync server. A backup is one more copy.</ng-container>
+      } @else if (backups.persistence() === 'persisted') {
         <ng-container i18n="@@backup.persisted">Your data lives on this device, and the browser keeps it until you delete it.</ng-container>
       } @else {
         <ng-container i18n="@@backup.bestEffort">Your data lives only on this device. The browser may clear it if space runs low, so keep a backup.</ng-container>
@@ -72,6 +74,74 @@
           <span i18n="@@backup.restore">Restore a backup…</span>
         </label>
       </div>
+    }
+  </section>
+
+  <section id="sync" aria-labelledby="sync-heading">
+    <h2 id="sync-heading" class="section-title" i18n="@@sync.title">Sync</h2>
+    @if (sync.server(); as server) {
+      <p class="muted backup-status" i18n="@@sync.connected">This device syncs with <strong>{{ server }}</strong>.</p>
+      <p class="small muted" role="status">
+        @switch (sync.status()) {
+          @case ('syncing') {
+            <ng-container i18n="@@sync.syncing">Syncing…</ng-container>
+          }
+          @case ('error') {
+            {{ sync.error() }}
+          }
+          @default {
+            @if (sync.lastSyncedAt(); as last) {
+              <ng-container i18n="@@sync.last">Last synced {{ last | date: 'd MMM y, HH:mm' }}.</ng-container>
+            } @else {
+              <ng-container i18n="@@sync.never">Not synced yet.</ng-container>
+            }
+          }
+        }
+        @if (sync.pending()) {
+          <ng-container i18n="@@sync.pending">{sync.pending(), plural, =1 {1 change waiting.} other {{{ sync.pending() }} changes waiting.}}</ng-container>
+        }
+      </p>
+
+      @if (sync.attention().length) {
+        <div class="attention" role="alert">
+          <p i18n="@@sync.attentionIntro">The server refused these changes. They stay on this device until you choose.</p>
+          <ul>
+            @for (entry of sync.attention(); track entry.key) {
+              <li>
+                <strong>{{ describe(entry) }}</strong>
+                <span class="small muted">{{ entry.message }}</span>
+                <span class="attention-actions">
+                  <button type="button" class="btn btn-quiet" (click)="sync.retry(entry)" i18n="@@action.retry">Try again</button>
+                  <button type="button" class="btn btn-quiet" (click)="sync.useServerCopy(entry)" i18n="@@sync.useServer">Use the server's copy</button>
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="backup-actions">
+        <button type="button" class="btn" [disabled]="sync.status() === 'syncing'" (click)="sync.syncNow()" i18n="@@sync.now">Sync now</button>
+        <button type="button" class="btn btn-quiet" (click)="disconnect()" i18n="@@sync.disconnect">Stop syncing</button>
+      </div>
+    } @else {
+      <p class="muted backup-status" i18n="@@sync.intro">Connect to your Selah server to keep a copy of your data there and on your other devices.</p>
+      <form [formGroup]="syncForm" (ngSubmit)="connect()">
+        <div class="ledger-row">
+          <label for="sync-server" i18n="@@sync.server">Server</label>
+          <input id="sync-server" type="url" inputmode="url" autocomplete="url" formControlName="server" placeholder="https://" />
+        </div>
+        <div class="ledger-row">
+          <label for="sync-token" i18n="@@sync.token">Access token</label>
+          <input id="sync-token" type="password" autocomplete="off" formControlName="token" />
+        </div>
+        @if (connectError(); as message) {
+          <p class="field-error" role="alert">{{ message }}</p>
+        }
+        <div class="backup-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="connecting()" i18n="@@sync.connect">Connect</button>
+        </div>
+      </form>
     }
   </section>
 

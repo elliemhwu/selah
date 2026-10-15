@@ -1,13 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CURRENCIES, type Currency, type IsoWeekday } from '@selah/shared-types';
 import { AppSettings } from '../core/app-settings';
 import { problemOf } from '../core/problem';
 import { BackupError } from '../data/backup';
 import { Backups, type PendingRestore } from '../data/backups';
+import { DeviceStore } from '../data/device-store';
+import type { OutboxEntry } from '../data/device-storage';
+import { Sync } from '../data/sync';
+import { SyncError } from '../data/sync-server';
 import { categoryTree } from '../finance/categories/category-tree';
 import { CategoriesApi } from '../finance/data/finance-api';
 import { Icon } from '../ui/icon';
@@ -27,7 +31,7 @@ const WEEKDAYS: { day: IsoWeekday; label: string }[] = [
 /**
  * Settings (requirements §4): the week start day and default currency, which
  * save as soon as they change (ADR 0024); backups of the device's data
- * (ADR 0025); and the category tree, whose forms open as routes (ADR 0022).
+ * (ADR 0025); sync with a server (ADR 0028); and the category tree, whose forms open as routes (ADR 0022).
  */
 @Component({
   selector: 'selah-settings-page',
@@ -45,6 +49,15 @@ export class SettingsPage {
   /** A backup chosen to restore, shown with what it holds until the user confirms. */
   protected readonly pending = signal<PendingRestore | null>(null);
   protected readonly restoring = signal(false);
+
+  protected readonly sync = inject(Sync);
+  private readonly store = inject(DeviceStore);
+  protected readonly connecting = signal(false);
+  protected readonly connectError = signal<string | null>(null);
+  protected readonly syncForm = inject(NonNullableFormBuilder).group({
+    server: ['', Validators.required],
+    token: ['', Validators.required],
+  });
 
   protected readonly weekdays = WEEKDAYS;
   protected readonly currencies = CURRENCIES;
@@ -94,6 +107,61 @@ export class SettingsPage {
       this.toast.show(problemOf(error).message);
     } finally {
       this.restoring.set(false);
+    }
+  }
+
+  protected async connect(): Promise<void> {
+    if (this.syncForm.invalid) {
+      this.syncForm.markAllAsTouched();
+      return;
+    }
+    this.connecting.set(true);
+    this.connectError.set(null);
+    try {
+      const { server, token } = this.syncForm.getRawValue();
+      await this.sync.connect(server, token);
+      this.syncForm.reset();
+      this.toast.show($localize`:@@sync.connectedToast:Connected. This device now syncs.`);
+    } catch (error) {
+      this.connectError.set(error instanceof SyncError ? error.message : problemOf(error).message);
+    } finally {
+      this.connecting.set(false);
+    }
+  }
+
+  protected async disconnect(): Promise<void> {
+    await this.sync.disconnect();
+    this.toast.show($localize`:@@sync.disconnectedToast:This device no longer syncs. Its data stays here.`);
+  }
+
+  /** Names the row behind a refused change, so the user can find it. */
+  protected describe(entry: OutboxEntry): string {
+    const data = this.store.data();
+    switch (entry.table) {
+      case 'accounts': {
+        const name = data.accounts.find((a) => a.id === entry.id)?.name ?? '';
+        return $localize`:@@sync.item.account:Account ${name}:name:`;
+      }
+      case 'categories': {
+        const name = data.categories.find((c) => c.id === entry.id)?.name ?? '';
+        return $localize`:@@sync.item.category:Category ${name}:name:`;
+      }
+      case 'records': {
+        const record = data.records.find((r) => r.id === entry.id);
+        const date = record?.occurredOn ?? '';
+        const note = record?.note ?? record?.lines[0]?.note ?? '';
+        return note ? $localize`:@@sync.item.recordNote:Entry on ${date}:date:, ${note}:note:` : $localize`:@@sync.item.record:Entry on ${date}:date:`;
+      }
+      case 'planVersions': {
+        const month = data.planVersions.find((v) => v.id === entry.id)?.effectiveFromMonth ?? '';
+        return $localize`:@@sync.item.plan:Budget plan from ${month}:month:`;
+      }
+      case 'budgetTransfers': {
+        const date = data.budgetTransfers.find((t) => t.id === entry.id)?.occurredOn ?? '';
+        return $localize`:@@sync.item.transfer:Budget transfer on ${date}:date:`;
+      }
+      case 'settings':
+        return $localize`:@@sync.item.settings:Settings`;
     }
   }
 

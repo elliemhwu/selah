@@ -6,7 +6,9 @@ import { toBackupJson } from '../data/backup';
 import { SAVE_FILE } from '../data/backups';
 import { type DeviceSnapshot, type DeviceStorage, EMPTY_SNAPSHOT, MemoryStorage } from '../data/device-storage';
 import { DEVICE_STORAGE } from '../data/device-store';
-import { flushSaves, settle, storedAccount, storedCategory, storedRecord } from '../data/testing';
+import { Sync } from '../data/sync';
+import { SYNC_SERVER, SyncError } from '../data/sync-server';
+import { brokenStorage, FakeSyncServer, flushSaves, problem, settle, storedAccount, storedCategory, storedRecord } from '../data/testing';
 import { Toast } from '../ui/toast';
 import { SettingsPage } from './settings-page';
 
@@ -15,10 +17,12 @@ const settings = { id: 'settings' as const, weekStartDay: 7 as const, defaultCur
 describe('SettingsPage', () => {
   let toast: { show: ReturnType<typeof vi.fn> };
   let saveFile: ReturnType<typeof vi.fn>;
+  let server: FakeSyncServer;
 
   async function render(seed: Partial<DeviceSnapshot> = {}, storage: DeviceStorage = new MemoryStorage({ settings, ...seed })) {
     toast = { show: vi.fn() };
     saveFile = vi.fn();
+    server = new FakeSyncServer();
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [SettingsPage],
@@ -27,6 +31,7 @@ describe('SettingsPage', () => {
         { provide: Toast, useValue: toast },
         { provide: DEVICE_STORAGE, useValue: storage },
         { provide: SAVE_FILE, useValue: saveFile },
+        { provide: SYNC_SERVER, useValue: server.factory },
         { provide: TODAY, useValue: () => '2026-10-15' },
       ],
     });
@@ -74,12 +79,7 @@ describe('SettingsPage', () => {
   });
 
   it("offers no choices when the device's data can't be opened", async () => {
-    const broken: DeviceStorage = {
-      load: () => Promise.reject(new Error('blocked')),
-      save: () => Promise.reject(new Error('blocked')),
-      replace: () => Promise.reject(new Error('blocked')),
-      watch: () => () => undefined,
-    };
+    const broken = brokenStorage();
     const { el } = await render({}, broken);
     expect(el.querySelector('#set-week')).toBeNull();
     expect(el.textContent).toContain("Couldn't load your settings.");
@@ -148,6 +148,81 @@ describe('SettingsPage', () => {
       expect(toast.show).toHaveBeenCalledWith("This file isn't a Selah backup.");
       expect(el.querySelector('.restore-confirm')).toBeNull();
       expect(storage.snapshot().accounts.map((a) => a.id)).toEqual(['old']);
+    });
+  });
+
+  describe('sync (ADR 0028)', () => {
+    const type = (el: HTMLElement, id: string, value: string) => {
+      const input = el.querySelector<HTMLInputElement>(id) as HTMLInputElement;
+      input.value = value;
+      input.dispatchEvent(new Event('input'));
+    };
+    const submit = async (fixture: { detectChanges(): void; whenStable(): Promise<unknown> }, el: HTMLElement) => {
+      el.querySelector<HTMLFormElement>('#sync form')?.dispatchEvent(new Event('submit'));
+      await fixture.whenStable();
+      await flushSaves();
+      fixture.detectChanges();
+    };
+
+    it('connects to a server, sends what is on the device, and says so', async () => {
+      const { fixture, el } = await render({ accounts: [storedAccount('cash')] });
+      type(el, '#sync-server', 'https://selah.test/');
+      type(el, '#sync-token', 'secret');
+      await submit(fixture, el);
+
+      expect(server.opened[0]).toEqual(['https://selah.test', 'secret']);
+      expect(server.pushes()).toContain('PUT finance/accounts/cash');
+      expect(el.querySelector('#sync')?.textContent).toContain('This device syncs with https://selah.test.');
+      expect(el.querySelector('#sync')?.textContent).toContain('Last synced');
+      expect(toast.show).toHaveBeenCalledWith('Connected. This device now syncs.');
+    });
+
+    it("says why it couldn't connect, and keeps the form", async () => {
+      const { fixture, el } = await render();
+      server.fail = new SyncError('unauthorized', "The server didn't accept the access token.");
+      type(el, '#sync-server', 'https://selah.test');
+      type(el, '#sync-token', 'wrong');
+      await submit(fixture, el);
+
+      expect(el.querySelector('#sync [role="alert"]')?.textContent).toContain("didn't accept the access token");
+      expect(el.querySelector('#sync-server')).not.toBeNull();
+    });
+
+    it('lists changes the server refused, and drops one for the server copy', async () => {
+      const storage = new MemoryStorage({ settings });
+      await storage.setConnection({ id: 'sync', server: 'https://selah.test', token: 't', cursor: 'c1', lastSyncedAt: null });
+      await storage.save({ accounts: [storedAccount('cash', 'TWD', { name: 'Wallet' })] });
+      const { fixture, el } = await render({}, storage);
+      server.refuse = (method) => (method === 'PUT' ? problem(409, 'An account named "Wallet" already exists.') : undefined);
+      await TestBed.inject(Sync).syncNow();
+      fixture.detectChanges();
+
+      const item = el.querySelector('.attention li');
+      expect(item?.textContent).toContain('Account Wallet');
+      expect(item?.textContent).toContain('An account named "Wallet" already exists.');
+
+      const useServer = [...(item?.querySelectorAll('button') ?? [])].find((b) => b.textContent?.includes("server's copy"));
+      useServer?.click();
+      await fixture.whenStable();
+      await flushSaves();
+      fixture.detectChanges();
+      expect(el.querySelector('.attention')).toBeNull();
+      expect(server.log.at(-1)).toBe('GET sync/changes');
+    });
+
+    it('stops syncing on request', async () => {
+      const storage = new MemoryStorage({ settings });
+      await storage.setConnection({ id: 'sync', server: 'https://selah.test', token: 't', cursor: null, lastSyncedAt: null });
+      const { fixture, el } = await render({}, storage);
+      await TestBed.inject(Sync).syncNow();
+      fixture.detectChanges();
+      const stop = [...el.querySelectorAll<HTMLButtonElement>('#sync button')].find((b) => b.textContent?.includes('Stop syncing'));
+      stop?.click();
+      await fixture.whenStable();
+      await flushSaves();
+      fixture.detectChanges();
+      expect(await storage.connection()).toBeNull();
+      expect(el.querySelector('#sync-server')).not.toBeNull();
     });
   });
 });

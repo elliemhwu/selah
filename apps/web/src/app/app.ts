@@ -4,6 +4,7 @@ import { type ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterL
 import { filter, map } from 'rxjs';
 import { Backups } from './data/backups';
 import { DeviceStore } from './data/device-store';
+import { Sync } from './data/sync';
 import { Icon, type IconName } from './ui/icon';
 import { ToastOutlet } from './ui/toast';
 
@@ -41,10 +42,12 @@ export class App {
   );
 
   private readonly store = inject(DeviceStore);
+  protected readonly sync = inject(Sync);
 
   constructor() {
     // Ask the browser to keep the data even when space runs low (ADR 0025).
     void inject(Backups).requestPersistence();
+    void this.sync.start();
   }
 
   /** Shown when the data on this device can't be opened (ADR 0025); the app needs no server. */

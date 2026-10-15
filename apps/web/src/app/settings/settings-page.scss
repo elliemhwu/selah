@@ -97,3 +97,35 @@
     margin: 0;
   }
 }
+
+.attention {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border: 1px dashed var(--error);
+  border-radius: var(--radius);
+  background: var(--panel);
+
+  p {
+    margin: 0 0 8px;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 0;
+    border-top: 1px dotted var(--rule);
+  }
+}
+
+.attention-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}

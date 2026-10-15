@@ -3,6 +3,7 @@ import { TODAY } from '../core/today';
 import { backupFileName, type BackupSummary, parseBackup, toBackupJson } from './backup';
 import type { DeviceSnapshot } from './device-storage';
 import { DeviceStore } from './device-store';
+import { Sync } from './sync';
 
 /** Hands a file to the user; tests replace it. */
 export const SAVE_FILE = new InjectionToken<(name: string, text: string) => void>('SAVE_FILE', {
@@ -37,6 +38,7 @@ export class Backups {
   private readonly store = inject(DeviceStore);
   private readonly saveFile = inject(SAVE_FILE);
   private readonly today = inject(TODAY);
+  private readonly sync = inject(Sync);
 
   /** When this device last downloaded a backup (ISO), if ever. Kept per device. */
   readonly lastBackupAt = signal<string | null>(readLastBackup());
@@ -73,9 +75,10 @@ export class Backups {
     return { fileName: file.name, summary, snapshot };
   }
 
-  /** Replaces everything on the device with the backup. */
-  restore(pending: PendingRestore): Promise<void> {
-    return this.store.replace(pending.snapshot);
+  /** Replaces everything on the device with the backup; with sync on, it goes to the server too (ADR 0028). */
+  async restore(pending: PendingRestore): Promise<void> {
+    await this.store.replace(pending.snapshot);
+    await this.sync.afterRestore();
   }
 }
 

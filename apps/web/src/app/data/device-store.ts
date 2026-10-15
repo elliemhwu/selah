@@ -25,8 +25,12 @@ export class DeviceStore {
   private readonly loadState = signal<'loading' | 'ready' | 'error'>('loading');
   private loading: Promise<void>;
 
+  private readonly saves = signal(0);
+
   /** Every row, deleted ones included. */
   readonly data = this.state.asReadonly();
+  /** Counts the saves made on this device in this tab, which sync follows (ADR 0028). */
+  readonly localSaves = this.saves.asReadonly();
   readonly status = this.loadState.asReadonly();
   readonly ready = computed(() => this.loadState() === 'ready');
 
@@ -51,10 +55,17 @@ export class DeviceStore {
     return this.loading;
   }
 
-  /** Writes the changes together, then shows them. */
+  /** Writes the changes together and queues them for sync, then shows them. */
   async save(changes: DeviceChanges): Promise<void> {
     await this.storage.save(changes);
     this.state.update((snapshot) => applyChanges(snapshot, changes));
+    this.saves.update((n) => n + 1);
+  }
+
+  /** Writes rows pulled from the server, except those waiting to be pushed, then shows them. */
+  async saveFromServer(changes: DeviceChanges): Promise<void> {
+    const applied = await this.storage.saveFromServer(changes);
+    this.state.update((snapshot) => applyChanges(snapshot, applied));
   }
 
   /** Replaces everything on the device, such as when restoring a backup. */
