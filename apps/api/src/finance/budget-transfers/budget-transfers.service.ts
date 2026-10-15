@@ -13,13 +13,13 @@ export class BudgetTransfersService {
 
   async list(query: ListBudgetTransfersQuery): Promise<BudgetTransferDto[]> {
     assertDateRange(query.from, query.to);
-    return (await this.transfers.list(query)).map(toDto);
+    return (await this.transfers.list(query)).map(toBudgetTransferDto);
   }
 
   async get(id: string): Promise<BudgetTransferDto> {
     const row = await this.transfers.findById(id);
     if (!row || row.deletedAt) throw new NotFoundError(`Budget transfer ${id} not found.`);
-    return toDto(row);
+    return toBudgetTransferDto(row);
   }
 
   /** Creates or replaces a manual transfer (ADR 0017, 0019). */
@@ -43,7 +43,7 @@ export class BudgetTransfersService {
   }
 }
 
-function toDto(row: BudgetTransferRow): BudgetTransferDto {
+export function toBudgetTransferDto(row: BudgetTransferRow): BudgetTransferDto {
   return {
     id: row.id,
     kind: row.kind as BudgetTransferKind,

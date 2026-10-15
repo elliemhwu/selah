@@ -51,14 +51,18 @@ export class AccountsService {
 }
 
 function toDto(row: AccountRow, records: readonly RecordForBalance[]): AccountDto {
-  const currency = row.currency as Currency;
+  const fields = toAccountFields(row);
+  return { ...fields, balance: balanceOf(fields, records) };
+}
+
+/** An account as stored, without its derived balance. */
+export function toAccountFields(row: AccountRow): Omit<AccountDto, 'balance'> {
   return {
     id: row.id,
     name: row.name,
     type: row.type as AccountType,
-    currency,
+    currency: row.currency as Currency,
     openingBalance: row.openingBalance,
-    balance: balanceOf({ id: row.id, currency, openingBalance: row.openingBalance }, records),
     sortOrder: row.sortOrder,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

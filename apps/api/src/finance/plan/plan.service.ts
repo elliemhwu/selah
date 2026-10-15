@@ -77,16 +77,20 @@ export class PlanService {
 
   private async toDto({ version, items }: VersionDocument): Promise<PlanVersionDto> {
     const newest = await this.plan.newestVersion();
-    return {
-      id: version.id,
-      effectiveFromMonth: toYearMonth(version.effectiveFromMonth),
-      note: version.note,
-      editable: newest?.id === version.id,
-      items: items.map(toItemDto),
-      createdAt: version.createdAt.toISOString(),
-      updatedAt: version.updatedAt.toISOString(),
-    };
+    return { ...toVersionFields({ version, items }), editable: newest?.id === version.id };
   }
+}
+
+/** A version as stored, without `editable`, which depends on the other versions. */
+export function toVersionFields({ version, items }: VersionDocument): Omit<PlanVersionDto, 'editable'> {
+  return {
+    id: version.id,
+    effectiveFromMonth: toYearMonth(version.effectiveFromMonth),
+    note: version.note,
+    items: items.map(toItemDto),
+    createdAt: version.createdAt.toISOString(),
+    updatedAt: version.updatedAt.toISOString(),
+  };
 }
 
 function toYearMonth(firstOfMonth: string): string {

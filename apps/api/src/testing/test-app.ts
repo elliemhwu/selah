@@ -4,7 +4,7 @@ import { sql } from 'kysely';
 import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { AppModule } from '../app/app.module';
-import { configureApp } from '../app/configure-app';
+import { type AppOptions, configureApp } from '../app/configure-app';
 import { DATABASE } from '../database/database.module';
 import type { Database } from '../database/database';
 
@@ -16,9 +16,9 @@ export interface TestApp {
 }
 
 /** The real app, configured like main.ts, on the test database. */
-export async function createTestApp(): Promise<TestApp> {
+export async function createTestApp(options: AppOptions = {}): Promise<TestApp> {
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-  const app = configureApp(moduleRef.createNestApplication({ logger: false }));
+  const app = configureApp(moduleRef.createNestApplication({ logger: false }), options);
   await app.init();
   return {
     app,

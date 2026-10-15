@@ -11,13 +11,13 @@ export class CategoriesService {
 
   /** A flat list; the client builds the tree from `parentId`. */
   async list(): Promise<CategoryDto[]> {
-    return (await this.categories.listLive()).map(toDto);
+    return (await this.categories.listLive()).map(toCategoryDto);
   }
 
   async get(id: string): Promise<CategoryDto> {
     const row = await this.categories.findById(id);
     if (!row || row.deletedAt) throw new NotFoundError(`Category ${id} not found.`);
-    return toDto(row);
+    return toCategoryDto(row);
   }
 
   /** Creates or replaces a category (ADR 0017). */
@@ -40,7 +40,7 @@ export class CategoriesService {
   }
 }
 
-function toDto(row: CategoryRow): CategoryDto {
+export function toCategoryDto(row: CategoryRow): CategoryDto {
   return {
     id: row.id,
     name: row.name,

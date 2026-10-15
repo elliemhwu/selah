@@ -101,6 +101,18 @@ export class PlanRepository {
     return Promise.all(versions.map((version) => this.loadDocument(version)));
   }
 
+  /**
+   * Versions changed after `after` (every version when null), soft-deleted
+   * ones included, with their items; for sync (ADR 0028). Saving or deleting
+   * a version always updates its row, so its `updatedAt` covers the items.
+   */
+  async changedSince(after: Date | null): Promise<VersionDocument[]> {
+    let query = this.db.selectFrom('finance.budgetPlanVersions').selectAll();
+    if (after) query = query.where('updatedAt', '>', after);
+    const versions = await query.orderBy('effectiveFromMonth').execute();
+    return Promise.all(versions.map((version) => this.loadDocument(version)));
+  }
+
   /** Sections of existing stable items, to keep them fixed. */
   async itemSections(ids: readonly string[]): Promise<Map<string, Section>> {
     if (ids.length === 0) return new Map();

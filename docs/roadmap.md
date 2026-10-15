@@ -2,7 +2,7 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-14_
+_Last updated: 2026-10-15_
 
 ## Current state
 
@@ -27,7 +27,9 @@ _Last updated: 2026-10-14_
 
 - **Phase 6b (backup and hosting):** done ([ADR 0027](decisions/0027-backups-and-hosting.md)). Settings downloads a backup file of everything on the device and restores one, replacing everything after a second tap; Home reminds to back up after 30 days without one. The app asks the browser to keep its storage and says whether it did. Selah has its own icon (a fermata over a ledger rule, `pnpm icons`), and a GitHub Action publishes the app to https://elliemhwu.github.io/selah/ on every push to `main`. The owner chose to start fresh: nothing from the local Postgres is brought over.
 
-**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). Then Phase 6c, sync, once a free cloud or home server is chosen. The open questions below are still waiting for the owner.
+- **Phase 6c (sync):** in progress, with the protocol proposed in [ADR 0028](decisions/0028-sync-protocol.md). It works the same whichever server is chosen. **Step 1 (API):** done. `GET /api/v1/sync/changes?since=` returns every row changed since a cursor, deleted rows included, in the shapes the device stores. `API_ACCESS_TOKEN` makes every request but the health check need a bearer token, and `API_CORS_ORIGINS` lets the hosted app call the API. **Step 2 (device):** the outbox, push and pull, and a Sync section in Settings.
+
+**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). Finish Phase 6c on the device, then choose where the server runs (a free cloud or a home server) and confirm [ADR 0028](decisions/0028-sync-protocol.md). The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -42,7 +44,7 @@ _Last updated: 2026-10-14_
 | 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings                   | `feat/finance-web-*`        | ✅ Done |
 | 6a  | Offline-first, device storage: IndexedDB, rules and reports in shared functions, every screen off the API ([ADR 0025](decisions/0025-offline-first.md)) | `feat/offline-*`            | ✅ Done |
 | 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ✅ Done |
-| 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | ⬜      |
+| 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | 🟡      |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 

@@ -83,6 +83,17 @@ export class RecordsRepository {
     return this.withLines(records);
   }
 
+  /**
+   * Records changed after `after` (every record when null), soft-deleted ones
+   * included; for sync (ADR 0028). Saving or deleting a record always updates
+   * its row, so its `updatedAt` covers the lines too.
+   */
+  async changedSince(after: Date | null): Promise<RecordWithLines[]> {
+    let query = this.db.selectFrom('finance.records').selectAll();
+    if (after) query = query.where('updatedAt', '>', after);
+    return this.withLines(await query.execute());
+  }
+
   /** The live accounts, categories and budget items among the given ids. */
   async lookups(ids: {
     accounts: string[];

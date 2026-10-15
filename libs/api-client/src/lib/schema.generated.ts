@@ -322,6 +322,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every row changed since the cursor, deleted ones included (ADR 0028) */
+        get: operations["getSyncChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -967,6 +984,154 @@ export interface components {
              */
             amount: string;
             note: string | null;
+        };
+        SyncAccountDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example Wallet */
+            name: string;
+            type: components["schemas"]["AccountType"];
+            currency: components["schemas"]["Currency"];
+            /** @example 1000.00 */
+            openingBalance: string;
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when the row was deleted (ADR 0007).
+             */
+            deletedAt: string | null;
+        };
+        SyncCategoryDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example Food */
+            name: string;
+            /** Format: uuid */
+            parentId: string | null;
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when the row was deleted (ADR 0007).
+             */
+            deletedAt: string | null;
+        };
+        SyncRecordDto: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["RecordType"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            accountId: string;
+            currency: components["schemas"]["Currency"];
+            /**
+             * Format: uuid
+             * @description Transfer only.
+             */
+            counterAccountId: string | null;
+            /** @description Transfer only: the amount received. */
+            counterAmount: string | null;
+            /** @description Adjustment only (ADR 0014). */
+            targetBalance: string | null;
+            note: string | null;
+            lines: components["schemas"]["RecordLineDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when the row was deleted (ADR 0007).
+             */
+            deletedAt: string | null;
+        };
+        SyncPlanVersionDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example 2026-10 */
+            effectiveFromMonth: string;
+            note: string | null;
+            items: components["schemas"]["PlanItemDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when the row was deleted (ADR 0007).
+             */
+            deletedAt: string | null;
+        };
+        SyncBudgetTransferDto: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["BudgetTransferKind"];
+            /**
+             * Format: date
+             * @example 2026-10-31
+             */
+            occurredOn: string;
+            /** @example 21:00 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            fromItemId: string;
+            /**
+             * Format: uuid
+             * @description Null only for a stored reset that dropped the leftover.
+             */
+            toItemId: string | null;
+            /**
+             * @description Whole TWD.
+             * @example 500.00
+             */
+            amount: string;
+            note: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when the row was deleted (ADR 0007).
+             */
+            deletedAt: string | null;
+        };
+        SyncSettingsDto: {
+            /**
+             * @description ISO day of week: 1 = Monday … 7 = Sunday.
+             * @enum {integer}
+             */
+            weekStartDay: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+            defaultCurrency: components["schemas"]["Currency"];
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        SyncChangesDto: {
+            /**
+             * Format: date-time
+             * @description Pass as `since` on the next pull. The server reads a little further back, so a row may come twice.
+             */
+            cursor: string;
+            accounts: components["schemas"]["SyncAccountDto"][];
+            categories: components["schemas"]["SyncCategoryDto"][];
+            records: components["schemas"]["SyncRecordDto"][];
+            planVersions: components["schemas"]["SyncPlanVersionDto"][];
+            budgetTransfers: components["schemas"]["SyncBudgetTransferDto"][];
+            /** @description Null when unchanged or never saved. */
+            settings: components["schemas"]["SyncSettingsDto"] | null;
         };
     };
     responses: never;
@@ -2217,6 +2382,37 @@ export interface operations {
             };
             /** @description A business rule refuses the request. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
+                };
+            };
+        };
+    };
+    getSyncChanges: {
+        parameters: {
+            query?: {
+                /** @description The cursor from the previous pull. Leave it out to get everything. */
+                since?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncChangesDto"];
+                };
+            };
+            /** @description The request shape is invalid. */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -48,6 +48,13 @@ export class BudgetTransfersRepository {
       .execute();
   }
 
+  /** Rows changed after `after` (every row when null), soft-deleted ones included; for sync (ADR 0028). */
+  changedSince(after: Date | null): Promise<BudgetTransferRow[]> {
+    let query = this.db.selectFrom('finance.budgetTransfers').selectAll();
+    if (after) query = query.where('updatedAt', '>', after);
+    return query.execute();
+  }
+
   /** Includes soft-deleted rows, so callers can tell "deleted" from "unknown". */
   findById(id: string): Promise<BudgetTransferRow | undefined> {
     return this.db.selectFrom('finance.budgetTransfers').selectAll().where('id', '=', id).executeTakeFirst();

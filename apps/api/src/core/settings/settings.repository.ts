@@ -20,6 +20,12 @@ export class SettingsRepository {
     return this.db.selectFrom('core.settings').selectAll().where('deletedAt', 'is', null).executeTakeFirst();
   }
 
+  /** The live row if it changed after `after` (or ever, when null); for sync (ADR 0028). */
+  async changedSince(after: Date | null): Promise<SettingsRow | undefined> {
+    const row = await this.findLive();
+    return row && (!after || row.updatedAt > after) ? row : undefined;
+  }
+
   /** Inserts the single live row, or replaces it, in one statement (the `settings_single_row` index). */
   async save(values: SettingsValues): Promise<void> {
     await this.db

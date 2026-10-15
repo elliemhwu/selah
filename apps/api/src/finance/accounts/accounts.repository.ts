@@ -30,6 +30,13 @@ export class AccountsRepository {
       .execute();
   }
 
+  /** Rows changed after `after` (every row when null), soft-deleted ones included; for sync (ADR 0028). */
+  changedSince(after: Date | null): Promise<AccountRow[]> {
+    let query = this.db.selectFrom('finance.accounts').selectAll();
+    if (after) query = query.where('updatedAt', '>', after);
+    return query.execute();
+  }
+
   /** Includes soft-deleted rows, so callers can tell "deleted" from "unknown". */
   findById(id: string): Promise<AccountRow | undefined> {
     return this.db.selectFrom('finance.accounts').selectAll().where('id', '=', id).executeTakeFirst();

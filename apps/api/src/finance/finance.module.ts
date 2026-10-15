@@ -49,5 +49,7 @@ import { ReportsService } from './reports/reports.service';
     ReportsRepository,
     ReportsService,
   ],
+  // Sync reads every table (ADR 0028).
+  exports: [AccountsRepository, BudgetTransfersRepository, CategoriesRepository, PlanRepository, RecordsRepository],
 })
 export class FinanceModule {}

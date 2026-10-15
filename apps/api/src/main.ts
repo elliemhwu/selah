@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
 import { AppModule } from './app/app.module';
-import { configureApp } from './app/configure-app';
+import { appOptionsFromEnv, configureApp } from './app/configure-app';
 import { buildOpenApiDocument } from './openapi';
 
 function loadEnv(): void {
@@ -16,7 +16,7 @@ function loadEnv(): void {
 
 async function bootstrap() {
   loadEnv();
-  const app = configureApp(await NestFactory.create(AppModule));
+  const app = configureApp(await NestFactory.create(AppModule), appOptionsFromEnv());
 
   const document = buildOpenApiDocument(app);
 

@@ -13,13 +13,13 @@ export class RecordsService {
 
   async list(query: ListRecordsQuery): Promise<RecordDto[]> {
     assertDateRange(query.from, query.to);
-    return (await this.records.list(query)).map(toDto);
+    return (await this.records.list(query)).map(toRecordDto);
   }
 
   async get(id: string): Promise<RecordDto> {
     const [found] = await this.records.findByIds([id]);
     if (!found || found.record.deletedAt) throw new NotFoundError(`Record ${id} not found.`);
-    return toDto(found);
+    return toRecordDto(found);
   }
 
   /** Creates or replaces one record and its lines (ADR 0017). */
@@ -54,11 +54,11 @@ export class RecordsService {
     const saved = new Map(
       (await this.records.findByIds(writes.map((w) => w.id))).map((r) => [r.record.id, r]),
     );
-    return { records: writes.map((w) => toDto(saved.get(w.id) as RecordWithLines)), created };
+    return { records: writes.map((w) => toRecordDto(saved.get(w.id) as RecordWithLines)), created };
   }
 }
 
-function toDto({ record: r, lines }: RecordWithLines): RecordDto {
+export function toRecordDto({ record: r, lines }: RecordWithLines): RecordDto {
   return {
     id: r.id,
     type: r.type as RecordType,

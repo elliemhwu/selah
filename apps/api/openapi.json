@@ -1674,6 +1674,49 @@
           "finance: reports"
         ]
       }
+    },
+    "/api/v1/sync/changes": {
+      "get": {
+        "operationId": "getSyncChanges",
+        "parameters": [
+          {
+            "name": "since",
+            "required": false,
+            "in": "query",
+            "description": "The cursor from the previous pull. Leave it out to get everything.",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncChangesDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Every row changed since the cursor, deleted ones included (ADR 0028)",
+        "tags": [
+          "sync"
+        ]
+      }
     }
   },
   "info": {
@@ -3349,6 +3392,413 @@
           "toItemId",
           "amount",
           "note"
+        ]
+      },
+      "SyncAccountDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Wallet"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountType"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "openingBalance": {
+            "type": "string",
+            "example": "1000.00"
+          },
+          "sortOrder": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when the row was deleted (ADR 0007)."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "currency",
+          "openingBalance",
+          "sortOrder",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "SyncCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Food"
+          },
+          "parentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when the row was deleted (ADR 0007)."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "parentId",
+          "sortOrder",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "SyncRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecordType"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "nullable": true,
+            "example": "12:30"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "counterAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Transfer only."
+          },
+          "counterAmount": {
+            "type": "string",
+            "nullable": true,
+            "description": "Transfer only: the amount received."
+          },
+          "targetBalance": {
+            "type": "string",
+            "nullable": true,
+            "description": "Adjustment only (ADR 0014)."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordLineDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when the row was deleted (ADR 0007)."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "occurredOn",
+          "occurredAt",
+          "accountId",
+          "currency",
+          "counterAccountId",
+          "counterAmount",
+          "targetBalance",
+          "note",
+          "lines",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "SyncPlanVersionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effectiveFromMonth": {
+            "type": "string",
+            "example": "2026-10"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItemDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when the row was deleted (ADR 0007)."
+          }
+        },
+        "required": [
+          "id",
+          "effectiveFromMonth",
+          "note",
+          "items",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "SyncBudgetTransferDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetTransferKind"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-31"
+          },
+          "occurredAt": {
+            "type": "string",
+            "nullable": true,
+            "example": "21:00"
+          },
+          "fromItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null only for a stored reset that dropped the leftover."
+          },
+          "amount": {
+            "type": "string",
+            "example": "500.00",
+            "description": "Whole TWD."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when the row was deleted (ADR 0007)."
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "occurredOn",
+          "occurredAt",
+          "fromItemId",
+          "toItemId",
+          "amount",
+          "note",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "SyncSettingsDto": {
+        "type": "object",
+        "properties": {
+          "weekStartDay": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "description": "ISO day of week: 1 = Monday … 7 = Sunday."
+          },
+          "defaultCurrency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "weekStartDay",
+          "defaultCurrency",
+          "updatedAt"
+        ]
+      },
+      "SyncChangesDto": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Pass as `since` on the next pull. The server reads a little further back, so a row may come twice."
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncAccountDto"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncCategoryDto"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncRecordDto"
+            }
+          },
+          "planVersions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncPlanVersionDto"
+            }
+          },
+          "budgetTransfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncBudgetTransferDto"
+            }
+          },
+          "settings": {
+            "nullable": true,
+            "description": "Null when unchanged or never saved.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SyncSettingsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "cursor",
+          "accounts",
+          "categories",
+          "records",
+          "planVersions",
+          "budgetTransfers",
+          "settings"
         ]
       }
     }
