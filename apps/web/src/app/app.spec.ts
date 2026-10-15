@@ -27,6 +27,7 @@ describe('App', () => {
     const broken: DeviceStorage = {
       load: () => Promise.reject(new Error('blocked')),
       save: () => Promise.reject(new Error('blocked')),
+      replace: () => Promise.reject(new Error('blocked')),
       watch: () => () => undefined,
     };
     const el = await render(broken);

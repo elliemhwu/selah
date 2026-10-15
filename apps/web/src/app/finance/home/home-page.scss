@@ -168,3 +168,20 @@ section {
     background: var(--paper);
   }
 }
+
+.backup-due {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  color: var(--ink-muted);
+
+  a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+}

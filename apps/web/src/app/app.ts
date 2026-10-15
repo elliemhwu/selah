@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { type ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { Backups } from './data/backups';
 import { DeviceStore } from './data/device-store';
 import { Icon, type IconName } from './ui/icon';
 import { ToastOutlet } from './ui/toast';
@@ -40,6 +41,11 @@ export class App {
   );
 
   private readonly store = inject(DeviceStore);
+
+  constructor() {
+    // Ask the browser to keep the data even when space runs low (ADR 0025).
+    void inject(Backups).requestPersistence();
+  }
 
   /** Shown when the data on this device can't be opened (ADR 0025); the app needs no server. */
   protected readonly storageFailed = computed(() => this.store.status() === 'error');

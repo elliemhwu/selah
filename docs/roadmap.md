@@ -25,7 +25,9 @@ _Last updated: 2026-10-14_
 
 - **Phase 6a, step 2 (device store):** done. Every row lives in IndexedDB through Dexie; `DeviceStore` loads it into memory at start and follows changes from other tabs. `finance-api.ts` keeps its shape but reads the device and runs the `finance-core` rules before saving, and settings moved to the device too. The app no longer needs the API: the "can't reach the server" banner became a warning that shows only if the device's storage can't be opened. Web tests seed an in-memory store instead of stubbing HTTP.
 
-**Next step:** Phase 6b, backup and hosting: export and import all data as a file (also the way to bring over anything entered into the local Postgres while testing), persistent storage, install polish, and free static hosting. Until then, data entered in the app lives only in that browser. No screen has been checked on a real phone yet. The open questions below are still waiting for the owner.
+- **Phase 6b (backup and hosting):** done ([ADR 0027](decisions/0027-backups-and-hosting.md)). Settings downloads a backup file of everything on the device and restores one, replacing everything after a second tap; Home reminds to back up after 30 days without one. The app asks the browser to keep its storage and says whether it did. Selah has its own icon (a fermata over a ledger rule, `pnpm icons`), and a GitHub Action publishes the app to https://elliemhwu.github.io/selah/ on every push to `main`. The owner chose to start fresh: nothing from the local Postgres is brought over.
+
+**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). Then Phase 6c, sync, once a free cloud or home server is chosen. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -39,7 +41,7 @@ _Last updated: 2026-10-14_
 | 4   | NestJS finance module design and implementation: accounts, categories, plan and items, records, budget transfers, reports                               | `feat/finance-api-*`        | ✅ Done |
 | 5   | Angular UI design and implementation: home, record form and batch entry, checklist, budget editor, monthly review, accounts, settings                   | `feat/finance-web-*`        | ✅ Done |
 | 6a  | Offline-first, device storage: IndexedDB, rules and reports in shared functions, every screen off the API ([ADR 0025](decisions/0025-offline-first.md)) | `feat/offline-*`            | ✅ Done |
-| 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ⬜ Next |
+| 6b  | Backup and hosting: export/import, persistent storage, install polish, free static hosting                                                              | `feat/offline-*`            | ✅ Done |
 | 6c  | Sync with a server (free cloud or home server, to be chosen); its own ADR                                                                               | `feat/sync-*`               | ⬜      |
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
