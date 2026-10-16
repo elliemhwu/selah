@@ -12,6 +12,13 @@
 </header>
 
 <div class="page">
+  @if (backupDue()) {
+    <p class="backup-due small">
+      <ng-container i18n="@@home.backupDue">Your data lives only on this device, and there's no recent backup.</ng-container>
+      <a routerLink="/settings" fragment="backup" i18n="@@home.backupNow">Back up now</a>
+    </p>
+  }
+
   @if (loading()) {
     <p class="muted small status" role="status" i18n="@@home.loading">Turning the pages…</p>
   }

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Selah's mark (ADR 0021): a fermata, the musical sign for a pause, over a
+       ledger's double rule, on oatmeal paper. Everything sits inside the
+       maskable safe zone. Run `pnpm icons` after changing this file. -->
+  <rect width="512" height="512" fill="#eee9df" />
+  <path d="M154 284 A102 102 0 0 1 358 284" fill="none" stroke="#b5603c" stroke-width="24" stroke-linecap="round" />
+  <circle cx="256" cy="258" r="21" fill="#b5603c" />
+  <line x1="150" y1="326" x2="362" y2="326" stroke="#6a6458" stroke-width="7" stroke-linecap="round" />
+  <line x1="150" y1="342" x2="362" y2="342" stroke="#6a6458" stroke-width="3" stroke-linecap="round" />
+</svg>

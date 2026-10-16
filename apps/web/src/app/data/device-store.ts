@@ -57,6 +57,13 @@ export class DeviceStore {
     this.state.update((snapshot) => applyChanges(snapshot, changes));
   }
 
+  /** Replaces everything on the device, such as when restoring a backup. */
+  async replace(snapshot: DeviceSnapshot): Promise<void> {
+    await this.storage.replace(snapshot);
+    this.state.set(snapshot);
+    this.loadState.set('ready');
+  }
+
   private async load(): Promise<void> {
     try {
       this.state.set(await this.storage.load());

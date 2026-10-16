@@ -51,6 +51,8 @@ const TABLES = ['accounts', 'categories', 'records', 'planVersions', 'budgetTran
 export interface DeviceStorage {
   load(): Promise<DeviceSnapshot>;
   save(changes: DeviceChanges): Promise<void>;
+  /** Replaces everything with `snapshot`, as one transaction (restoring a backup). */
+  replace(snapshot: DeviceSnapshot): Promise<void>;
   /** Reports changes made elsewhere, such as another tab. Returns a function that stops watching. */
   watch(onChange: (snapshot: DeviceSnapshot) => void): () => void;
 }
@@ -75,6 +77,17 @@ export class DexieStorage implements DeviceStorage {
         if (rows?.length) await (this.db[table] as Table<unknown, string>).bulkPut(rows);
       }
       if (changes.settings) await this.db.settings.put(changes.settings);
+    });
+  }
+
+  async replace(snapshot: DeviceSnapshot): Promise<void> {
+    await this.db.transaction('rw', [...TABLES.map((t) => this.db[t]), this.db.settings], async () => {
+      for (const table of TABLES) {
+        await this.db[table].clear();
+        await (this.db[table] as Table<unknown, string>).bulkPut(snapshot[table]);
+      }
+      await this.db.settings.clear();
+      if (snapshot.settings) await this.db.settings.put(snapshot.settings);
     });
   }
 
@@ -138,6 +151,10 @@ export class MemoryStorage implements DeviceStorage {
 
   async save(changes: DeviceChanges): Promise<void> {
     this.data = applyChanges(this.data, structuredClone(changes));
+  }
+
+  async replace(snapshot: DeviceSnapshot): Promise<void> {
+    this.data = structuredClone(snapshot);
   }
 
   watch(): () => void {

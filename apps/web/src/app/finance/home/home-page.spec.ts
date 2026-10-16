@@ -80,6 +80,26 @@ describe('HomePage', () => {
     expect(el.querySelector('.new-entry')?.getAttribute('href')).toBe('/records/new');
   });
 
+  describe('backup reminder', () => {
+    const lunch = { records: [spent('r1', '2026-10-06', '150.00', 'daily')] };
+    afterEach(() => localStorage.clear());
+
+    it('reminds to back up when there is data and no recent backup', async () => {
+      localStorage.setItem('selah.lastBackup', '2026-09-01T10:00:00.000Z');
+      const { el } = await render([daily], lunch);
+      expect(el.querySelector('.backup-due')?.textContent).toContain("there's no recent backup");
+      expect(el.querySelector('.backup-due a')?.getAttribute('href')).toBe('/settings#backup');
+    });
+
+    it('stays quiet after a recent backup, or with nothing to lose', async () => {
+      localStorage.setItem('selah.lastBackup', '2026-10-01T10:00:00.000Z');
+      expect((await render([daily], lunch)).el.querySelector('.backup-due')).toBeNull();
+      TestBed.resetTestingModule();
+      localStorage.clear();
+      expect((await render([daily])).el.querySelector('.backup-due')).toBeNull();
+    });
+  });
+
   it('says when no plan covers this month', async () => {
     const { el } = await render(null);
     expect(el.textContent).toContain('No budget plan covers this month yet.');

@@ -13,7 +13,8 @@
     "db:test:prepare": "dbmate -e TEST_DATABASE_URL up",
     "db:codegen": "kysely-codegen --dialect postgres --camel-case --date-parser string --numeric-parser string --include-pattern \"{core,finance}.*\" --out-file apps/api/src/database/db.generated.ts",
     "openapi": "nx run api:openapi && pnpm api-client:gen",
-    "api-client:gen": "openapi-typescript apps/api/openapi.json -o libs/api-client/src/lib/schema.generated.ts"
+    "api-client:gen": "openapi-typescript apps/api/openapi.json -o libs/api-client/src/lib/schema.generated.ts",
+    "icons": "node scripts/icons.mjs"
   },
   "private": true,
   "dependencies": {
@@ -59,6 +60,7 @@
     "@nx/vitest": "23.2.0",
     "@nx/web": "23.2.0",
     "@nx/webpack": "23.2.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@schematics/angular": "~22.1.0",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.8",

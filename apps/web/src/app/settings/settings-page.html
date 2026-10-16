@@ -36,6 +36,45 @@
     }
   </section>
 
+  <section id="backup" aria-labelledby="backup-heading">
+    <h2 id="backup-heading" class="section-title" i18n="@@backup.title">Backup</h2>
+    <p class="muted backup-status">
+      @if (backups.persistence() === 'persisted') {
+        <ng-container i18n="@@backup.persisted">Your data lives on this device, and the browser keeps it until you delete it.</ng-container>
+      } @else {
+        <ng-container i18n="@@backup.bestEffort">Your data lives only on this device. The browser may clear it if space runs low, so keep a backup.</ng-container>
+      }
+    </p>
+    <p class="small muted" role="status">
+      @if (backups.lastBackupAt(); as last) {
+        <ng-container i18n="@@backup.last">Last backup on this device: {{ last | date: 'd MMM y, HH:mm' }}</ng-container>
+      } @else {
+        <ng-container i18n="@@backup.never">No backup from this device yet.</ng-container>
+      }
+    </p>
+
+    @if (pending(); as chosen) {
+      <div class="restore-confirm" role="alert">
+        <p i18n="@@backup.confirm">
+          Restore <strong>{{ chosen.fileName }}</strong>, from {{ chosen.summary.exportedAt | date: 'd MMM y, HH:mm' }}, with
+          {{ chosen.summary.records }} entries and {{ chosen.summary.accounts }} accounts? This replaces everything on this device.
+        </p>
+        <div class="backup-actions">
+          <button type="button" class="btn btn-quiet" (click)="pending.set(null)" i18n="@@action.cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" [disabled]="restoring()" (click)="restore()" i18n="@@backup.replace">Replace my data</button>
+        </div>
+      </div>
+    } @else {
+      <div class="backup-actions">
+        <button type="button" class="btn" (click)="download()" i18n="@@backup.download">Download a backup</button>
+        <label class="btn restore-label">
+          <input type="file" accept="application/json,.json" class="cdk-visually-hidden" (change)="choose($any($event.target))" />
+          <span i18n="@@backup.restore">Restore a backup…</span>
+        </label>
+      </div>
+    }
+  </section>
+
   <section aria-labelledby="categories-heading">
     <h2 id="categories-heading" class="section-title" i18n="@@settings.categories">Categories</h2>
     @if (categories.isLoading()) {

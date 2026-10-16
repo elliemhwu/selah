@@ -36,6 +36,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0024](0024-settings-resource.md)                    | Settings are one resource with no id, loaded once by the web app             | Accepted                                      |
 | [0025](0025-offline-first.md)                        | Offline-first: the device holds all the data                                 | Accepted                                      |
 | [0026](0026-finance-core-and-device-store.md)        | Rules and reports in libs/finance-core; the device store uses Dexie          | Accepted                                      |
+| [0027](0027-backups-and-hosting.md)                  | Backups to a file, and the app on GitHub Pages, until sync exists            | Accepted                                      |
 
 ## Template
 

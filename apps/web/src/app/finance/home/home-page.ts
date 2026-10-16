@@ -1,16 +1,21 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { toDayNumber } from '@selah/shared-utils';
 import { isNotFound } from '../../core/problem';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
+import { Backups } from '../../data/backups';
 import { Icon } from '../../ui/icon';
-import { type ChecklistItemDto, type EnvelopeDto, ReportsApi } from '../data/finance-api';
+import { type ChecklistItemDto, type EnvelopeDto, FinanceData, ReportsApi } from '../data/finance-api';
+
+/** Days without a backup before Home reminds the user. */
+const BACKUP_REMINDER_DAYS = 30;
 
 /**
  * Home (requirements §4): what's left in each envelope, this period's
- * checklist, and a new entry. Entries open as routes (ADR 0022); this screen
- * loads fresh numbers each time it is shown.
+ * checklist, and a new entry. Entries open as routes (ADR 0022). It also
+ * reminds the user to back up, since the data lives only on the device (ADR 0025).
  */
 @Component({
   selector: 'selah-home-page',
@@ -25,6 +30,15 @@ export class HomePage {
   protected readonly envelopes = this.reports.envelopes(this.today);
   protected readonly checklist = this.reports.checklist(this.today);
   protected readonly selected = signal<ReadonlySet<string>>(new Set());
+
+  private readonly backups = inject(Backups);
+  private readonly finance = inject(FinanceData);
+  /** There is data, and this device hasn't downloaded a backup in 30 days (ADR 0025). */
+  protected readonly backupDue = computed(() => {
+    if (this.finance.records().length === 0) return false;
+    const last = this.backups.lastBackupAt();
+    return !last || toDayNumber(this.today()) - toDayNumber(last.slice(0, 10)) >= BACKUP_REMINDER_DAYS;
+  });
 
   /** Both reports fail with NotFoundError when no plan version covers today. */
   protected readonly noPlan = computed(() => {

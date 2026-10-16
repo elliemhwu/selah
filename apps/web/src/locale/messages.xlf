@@ -21,7 +21,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
@@ -37,7 +37,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">47,49</context>
+          <context context-type="linenumber">86,88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="nav.label" datatype="html">
@@ -55,7 +55,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="record.title" datatype="html">
@@ -95,7 +95,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="record.editTitle" datatype="html">
@@ -117,7 +117,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="versions.title" datatype="html">
@@ -168,7 +168,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="nav.accounts" datatype="html">
@@ -179,7 +179,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="account.newTitle" datatype="html">
@@ -299,6 +299,20 @@
           <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="backup.notOurs" datatype="html">
+        <source>This file isn&apos;t a Selah backup.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/data/backup.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.newer" datatype="html">
+        <source>This backup comes from a newer version of Selah. Update the app, then try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/data/backup.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="action.cancel" datatype="html">
         <source>Cancel</source>
         <context-group purpose="location">
@@ -336,6 +350,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
           <context context-type="linenumber">3,4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">63,64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="action.save" datatype="html">
@@ -401,7 +419,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">16,19</context>
+          <context context-type="linenumber">23,26</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/batch-record-page.html</context>
@@ -421,7 +439,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">81,83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="account.notFound" datatype="html">
@@ -1847,18 +1865,32 @@
           <context context-type="linenumber">11,14</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="home.backupDue" datatype="html">
+        <source>Your data lives only on this device, and there&apos;s no recent backup.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.backupNow" datatype="html">
+        <source>Back up now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
+          <context context-type="linenumber">18,22</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="home.noPlan" datatype="html">
         <source>No budget plan covers this month yet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">21,22</context>
+          <context context-type="linenumber">28,29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.createPlan" datatype="html">
         <source>Set up the budget</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">22,24</context>
+          <context context-type="linenumber">29,31</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/review/review-page.html</context>
@@ -1869,77 +1901,77 @@
         <source>Couldn&apos;t load your budgets.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">26,27</context>
+          <context context-type="linenumber">33,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.envelopes" datatype="html">
         <source>What&apos;s left</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">31,32</context>
+          <context context-type="linenumber">38,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.noEnvelopes" datatype="html">
         <source>No rollover budgets in this plan.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">33,35</context>
+          <context context-type="linenumber">40,42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.allotment" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ envelope.allotment | money }}"/> <x id="INTERPOLATION_1" equiv-text="{{ periodLabel(envelope) }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">43,44</context>
+          <context context-type="linenumber">50,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.resetsOn" datatype="html">
         <source>resets <x id="INTERPOLATION" equiv-text="{{ envelope.resetsOn | date: &apos;EEE&apos; }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">53,54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.checklist" datatype="html">
         <source>This period</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">56,57</context>
+          <context context-type="linenumber">63,64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.doneCount" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ doneCount() }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ checklist.value().length }}"/> recorded</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">58,60</context>
+          <context context-type="linenumber">65,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.noChecklist" datatype="html">
         <source>Nothing recurring is due in this period.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">69,71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.recorded" datatype="html">
         <source>Recorded</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">68,69</context>
+          <context context-type="linenumber">75,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.recordSelected" datatype="html">
         <source> Record <x id="INTERPOLATION" equiv-text="{{ selected().size }}"/> selected </source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">95,97</context>
+          <context context-type="linenumber">102,104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.add" datatype="html">
         <source>New entry</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
-          <context context-type="linenumber">100,103</context>
+          <context context-type="linenumber">107,110</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/records-page.html</context>
@@ -1950,21 +1982,21 @@
         <source>a day</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.period.week" datatype="html">
         <source>a week</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.period.month" datatype="html">
         <source>a month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="batch.title" datatype="html">
@@ -2649,88 +2681,165 @@
           <context context-type="linenumber">34,39</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="backup.title" datatype="html">
+        <source>Backup</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">40,41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.persisted" datatype="html">
+        <source>Your data lives on this device, and the browser keeps it until you delete it.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">43,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.bestEffort" datatype="html">
+        <source>Your data lives only on this device. The browser may clear it if space runs low, so keep a backup.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">45,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.last" datatype="html">
+        <source>Last backup on this device: <x id="INTERPOLATION" equiv-text="{{ last | date: &apos;d MMM y, HH:mm&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.never" datatype="html">
+        <source>No backup from this device yet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.confirm" datatype="html">
+        <source> Restore <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ chosen.fileName }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>, from <x id="INTERPOLATION_1" equiv-text="{{ chosen.summary.exportedAt | date: &apos;d MMM y, HH:mm&apos; }}"/>, with <x id="INTERPOLATION_2" equiv-text="{{ chosen.summary.records }}"/> entries and <x id="INTERPOLATION_3" equiv-text="{{ chosen.summary.accounts }}"/> accounts? This replaces everything on this device. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">59,62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.replace" datatype="html">
+        <source>Replace my data</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">64,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.download" datatype="html">
+        <source>Download a backup</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.restore" datatype="html">
+        <source>Restore a backup…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
+          <context context-type="linenumber">72,74</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="settings.categories" datatype="html">
         <source>Categories</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">40,41</context>
+          <context context-type="linenumber">79,80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.categoriesFailed" datatype="html">
         <source>Couldn&apos;t load your categories.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">85,86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.noCategories" datatype="html">
         <source>No categories yet. They describe what an entry was for, such as Food › Lunch, apart from the budget.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">50,52</context>
+          <context context-type="linenumber">89,91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.newCategory" datatype="html">
         <source>New category</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
-          <context context-type="linenumber">62,65</context>
+          <context context-type="linenumber">101,104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.1" datatype="html">
         <source>Monday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.2" datatype="html">
         <source>Tuesday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.3" datatype="html">
         <source>Wednesday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.4" datatype="html">
         <source>Thursday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.5" datatype="html">
         <source>Friday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.6" datatype="html">
         <source>Saturday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="weekday.7" datatype="html">
         <source>Sunday</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.downloaded" datatype="html">
+        <source>Backup downloaded. Keep it somewhere other than this device.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="backup.restored" datatype="html">
+        <source>Backup restored.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.saved" datatype="html">
         <source>Settings saved.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="action.dismiss" datatype="html">
