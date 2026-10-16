@@ -1,60 +1,35 @@
-import { provideHttpClient } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
-import { AppSettings } from './core/app-settings';
+import type { DeviceStorage } from './data/device-storage';
+import { DEVICE_STORAGE } from './data/device-store';
+import { deviceData, settle } from './data/testing';
 
 describe('App', () => {
-  let http: HttpTestingController;
-
-  beforeEach(() => {
+  async function render(storage: DeviceStorage = deviceData().storage) {
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [provideRouter([]), { provide: DEVICE_STORAGE, useValue: storage }],
     });
-    http = TestBed.inject(HttpTestingController);
-  });
-
-  afterEach(() => http.verify());
-
-  async function render(health: () => void) {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    http.expectOne('/api/v1/core/settings').flush({ weekStartDay: 1, defaultCurrency: 'TWD', updatedAt: null });
-    health();
-    await fixture.whenStable();
+    await settle(fixture);
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('shows the navigation', async () => {
-    const el = await render(() => http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'ok' }));
+  it('shows the navigation, with no server to reach', async () => {
+    const el = await render();
     const labels = [...el.querySelectorAll('.bottom-nav .label')].map((l) => l.textContent?.trim());
     expect(labels).toEqual(['Home', 'Records', 'Budget', 'Review', 'Accounts']);
     expect(el.querySelector('.offline')).toBeNull();
   });
 
-  it('says when the API is unreachable', async () => {
-    const el = await render(() =>
-      http.expectOne('/api/v1/health').flush(null, { status: 502, statusText: 'Bad Gateway' }),
-    );
-    expect(el.querySelector('.offline')?.textContent).toContain("Can't reach the server");
-  });
-
-  it('loads the settings once for the forms', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    http.expectOne('/api/v1/core/settings').flush({ weekStartDay: 7, defaultCurrency: 'JPY', updatedAt: '2026-10-14T00:00:00Z' });
-    http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'ok' });
-    await fixture.whenStable();
-    expect(TestBed.inject(AppSettings).value()).toMatchObject({ weekStartDay: 7, defaultCurrency: 'JPY' });
-  });
-
-  it('says when the database is down', async () => {
-    const el = await render(() => http.expectOne('/api/v1/health').flush({ status: 'ok', database: 'unavailable' }));
-    expect(el.querySelector('.offline')).not.toBeNull();
+  it("says when the device's data can't be opened", async () => {
+    const broken: DeviceStorage = {
+      load: () => Promise.reject(new Error('blocked')),
+      save: () => Promise.reject(new Error('blocked')),
+      watch: () => () => undefined,
+    };
+    const el = await render(broken);
+    expect(el.querySelector('.offline')?.textContent).toContain("Couldn't open the data on this device.");
   });
 });

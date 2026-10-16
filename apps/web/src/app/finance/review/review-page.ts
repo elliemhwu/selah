@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type { Section, YearMonth } from '@selah/shared-types';
 import { endOfMonth, nextYearMonth, previousYearMonth, yearMonthOf } from '@selah/shared-utils';
+import { isNotFound } from '../../core/problem';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
 import { treeRows } from '../budget/plan-view';
@@ -47,7 +47,7 @@ export class ReviewPage {
   protected readonly monthOpen = computed(() => this.month() >= this.todayMonth);
   protected readonly noPlan = computed(() => {
     const error = this.review.error();
-    return error instanceof HttpErrorResponse && error.status === 404;
+    return isNotFound(error);
   });
   /** Sections in order, each with its items in tree order. */
   protected readonly sections = computed(() => {

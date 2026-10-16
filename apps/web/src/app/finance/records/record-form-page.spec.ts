@@ -1,58 +1,61 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import type { Currency } from '@selah/shared-types';
-import { AppSettings } from '../../core/app-settings';
 import { TODAY } from '../../core/today';
+import type { MemoryStorage, StoredRecord } from '../../data/device-storage';
+import {
+  deviceData,
+  flushSaves,
+  planItem,
+  settle,
+  storedAccount,
+  storedLine,
+  storedRecord,
+  storedVersion,
+} from '../../data/testing';
 import { FormNavigation } from '../../ui/form-navigation';
-import type { AccountDto, PlanVersionDto, RecordDto } from '../data/finance-api';
 import { RecordFormPage } from './record-form-page';
 
-const API = '/api/v1/finance';
-const account = (id: string, currency: AccountDto['currency']) =>
-  ({ id, name: id, currency, type: 'cash', openingBalance: '0.00', balance: '0.00', sortOrder: 0 }) as AccountDto;
-const plan = {
-  id: 'v1',
-  effectiveFromMonth: '2026-10',
-  items: [
-    { budgetItemId: 'salary', section: 'income', name: 'Salary', parentItemId: null },
-    { budgetItemId: 'rent', section: 'expense', name: 'Rent', parentItemId: null },
-    { budgetItemId: 'food', section: 'expense', name: 'Food', parentItemId: null },
-  ],
-} as PlanVersionDto;
-const saved: RecordDto = {
-  id: 'r1',
-  type: 'expense',
+const accounts = [storedAccount('cash', 'TWD', { sortOrder: 0 }), storedAccount('usd', 'USD', { sortOrder: 1 })];
+const plan = storedVersion('v1', '2026-10', [
+  planItem('salary', { section: 'income' }),
+  planItem('rent'),
+  planItem('food'),
+]);
+/** Gives USD a last-used rate of 32.5. */
+const usdPurchase = storedRecord('old', {
+  accountId: 'usd',
+  currency: 'USD',
+  occurredOn: '2026-10-01',
+  lines: [storedLine('l0', '1.00', { twdAmount: '33.00', fxRate: '32.5' })],
+});
+const saved = storedRecord('r1', {
   occurredOn: '2026-10-05',
   occurredAt: '12:30',
-  accountId: 'cash',
-  currency: 'TWD',
-  counterAccountId: null,
-  counterAmount: null,
-  targetBalance: null,
   note: 'Market',
-  lines: [
-    { id: 'l1', amount: '150.00', twdAmount: '150.00', fxRate: null, categoryId: null, budgetItemId: 'food', note: 'Veg' },
-    { id: 'l2', amount: '80.00', twdAmount: '80.00', fxRate: null, categoryId: null, budgetItemId: 'rent', note: null },
-  ],
-  createdAt: '2026-10-05T04:30:00Z',
-  updatedAt: '2026-10-05T04:30:00Z',
-};
+  lines: [storedLine('l1', '150.00', { budgetItemId: 'food', note: 'Veg' }), storedLine('l2', '80.00', { budgetItemId: 'rent' })],
+});
 
 describe('RecordFormPage', () => {
-  let http: HttpTestingController;
   let leave: ReturnType<typeof vi.fn>;
+  let storage: MemoryStorage;
 
-  function setup(route: { query?: Record<string, string>; params?: Record<string, string> } = {}, defaultCurrency: Currency = 'TWD') {
+  async function render(
+    route: { query?: Record<string, string>; params?: Record<string, string> } = {},
+    { records = [] as StoredRecord[], defaultCurrency = 'TWD' as Currency } = {},
+  ) {
     leave = vi.fn();
+    const device = deviceData({
+      accounts,
+      planVersions: [plan],
+      records: [usdPurchase, ...records],
+      settings: { id: 'settings', weekStartDay: 1, defaultCurrency, updatedAt: 'x' },
+    });
+    storage = device.storage;
     TestBed.configureTestingModule({
       imports: [RecordFormPage],
       providers: [
-        { provide: AppSettings, useValue: { value: signal({ weekStartDay: 1, defaultCurrency, updatedAt: null }) } },
-        provideHttpClient(),
-        provideHttpClientTesting(),
+        ...device.providers,
         { provide: TODAY, useValue: () => '2026-10-07' },
         {
           provide: ActivatedRoute,
@@ -61,82 +64,63 @@ describe('RecordFormPage', () => {
         { provide: FormNavigation, useValue: { leave } },
       ],
     });
-    http = TestBed.inject(HttpTestingController);
-  }
-
-  afterEach(() => http.verify());
-
-  async function render(record?: RecordDto) {
     const fixture = TestBed.createComponent(RecordFormPage);
-    fixture.detectChanges();
-    if (record) http.expectOne(`${API}/records/${record.id}`).flush(record);
-    http.expectOne(`${API}/accounts`).flush([account('cash', 'TWD'), account('usd', 'USD')]);
-    http.expectOne(`${API}/categories`).flush([]);
-    http.expectOne(`${API}/fx-rates/last-used`).flush([{ currency: 'USD', rate: '32.5', occurredOn: '2026-10-01' }]);
-    http.expectOne((r) => r.url === `${API}/plan` && r.params.get('month') === '2026-10').flush(plan);
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await settle(fixture);
     const el = fixture.nativeElement as HTMLElement;
     const component = fixture.componentInstance as unknown as { form: RecordFormPage['form'] };
     const submit = async () => {
       el.querySelector('form')?.dispatchEvent(new Event('submit'));
+      await flushSaves();
       await fixture.whenStable();
     };
     return { fixture, el, submit, form: component.form, line: (i: number) => component.form.controls.lines.at(i).controls };
   }
+  /** Records saved by the form, without the seeded ones. */
+  const savedRecords = () => storage.snapshot().records.filter((r) => r.id !== 'old');
 
   it('saves an expense on the first account, then leaves the form', async () => {
-    setup();
-    const { el, submit } = await render();
+    const { el, submit, line } = await render();
     const amount = el.querySelector<HTMLInputElement>('#rec-amount') as HTMLInputElement;
     amount.value = '150';
     amount.dispatchEvent(new Event('input'));
     const note = el.querySelector<HTMLInputElement>('#rec-note') as HTMLInputElement;
     note.value = 'lunch';
     note.dispatchEvent(new Event('input'));
+    const lineId = line(0).id.value;
     await submit();
-    const req = http.expectOne((r) => r.method === 'PUT' && r.url.startsWith(`${API}/records/`));
-    expect(req.request.body).toMatchObject({
-      type: 'expense',
-      occurredOn: '2026-10-07',
-      occurredAt: null,
-      accountId: 'cash',
-      currency: 'TWD',
-      note: 'lunch',
-      lines: [{ amount: '150', fxRate: undefined, budgetItemId: null, categoryId: null, note: null }],
-    });
-    expect(req.request.body.lines[0].id).toMatch(/^[0-9a-f-]{36}$/);
-    req.flush({ id: 'saved' });
-    await Promise.resolve();
+    expect(savedRecords()).toEqual([
+      expect.objectContaining({
+        type: 'expense',
+        occurredOn: '2026-10-07',
+        occurredAt: null,
+        accountId: 'cash',
+        currency: 'TWD',
+        note: 'lunch',
+        lines: [{ id: lineId, amount: '150.00', twdAmount: '150.00', fxRate: null, budgetItemId: null, categoryId: null, note: null }],
+      }),
+    ]);
     expect(leave).toHaveBeenCalledWith('/', 'Saved.');
   });
 
   it('starts from a checklist item and keeps the ids when saving again', async () => {
-    setup({ query: { type: 'income', item: 'salary', amount: '60000.00' } });
-    const { submit, form, line, fixture } = await render();
+    const { submit, form, line } = await render({ query: { type: 'income', item: 'salary', amount: '60000.00' } });
     expect(form.controls.type.value).toBe('income');
     expect(line(0).budgetItemId.value).toBe('salary');
     expect(line(0).amount.value).toBe('60000');
 
+    line(0).amount.setValue('60000.5');
     await submit();
-    const first = http.expectOne((r) => r.method === 'PUT');
-    first.flush(
-      { status: 422, title: 'Unprocessable Entity', errors: { 'lines.0.amount': ['Too much.'] } },
-      { status: 422, statusText: 'Unprocessable Entity' },
-    );
-    await fixture.whenStable();
-    expect(line(0).amount.errors).toEqual({ server: 'Too much.' });
+    expect(line(0).amount.errors).toEqual({ server: 'TWD amounts must be whole.' });
+    expect(savedRecords()).toEqual([]);
 
+    const lineId = line(0).id.value;
     line(0).amount.setValue('59000');
     await submit();
-    const second = http.expectOne((r) => r.method === 'PUT');
-    expect(second.request.url).toBe(first.request.url);
-    expect(second.request.body.lines[0].id).toBe(first.request.body.lines[0].id);
-    second.flush({ id: 'saved' });
+    const [record] = savedRecords();
+    expect(record).toMatchObject({ type: 'income', lines: [{ id: lineId, amount: '59000.00', budgetItemId: 'salary' }] });
   });
 
   it('splits a receipt into lines and shows the total', async () => {
-    setup();
     const { el, fixture, form, line, submit } = await render();
     line(0).amount.setValue('150');
     line(0).budgetItemId.setValue('food');
@@ -148,30 +132,24 @@ describe('RecordFormPage', () => {
     expect(el.querySelector('.total')?.textContent).toContain('230');
     expect(form.controls.lines.length).toBe(2);
     await submit();
-    const req = http.expectOne((r) => r.method === 'PUT');
-    expect(req.request.body.lines.map((l: { amount: string; budgetItemId: string }) => [l.amount, l.budgetItemId])).toEqual([
-      ['150', 'food'],
-      ['80', 'rent'],
+    expect(savedRecords()[0].lines.map((l) => [l.amount, l.budgetItemId])).toEqual([
+      ['150.00', 'food'],
+      ['80.00', 'rent'],
     ]);
-    req.flush({});
   });
 
   it('edits a saved record, keeping its line ids, and deletes it after a second tap', async () => {
-    setup({ params: { id: 'r1' } });
-    const { el, fixture, form, line, submit } = await render(saved);
+    const { el, fixture, form, line, submit } = await render({ params: { id: 'r1' } }, { records: [saved] });
     expect(form.getRawValue()).toMatchObject({ occurredOn: '2026-10-05', occurredAt: '12:30', note: 'Market' });
     expect(form.controls.lines.length).toBe(2);
     expect(line(0).note.value).toBe('Veg');
 
     line(1).amount.setValue('90');
     await submit();
-    const req = http.expectOne({ method: 'PUT', url: `${API}/records/r1` });
-    expect(req.request.body.lines.map((l: { id: string; amount: string }) => [l.id, l.amount])).toEqual([
-      ['l1', '150'],
-      ['l2', '90'],
+    expect(savedRecords()[0].lines.map((l) => [l.id, l.amount])).toEqual([
+      ['l1', '150.00'],
+      ['l2', '90.00'],
     ]);
-    req.flush(saved);
-    await fixture.whenStable();
     expect(leave).toHaveBeenCalledWith('/records', 'Saved.');
     fixture.detectChanges(); // the button is enabled again once saving ends
 
@@ -180,31 +158,25 @@ describe('RecordFormPage', () => {
     fixture.detectChanges();
     expect(button().textContent).toContain('Tap again');
     button().click();
-    http.expectOne({ method: 'DELETE', url: `${API}/records/r1` }).flush(null);
-    await fixture.whenStable();
+    await flushSaves();
+    expect(savedRecords()[0].deletedAt).not.toBeNull();
     expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
   });
 
   it('sends transfers to their own form', async () => {
-    setup({ params: { id: 't1' } });
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    const fixture = TestBed.createComponent(RecordFormPage);
-    fixture.detectChanges();
-    http.expectOne(`${API}/records/t1`).flush({ ...saved, id: 't1', type: 'transfer' });
-    await Promise.resolve();
-    fixture.detectChanges();
+    const transfer = storedRecord('t1', { type: 'transfer', counterAccountId: 'usd', counterAmount: '1.00', lines: [storedLine('l1', '33.00')] });
+    const navigate = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
+    await render({ params: { id: 't1' } }, { records: [transfer] });
     expect(navigate).toHaveBeenCalledWith(['/accounts', 'transfer', 't1'], { replaceUrl: true });
-    http.match(() => true).forEach((r) => r.flush([]));
+    navigate.mockRestore();
   });
 
   it('drops a budget item that does not fit the record type', async () => {
-    setup({ query: { item: 'salary' } });
-    const { line } = await render();
+    const { line } = await render({ query: { item: 'salary' } });
     expect(line(0).budgetItemId.value).toBe('');
   });
 
   it('pre-fills the last rate for a foreign currency and needs one to save', async () => {
-    setup();
     const { form, line, submit, fixture } = await render();
     form.controls.accountId.setValue('usd');
     fixture.detectChanges();
@@ -214,13 +186,12 @@ describe('RecordFormPage', () => {
     line(0).amount.setValue('10');
     form.controls.fxRate.setValue('');
     await submit();
-    http.expectNone((r) => r.method === 'PUT');
+    expect(savedRecords()).toEqual([]);
     expect(form.controls.fxRate.errors).toEqual({ required: true });
   });
 
   it('starts a new entry in the default currency, with its last rate', async () => {
-    setup({}, 'USD');
-    const { form, fixture } = await render();
+    const { form, fixture } = await render({}, { defaultCurrency: 'USD' });
     // The first account is TWD, which takes a USD entry (ADR 0016).
     expect(form.getRawValue()).toMatchObject({ accountId: 'cash', currency: 'USD', fxRate: '32.5' });
 
@@ -230,8 +201,7 @@ describe('RecordFormPage', () => {
   });
 
   it('keeps the currency of an entry being edited', async () => {
-    setup({ params: { id: 'r1' } }, 'USD');
-    const { form } = await render(saved);
+    const { form } = await render({ params: { id: 'r1' } }, { records: [saved], defaultCurrency: 'USD' });
     expect(form.controls.currency.value).toBe('TWD');
   });
 });

@@ -1,31 +1,32 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import type { MemoryStorage } from '../../data/device-storage';
+import { DeviceStore } from '../../data/device-store';
+import { deviceData, storedVersion } from '../../data/testing';
 import type { PlanVersionDto } from '../data/finance-api';
 import { PlanDraft } from './plan-draft';
 import { planItem } from './plan-item.testing';
 
-const version: PlanVersionDto = {
-  id: 'v1',
-  effectiveFromMonth: '2026-10',
-  note: 'After the raise',
-  editable: true,
-  items: [planItem('food', { amount: '7000.00' }), planItem('daily', { parentItemId: 'food', cadence: 'daily', amount: '185.00' }), planItem('rent', { amount: '15000.00' })],
-  createdAt: '2026-10-01T00:00:00Z',
-  updatedAt: '2026-10-01T00:00:00Z',
-};
+const stored = storedVersion(
+  'v1',
+  '2026-10',
+  [planItem('food', { amount: '7000.00' }), planItem('daily', { parentItemId: 'food', cadence: 'daily', amount: '185.00' }), planItem('rent', { amount: '15000.00' })],
+  { note: 'After the raise' },
+);
+const { deletedAt: _, ...rest } = stored;
+const version: PlanVersionDto = { ...rest, editable: true };
 
 describe('PlanDraft', () => {
-  let http: HttpTestingController;
   let draft: PlanDraft;
+  let storage: MemoryStorage;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-    http = TestBed.inject(HttpTestingController);
+    const device = deviceData({ planVersions: [stored] });
+    storage = device.storage;
+    TestBed.configureTestingModule({ providers: device.providers });
     draft = TestBed.inject(PlanDraft);
+    await TestBed.inject(DeviceStore).whenLoaded();
   });
-  afterEach(() => http.verify());
 
   it('tracks new, edited and removed items against the version', () => {
     draft.edit(version);
@@ -45,8 +46,8 @@ describe('PlanDraft', () => {
     draft.edit(version);
     draft.putItem({ ...version.items[2], name: 'Rent & bills' });
     TestBed.tick();
-    const stored = JSON.parse(localStorage.getItem('selah.planDraft.v1') as string);
-    expect(stored.items[2].name).toBe('Rent & bills');
+    const kept = JSON.parse(localStorage.getItem('selah.planDraft.v1') as string);
+    expect(kept.items[2].name).toBe('Rent & bills');
     draft.discard();
     TestBed.tick();
     expect(localStorage.getItem('selah.planDraft.v1')).toBeNull();
@@ -64,34 +65,29 @@ describe('PlanDraft', () => {
   it('saves the whole version, then clears the draft', async () => {
     draft.edit(version);
     draft.putItem({ ...version.items[2], amount: '16000.00' });
-    const saving = draft.save();
-    const req = http.expectOne({ method: 'PUT', url: '/api/v1/finance/plan-versions/v1' });
-    expect(req.request.body).toEqual({
-      effectiveFromMonth: '2026-10',
-      note: 'After the raise',
-      items: [version.items[0], version.items[1], { ...version.items[2], amount: '16000.00' }],
-    });
-    req.flush(version);
-    expect(await saving).toEqual({ ok: true, version });
+    const result = await draft.save();
+    expect(result).toMatchObject({ ok: true, version: { id: 'v1', editable: true } });
+    expect(storage.snapshot().planVersions).toEqual([
+      expect.objectContaining({
+        id: 'v1',
+        effectiveFromMonth: '2026-10',
+        note: 'After the raise',
+        items: [version.items[0], version.items[1], { ...version.items[2], amount: '16000.00' }],
+      }),
+    ]);
     expect(draft.state()).toBeNull();
   });
 
   it('puts rule violations on their items and keeps the draft', async () => {
-    draft.edit(version);
-    const saving = draft.save();
-    http.expectOne({ method: 'PUT' }).flush(
-      {
-        status: 422,
-        detail: 'The plan breaks the rules.',
-        errors: { 'items.1.resetCycle': ['A daily item can reset: never, week, month, year.'], effectiveFromMonth: ['Too early.'] },
-      },
-      { status: 422, statusText: 'Unprocessable Entity' },
-    );
-    expect(await saving).toEqual({ ok: false, message: 'The plan breaks the rules.' });
+    // A version starting before the existing one, with a reset that says nothing about the leftover.
+    draft.startNew(version, '2026-09', null);
+    draft.putItem({ ...version.items[1], rollover: true, resetCycle: 'week' });
+    expect(await draft.save()).toEqual({ ok: false, message: 'The plan breaks the rules.' });
     expect(draft.errors()).toEqual({
-      general: ['Too early.'],
-      byItem: { daily: ['A daily item can reset: never, week, month, year.'] },
+      general: ['A new version must start after 2026-10.'],
+      byItem: { daily: ['Choose what happens at reset: drop or carry.'] },
     });
     expect(draft.state()).not.toBeNull();
+    expect(storage.snapshot().planVersions).toHaveLength(1);
   });
 });

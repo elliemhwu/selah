@@ -1,9 +1,9 @@
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type { Section, YearMonth } from '@selah/shared-types';
 import { nextYearMonth, previousYearMonth, yearMonthOf } from '@selah/shared-utils';
+import { isNotFound } from '../../core/problem';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
 import { Toast } from '../../ui/toast';
@@ -58,7 +58,7 @@ export class BudgetPage {
   protected readonly loading = computed(() => !this.editing() && (this.versionId ? this.picked : this.active).isLoading());
   protected readonly noPlan = computed(() => {
     const error = this.active.error();
-    return !this.editing() && !this.versionId && error instanceof HttpErrorResponse && error.status === 404;
+    return !this.editing() && !this.versionId && isNotFound(error);
   });
   /** While editing, months before the draft's start belong to older versions. */
   protected readonly atFirstMonth = computed(() => {

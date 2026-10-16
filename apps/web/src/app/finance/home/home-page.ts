@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { isNotFound } from '../../core/problem';
 import { MoneyPipe } from '../../core/money.pipe';
 import { TODAY } from '../../core/today';
 import { Icon } from '../../ui/icon';
@@ -26,10 +26,10 @@ export class HomePage {
   protected readonly checklist = this.reports.checklist(this.today);
   protected readonly selected = signal<ReadonlySet<string>>(new Set());
 
-  /** Both reports answer 404 when no plan version covers today. */
+  /** Both reports fail with NotFoundError when no plan version covers today. */
   protected readonly noPlan = computed(() => {
     const error = this.envelopes.error();
-    return error instanceof HttpErrorResponse && error.status === 404;
+    return isNotFound(error);
   });
   protected readonly failed = computed(() => !this.noPlan() && (!!this.envelopes.error() || !!this.checklist.error()));
   protected readonly loading = computed(() => this.envelopes.isLoading() || this.checklist.isLoading());

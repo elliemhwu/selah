@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import type { AbstractControl } from '@angular/forms';
 import type { ApiSchemas } from '@selah/api-client';
+import { ConflictError, NotFoundError, RuleViolationError } from '@selah/finance-core';
 
 export interface Problem {
   /** What to tell the user when no field matches. */
@@ -31,8 +32,13 @@ export function applyFieldErrors(
   return unmatched;
 }
 
-/** Reads an API error as Problem Details, or describes a network failure. */
+/**
+ * Reads a refusal from the finance rules on the device (ADR 0025), an API
+ * error as Problem Details, or describes a network failure.
+ */
 export function problemOf(error: unknown): Problem {
+  if (error instanceof RuleViolationError) return { message: error.message, errors: error.errors ?? {} };
+  if (error instanceof ConflictError || error instanceof NotFoundError) return { message: error.message, errors: {} };
   if (error instanceof HttpErrorResponse) {
     if (error.status === 0) {
       return { message: $localize`:@@problem.offline:Can't reach the server. Check your connection and try again.`, errors: {} };
@@ -46,4 +52,9 @@ export function problemOf(error: unknown): Problem {
     }
   }
   return { message: $localize`:@@problem.unexpected:Something went wrong. Please try again.`, errors: {} };
+}
+
+/** True when a resource failed because the thing doesn't exist, such as no plan for a month. */
+export function isNotFound(error: unknown): boolean {
+  return error instanceof NotFoundError || (error instanceof HttpErrorResponse && error.status === 404);
 }

@@ -1,9 +1,9 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { TODAY } from '../../core/today';
+import type { DeviceSnapshot, MemoryStorage } from '../../data/device-storage';
+import { deviceData, flushSaves, settle, storedVersion } from '../../data/testing';
 import { FormNavigation } from '../../ui/form-navigation';
 import type { PlanVersionDto } from '../data/finance-api';
 import { BudgetItemPage } from './budget-item-page';
@@ -12,7 +12,6 @@ import { BudgetVersionsPage } from './budget-versions-page';
 import { PlanDraft } from './plan-draft';
 import { planItem } from './plan-item.testing';
 
-const API = '/api/v1/finance';
 const version: PlanVersionDto = {
   id: 'v2',
   effectiveFromMonth: '2026-10',
@@ -31,19 +30,26 @@ const version: PlanVersionDto = {
   createdAt: '2026-10-01T00:00:00Z',
   updatedAt: '2026-10-01T00:00:00Z',
 };
+const { editable: _, ...fields } = version;
+const stored = storedVersion(version.id, version.effectiveFromMonth, version.items, fields);
 
 describe('budget pages', () => {
-  let http: HttpTestingController;
   let leave: ReturnType<typeof vi.fn>;
+  let storage: MemoryStorage;
 
-  function setup<T>(component: Type<T>, route: { params?: Record<string, string>; query?: Record<string, string> } = {}) {
+  function setup<T>(
+    component: Type<T>,
+    route: { params?: Record<string, string>; query?: Record<string, string> } = {},
+    seed: Partial<DeviceSnapshot> = { planVersions: [stored] },
+  ) {
     localStorage.clear();
     leave = vi.fn();
+    const device = deviceData(seed);
+    storage = device.storage;
     TestBed.configureTestingModule({
       imports: [component],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
+        ...device.providers,
         provideRouter([]),
         { provide: TODAY, useValue: () => '2026-10-07' },
         {
@@ -53,27 +59,18 @@ describe('budget pages', () => {
         { provide: FormNavigation, useValue: { leave } },
       ],
     });
-    http = TestBed.inject(HttpTestingController);
   }
-  afterEach(() => http.verify());
 
   async function render<T>(component: Type<T>) {
     const fixture = TestBed.createComponent(component);
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await settle(fixture);
     return { fixture, el: fixture.nativeElement as HTMLElement };
   }
 
   describe('BudgetPage', () => {
     it('shows the active plan for the month with net income and unallocated', async () => {
       setup(BudgetPage);
-      const fixture = TestBed.createComponent(BudgetPage);
-      fixture.detectChanges();
-      http.expectOne((r) => r.url === `${API}/plan` && r.params.get('month') === '2026-10').flush(version);
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const el = fixture.nativeElement as HTMLElement;
+      const { el } = await render(BudgetPage);
       expect(el.querySelector('.base-amount')?.textContent).toContain('57,000');
       const names = [...el.querySelectorAll('.item-name')].map((n) => n.textContent?.trim());
       expect(names).toEqual(['Salary', 'Tax', 'Food', 'Daily Food', 'Allowance']);
@@ -87,12 +84,7 @@ describe('budget pages', () => {
 
     it('edits: starts a draft, links items, and saves the whole plan', async () => {
       setup(BudgetPage);
-      const fixture = TestBed.createComponent(BudgetPage);
-      fixture.detectChanges();
-      http.expectOne((r) => r.url === `${API}/plan`).flush(version);
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const el = fixture.nativeElement as HTMLElement;
+      const { fixture, el } = await render(BudgetPage);
       [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Edit this plan'))?.click();
       fixture.detectChanges();
       expect(el.querySelector('.draft-bar')?.textContent).toContain('no changes yet');
@@ -105,25 +97,18 @@ describe('budget pages', () => {
       expect(el.querySelector('.tag')?.textContent).toContain('Edited');
 
       [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Save plan'))?.click();
-      const req = http.expectOne({ method: 'PUT', url: `${API}/plan-versions/v2` });
-      expect(req.request.body.items[0].amount).toBe('62000.00');
-      req.flush(version);
-      // Saving clears the draft, so the page fetches the saved plan again.
-      await new Promise((resolve) => setTimeout(resolve));
-      fixture.detectChanges();
-      http.expectOne((r) => r.url === `${API}/plan`).flush(version);
-      await fixture.whenStable();
+      await flushSaves();
+      expect(storage.snapshot().planVersions[0].items[0].amount).toBe('62000.00');
+      // Saving clears the draft; the page shows the saved plan.
       expect(draft.state()).toBeNull();
+      fixture.detectChanges();
+      expect(el.querySelector('.draft-bar')).toBeNull();
+      expect(el.querySelector('.base-amount')?.textContent).toContain('58,900'); // 62,000 − 5% tax
     });
 
     it('offers a first plan when none covers the month', async () => {
-      setup(BudgetPage);
-      const fixture = TestBed.createComponent(BudgetPage);
-      fixture.detectChanges();
-      http.expectOne((r) => r.url === `${API}/plan`).flush({ status: 404 }, { status: 404, statusText: 'Not Found' });
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const el = fixture.nativeElement as HTMLElement;
+      setup(BudgetPage, {}, {});
+      const { fixture, el } = await render(BudgetPage);
       expect(el.textContent).toContain('No plan covers this month.');
       [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Start a plan'))?.click();
       fixture.detectChanges();
@@ -190,21 +175,10 @@ describe('budget pages', () => {
 
   describe('BudgetVersionsPage', () => {
     it('lists versions newest first and starts a new one from the newest', async () => {
-      setup(BudgetVersionsPage);
+      const first = storedVersion('v1', '2026-01', version.items.slice(0, 4), { note: 'First plan' });
+      setup(BudgetVersionsPage, {}, { planVersions: [stored, first] });
       const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-      const fixture = TestBed.createComponent(BudgetVersionsPage);
-      fixture.detectChanges();
-      http.expectOne(`${API}/plan-versions`).flush([
-        { id: 'v1', effectiveFromMonth: '2026-01', note: 'First plan', editable: false, itemCount: 4 },
-        { id: 'v2', effectiveFromMonth: '2026-10', note: null, editable: true, itemCount: 5 },
-      ]);
-      // The list names the newest version, which is then fetched to copy from.
-      await new Promise((resolve) => setTimeout(resolve));
-      fixture.detectChanges();
-      http.expectOne(`${API}/plan-versions/v2`).flush(version);
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const el = fixture.nativeElement as HTMLElement;
+      const { fixture, el } = await render(BudgetVersionsPage);
       const ranges = [...el.querySelectorAll('.range')].map((r) => r.textContent?.replace(/\s+/g, ' ').trim());
       expect(ranges).toEqual(['Oct 2026 →', 'Jan 2026 – Sep 2026']);
 

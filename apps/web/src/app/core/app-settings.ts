@@ -1,39 +1,37 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import type { ApiSchemas } from '@selah/api-client';
-import { firstValueFrom } from 'rxjs';
+import { DEFAULT_SETTINGS } from '@selah/finance-core';
+import { DeviceStore } from '../data/device-store';
 
 export type SettingsDto = ApiSchemas['SettingsDto'];
 export type UpdateSettingsDto = ApiSchemas['UpdateSettingsDto'];
 
-const URL = '/api/v1/core/settings';
-/** What the API returns before the settings are first saved. */
-const DEFAULTS: SettingsDto = { weekStartDay: 1, defaultCurrency: 'TWD', updatedAt: null };
-
 /**
- * App-wide settings (ADR 0024). The shell loads them once, so forms can read
- * them without a request of their own; the defaults apply until they arrive.
+ * App-wide settings (ADR 0024), kept on the device with everything else
+ * (ADR 0025). The defaults apply until they are first saved.
  */
 @Injectable({ providedIn: 'root' })
 export class AppSettings {
-  private readonly http = inject(HttpClient);
-  private readonly state = signal<SettingsDto>(DEFAULTS);
-  readonly value = this.state.asReadonly();
-  readonly status = signal<'idle' | 'loading' | 'loaded' | 'error'>('idle');
+  private readonly store = inject(DeviceStore);
 
-  async load(): Promise<void> {
-    this.status.set('loading');
-    try {
-      this.state.set(await firstValueFrom(this.http.get<SettingsDto>(URL)));
-      this.status.set('loaded');
-    } catch {
-      this.status.set('error');
-    }
+  readonly value = computed<SettingsDto>(() => {
+    const stored = this.store.data().settings;
+    return stored
+      ? { weekStartDay: stored.weekStartDay, defaultCurrency: stored.defaultCurrency, updatedAt: stored.updatedAt }
+      : { ...DEFAULT_SETTINGS, updatedAt: null };
+  });
+  readonly status = computed(() => {
+    const status = this.store.status();
+    return status === 'ready' ? 'loaded' : status;
+  });
+
+  /** Tries opening the device's data again after a failure. */
+  reload(): Promise<void> {
+    return this.store.reload();
   }
 
-  /** Replaces every setting; the stored value changes only once the API accepts it. */
+  /** Replaces every setting. */
   async save(settings: UpdateSettingsDto): Promise<void> {
-    this.state.set(await firstValueFrom(this.http.put<SettingsDto>(URL, settings)));
-    this.status.set('loaded');
+    await this.store.save({ settings: { id: 'settings', ...settings, updatedAt: new Date().toISOString() } });
   }
 }

@@ -46,7 +46,6 @@ export class SettingsPage {
   });
 
   constructor() {
-    if (this.settings.status() !== 'loaded' && this.settings.status() !== 'loading') void this.settings.load();
     // Show the stored settings; changes the user makes are saved below.
     effect(() => {
       const { weekStartDay, defaultCurrency } = this.settings.value();
