@@ -2,7 +2,7 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-15_
+_Last updated: 2026-10-16_
 
 ## Current state
 
@@ -56,7 +56,6 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Open questions
 
-- **Rollover example in requirements §3.1:** "daily food of 185 with 150 spent leaves 210 available the next day." By the rule as described, the next day has 185 + 35 = **220**. The code does 220. Is the example a typo, or is there a rule missing?
 - **Choices made in [ADR 0019](decisions/0019-budget-transfers-and-reports.md), to confirm:**
   - Percentage items are based on the whole month's planned income, so they grow in a bonus month. The alternative is a base that leaves out yearly and one-time income.
   - A rollover envelope counts only the item's own records, not its children's.
