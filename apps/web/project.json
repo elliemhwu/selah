@@ -47,6 +47,17 @@
         "development": {
           "optimization": false,
           "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/web/src/app/data/storage-mode.ts",
+              "with": "apps/web/src/app/data/storage-mode.api.ts"
+            }
+          ]
+        },
+        "device": {
+          "optimization": false,
+          "extractLicenses": false,
           "sourceMap": true
         }
       }
@@ -65,13 +76,17 @@
         },
         "development": {
           "buildTarget": "web:build:development"
+        },
+        "device": {
+          "buildTarget": "web:build:device"
         }
       }
     },
     "test": {
       "executor": "@angular/build:unit-test",
       "options": {
-        "watch": false
+        "watch": false,
+        "buildTarget": "web:build:device"
       }
     },
     "extract-i18n": {

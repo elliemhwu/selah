@@ -1,6 +1,10 @@
 @if (storageFailed()) {
   <div class="offline" role="alert">
-    <span i18n="@@shell.storageFailed">Couldn't open the data on this device. Try again, or reload the app.</span>
+    @if (apiBuild) {
+      <span i18n="@@shell.serverFailed">Couldn't load the data from the server. Check that the API is running, then try again.</span>
+    } @else {
+      <span i18n="@@shell.storageFailed">Couldn't open the data on this device. Try again, or reload the app.</span>
+    }
     <button type="button" class="btn btn-quiet" (click)="retry()" i18n="@@action.retry">Try again</button>
   </div>
 }
