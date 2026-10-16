@@ -1,6 +1,6 @@
 # 0025. Offline-first: the device holds all the data
 
-- Status: Accepted
+- Status: Accepted. Step 3 (sync) is replaced by [0028](0028-local-only.md): local only for now.
 - Date: 2026-10-14
 - Extends: [0007](0007-offline-ready-data-conventions.md). Changes how the web app reaches data, set in [0015](0015-api-client-generation.md) and [0020](0020-web-ui-foundation.md).
 
@@ -30,7 +30,7 @@ On 2026-10-14 the owner chose **offline-first, with the device holding all the d
 - **Order of work:**
   1. **Device storage:** IndexedDB, the shared rules and reports, and every screen moved off the API. The app works fully on one device with no server.
   2. **Backup and hosting:** export and import of all data as a file, persistent storage (`navigator.storage.persist()`), install polish, and static hosting (for example GitHub Pages or Cloudflare Pages, both free). The app needs no server to run.
-  3. **Sync:** once the free cloud or home server is chosen.
+  3. **Sync:** once the free cloud or home server is chosen. _Replaced by [0028](0028-local-only.md): no sync for now; a server comes later as a hosted service with accounts._
 
 ## Consequences
 
