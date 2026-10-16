@@ -18,7 +18,7 @@ Nx monorepo:
 - `apps/api`: NestJS. Will be migrated to a separate .NET repo later.
 - `libs/shared-types`: DTOs and enums shared by web and api
 - `libs/shared-utils`: finance math as **pure functions**
-- `libs/finance-core`: finance rules and reports as **pure functions**, run by both the API and the device
+- `libs/finance-core`: finance rules and reports as **pure functions**, run by the app in both builds
 - `libs/api-client`: HTTP client for the API
 - PostgreSQL, one **schema per module** (`finance`, `core`, …)
 
@@ -33,13 +33,13 @@ Nx monorepo:
 - **Every UI string is translatable** ([ADR 0020](docs/decisions/0020-web-ui-foundation.md)): use `i18n` attributes in templates and `$localize` in code, each with an `@@id`. Run `pnpm nx run web:extract-i18n` after changing UI text and commit `apps/web/src/locale/messages.xlf`. Show money with the `money` pipe, never as a JS `number`.
 - **The Linen ledger look** ([ADR 0021](docs/decisions/0021-linen-ledger-ui.md)): no Angular Material. Use the CDK for behaviour, the classes and CSS tokens in `apps/web/src/styles.scss` for the look, and `apps/web/src/app/ui/` for shared pieces. Never hard-code a colour or font. Forms are routes, not dialogs ([ADR 0022](docs/decisions/0022-forms-are-routes.md)): mark them `data: { form: true }` and leave with `FormNavigation`.
 - **Nx loads `.env` into every task**, the Angular dev server included. Use prefixed env names (`API_PORT`, not `PORT`).
-- **API conventions** ([ADR 0017](docs/decisions/0017-api-conventions.md)): `PUT /{id}` upserts with client ids, `DELETE` soft-deletes, errors are Problem Details. Services throw the errors in `apps/api/src/common/errors.ts`, never NestJS HTTP exceptions. Cover endpoints with `*.int-spec.ts` tests (`pnpm nx run api:integration`).
+- **The API is a generic row store** ([ADR 0029](docs/decisions/0029-generic-row-store-and-two-builds.md)): `GET`/`PATCH`/`PUT /api/v1/store` load, save and replace rows in the shape the app stores them. A new table is a migration plus a row DTO and table mapper (`apps/api/src/<module>/rows/`) registered in `StoreService`; no per-feature endpoints. Errors are Problem Details ([ADR 0017](docs/decisions/0017-api-conventions.md)): services throw the errors in `apps/api/src/common/errors.ts`, never NestJS HTTP exceptions. Cover the store with `*.int-spec.ts` tests (`pnpm nx run api:integration`).
 - **Finance math only in `libs/shared-utils`** ([ADR 0005](docs/decisions/0005-finance-math-in-shared-utils.md)): rounding, percentages, cadence conversion, rollover, FX.
   - Pure functions with no framework imports, each with unit tests.
   - Other code calls these functions and never reimplements the math inline.
 - **Finance rules and reports only in `libs/finance-core`** ([ADR 0025](docs/decisions/0025-offline-first.md), [0026](docs/decisions/0026-finance-core-and-device-store.md)): record, account, category, plan and transfer rules; envelopes, checklist, review, movements.
-  - The API and the device call the same functions, so they agree. API services only load data, call them, and save.
-  - Change a rule in `finance-core`, never in an API service or a web component.
+  - The app runs them before every save, in both builds; the API stores what it is sent.
+  - Change a rule in `finance-core`, never in the API or a web component.
 - **Money is never a JS `number` in transit** ([ADR 0006](docs/decisions/0006-money-representation.md)): `NUMERIC` in the DB, decimal strings over the API, integer cents in calculations. TWD/JPY are whole units; round half away from zero.
 - **Data is ready for offline sync** ([ADR 0007](docs/decisions/0007-offline-ready-data-conventions.md)):
   - UUID primary keys that the client can generate
