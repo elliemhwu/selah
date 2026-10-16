@@ -1,0 +1,122 @@
+{
+  "name": "web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "selah",
+  "sourceRoot": "apps/web/src",
+  "tags": ["type:app", "scope:web"],
+  "i18n": {
+    "sourceLocale": "en-US"
+  },
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/web",
+        "browser": "apps/web/src/main.ts",
+        "polyfills": ["@angular/localize/init"],
+        "tsConfig": "apps/web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/web/public"
+          }
+        ],
+        "styles": ["apps/web/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/web/ngsw-config.json"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/web/src/app/data/storage-mode.ts",
+              "with": "apps/web/src/app/data/storage-mode.api.ts"
+            }
+          ]
+        },
+        "device": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "dependsOn": ["api:serve"],
+      "options": {
+        "proxyConfig": "apps/web/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "web:build:production"
+        },
+        "development": {
+          "buildTarget": "web:build:development"
+        },
+        "device": {
+          "buildTarget": "web:build:device"
+        }
+      }
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false,
+        "buildTarget": "web:build:device"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "web:build:development",
+        "outputPath": "apps/web/src/locale"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "web:build",
+        "staticFilePath": "dist/apps/web/browser",
+        "spa": true
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "tsc --noEmit -p tsconfig.app.json",
+          "tsc --noEmit -p tsconfig.spec.json"
+        ],
+        "parallel": false
+      }
+    }
+  }
+}

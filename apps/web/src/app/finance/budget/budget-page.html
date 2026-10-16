@@ -1,0 +1,188 @@
+<header class="page-header">
+  <div class="title-row">
+    <h1 i18n="@@budget.title">Budget</h1>
+    <a class="muted small" routerLink="/budget/versions" i18n="@@budget.versions">Versions</a>
+  </div>
+  <div class="month-row small muted">
+    @if (source(); as s) {
+      <span i18n="@@budget.planFrom">Plan from {{ firstOfMonth(s.from) | date: 'MMM y' }}</span>
+    } @else {
+      <span></span>
+    }
+    <span class="stepper">
+      <button type="button" class="btn btn-quiet" (click)="previousMonth()" [disabled]="atFirstMonth()" i18n-aria-label="@@budget.previousMonth" aria-label="Previous month">‹</button>
+      <span class="month">{{ firstOfMonth(month()) | date: 'MMMM y' }}</span>
+      <button type="button" class="btn btn-quiet" (click)="nextMonth()" i18n-aria-label="@@budget.nextMonth" aria-label="Next month">›</button>
+    </span>
+  </div>
+</header>
+
+@if (editing()) {
+  <div class="draft-bar" role="status">
+    <span class="grow">
+      @if (draft.changes().count === 0) {
+        <ng-container i18n="@@budget.editingNoChanges">Editing · no changes yet</ng-container>
+      } @else {
+        <ng-container i18n="@@budget.editingChanges">Editing · {{ draft.changes().count }} changes not saved</ng-container>
+      }
+    </span>
+    <button type="button" class="btn btn-quiet" (click)="discard()">
+      @if (confirmingDiscard()) {
+        <ng-container i18n="@@budget.confirmDiscard">Tap again to discard</ng-container>
+      } @else {
+        <ng-container i18n="@@budget.discard">Discard</ng-container>
+      }
+    </button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || draft.changes().count === 0" i18n="@@budget.save">Save plan</button>
+  </div>
+  @for (message of draft.errors().general; track $index) {
+    <p class="field-error general">{{ message }}</p>
+  }
+}
+
+<div class="page">
+  @if (loading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  }
+
+  @if (noPlan()) {
+    <div class="empty">
+      <p class="section-title" i18n="@@budget.noPlan">No plan covers this month.</p>
+      <p class="muted" i18n="@@budget.noPlanHint">Write down what comes in, then give each part of it a job.</p>
+      <button type="button" class="btn btn-primary" (click)="startFirstPlan()" i18n="@@budget.startFirst">Start a plan from this month</button>
+    </div>
+  }
+
+  @if (view(); as v) {
+    @if (v.error) {
+      <p class="field-error general" i18n="@@budget.cantCalculate">The amounts can't be worked out: {{ v.error }}</p>
+    }
+
+    @for (section of v.sections; track section.section) {
+      @if (section.section === 'offering') {
+        <div class="base">
+          <span class="base-label" i18n="@@budget.toAllocate">To allocate · net income</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="amount base-amount">{{ v.netIncome | money }}</span>
+        </div>
+      }
+
+      <section [attr.aria-labelledby]="'section-' + section.section">
+        <div class="section-head">
+          <h2 [id]="'section-' + section.section" class="section-title">{{ section.label }}</h2>
+          @if (section.share !== null) {
+            <span class="small muted">{{ section.share | number: '1.0-1' }}%</span>
+          }
+          <span class="grow"></span>
+          <span class="amount">{{ section.total | money }}</span>
+        </div>
+
+        <ul class="items">
+          @for (row of section.rows; track row.item.budgetItemId) {
+            <li [class.child]="row.depth > 0" [style.margin-inline-start.px]="row.depth * 16">
+              @if (editing()) {
+                <a class="item" [routerLink]="['/budget/items', row.item.budgetItemId]">
+                  <ng-container *ngTemplateOutlet="itemContent; context: { $implicit: row }" />
+                </a>
+              } @else {
+                <div class="item">
+                  <ng-container *ngTemplateOutlet="itemContent; context: { $implicit: row }" />
+                </div>
+              }
+              @for (message of itemErrors(row.item); track $index) {
+                <p class="field-error">{{ message }}</p>
+              }
+            </li>
+          }
+        </ul>
+
+        @if (editing()) {
+          <button type="button" class="btn btn-quiet add" (click)="addItem(section.section)" i18n="@@budget.addItem">+ Add to {{ section.label }}</button>
+        }
+      </section>
+    }
+
+    <div class="unallocated">
+      <span class="unallocated-label">
+        <span i18n="@@budget.unallocated">Unallocated</span>
+        @if (v.unallocatedShare !== null) {
+          <span class="small muted" i18n="@@budget.ofNetIncome">{{ v.unallocatedShare | number: '1.0-1' }}% of net income</span>
+        }
+      </span>
+      <span class="grow"></span>
+      <span class="amount unallocated-amount" [class.negative]="isNegative(v.unallocated)">{{ v.unallocated | money }}</span>
+    </div>
+
+    @if (!editing()) {
+      @if (source()?.editable) {
+        <button type="button" class="btn" (click)="startEditing()" i18n="@@budget.edit">Edit this plan</button>
+      } @else {
+        <p class="small muted" i18n="@@budget.readOnly">This version is read-only; a later version replaced it. Start a new version to change the plan.</p>
+      }
+    }
+  }
+</div>
+
+<ng-template #itemContent let-row>
+  <span class="item-text">
+    <span class="item-name">
+      {{ row.item.name }}
+      @switch (tag(row.item)) {
+        @case ('new') {
+          <span class="tag" i18n="@@budget.tagNew">· New</span>
+        }
+        @case ('edited') {
+          <span class="tag" i18n="@@budget.tagEdited">· Edited</span>
+        }
+      }
+    </span>
+    <span class="item-summary small muted">
+      @if (row.item.anchor === 'percent') {
+        <ng-container i18n="@@budget.percentOf">{{ row.item.percent | number: '1.0-4' }}% of {row.item.percentBase, select, gross_income {gross income} other {net income}}</ng-container>
+      } @else {
+        @switch (row.item.cadence) {
+          @case ('daily') {
+            <ng-container i18n="@@budget.perDay">{{ row.item.amount | money }} a day</ng-container>
+          }
+          @case ('weekly') {
+            <ng-container i18n="@@budget.perWeek">{{ row.item.amount | money }} a week</ng-container>
+          }
+          @case ('monthly') {
+            <ng-container i18n="@@budget.perMonth">{{ row.item.amount | money }} a month</ng-container>
+          }
+          @case ('yearly') {
+            <ng-container i18n="@@budget.yearly">yearly · {{ row.item.amount | money }} in {{ monthOfYear(row.item.cadenceMonth) | date: 'MMMM' }}</ng-container>
+          }
+          @case ('one_time') {
+            <ng-container i18n="@@budget.once">once · {{ row.item.amount | money }} on {{ row.item.cadenceDate | date: 'd MMM y' }}</ng-container>
+          }
+        }
+      }
+      @if (row.item.overrides.length > 0) {
+        <ng-container i18n="@@budget.overrides"> · {row.item.overrides.length, plural, =1 {1 month differs} other {{{ row.item.overrides.length }} months differ}}</ng-container>
+      }
+      @if (row.item.rollover) {
+        @switch (row.item.resetCycle) {
+          @case ('never') {
+            <ng-container i18n="@@budget.rollsNever"> · rolls, never resets</ng-container>
+          }
+          @default {
+            @if (row.item.onReset === 'carry') {
+              <ng-container i18n="@@budget.rollsCarry"> · rolls, resets {row.item.resetCycle, select, week {weekly} month {monthly} other {yearly}} → {{ itemName(row.item.carryToItemId) }}</ng-container>
+            } @else {
+              <ng-container i18n="@@budget.rollsDrop"> · rolls, resets {row.item.resetCycle, select, week {weekly} month {monthly} other {yearly}}</ng-container>
+            }
+          }
+        }
+      }
+    </span>
+  </span>
+  <span class="leader" aria-hidden="true"></span>
+  <span class="amount item-amount">
+    @if (row.monthly === null || (row.monthly === '0.00' && (row.item.cadence === 'yearly' || row.item.cadence === 'one_time'))) {
+      —
+    } @else {
+      {{ row.monthly | money }}
+    }
+  </span>
+</ng-template>

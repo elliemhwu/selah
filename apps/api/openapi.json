@@ -1,0 +1,982 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "API and database status",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/store": {
+      "get": {
+        "operationId": "loadStore",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreSnapshotDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Every stored row, deleted ones included",
+        "tags": [
+          "store"
+        ]
+      },
+      "patch": {
+        "description": "Each row replaces the stored row with its id. A record or plan version replaces its lines or items.",
+        "operationId": "saveStoreChanges",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreChangesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create or replace rows, by table, all or nothing",
+        "tags": [
+          "store"
+        ]
+      },
+      "put": {
+        "operationId": "replaceStore",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreSnapshotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Replaced."
+          },
+          "400": {
+            "description": "The request shape is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: duplicate, deleted, or still in use.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A business rule refuses the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Replace everything, such as when restoring a backup",
+        "tags": [
+          "store"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Selah API",
+    "description": "Personal life management API. Money amounts are decimal strings.",
+    "version": "1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "HealthDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ],
+            "description": "The API process is running."
+          },
+          "database": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "unavailable"
+            ],
+            "description": "Whether the database answered a trivial query."
+          }
+        },
+        "required": [
+          "status",
+          "database"
+        ]
+      },
+      "AccountType": {
+        "type": "string",
+        "enum": [
+          "cash",
+          "bank",
+          "credit_card",
+          "stored_value",
+          "gift_card"
+        ]
+      },
+      "Currency": {
+        "type": "string",
+        "enum": [
+          "TWD",
+          "JPY",
+          "EUR",
+          "GBP",
+          "USD"
+        ]
+      },
+      "AccountRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Wallet"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountType"
+              }
+            ]
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "openingBalance": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00"
+          },
+          "sortOrder": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "name",
+          "type",
+          "currency",
+          "openingBalance",
+          "sortOrder"
+        ]
+      },
+      "CategoryRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Food"
+          },
+          "parentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "name",
+          "parentId",
+          "sortOrder"
+        ]
+      },
+      "RecordType": {
+        "type": "string",
+        "enum": [
+          "income",
+          "expense",
+          "transfer",
+          "adjustment"
+        ]
+      },
+      "RecordLineRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "In the record currency."
+          },
+          "twdAmount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD."
+          },
+          "fxRate": {
+            "type": "string",
+            "pattern": "^\\d{1,10}(\\.\\d{1,8})?$",
+            "example": "0.2083",
+            "description": "Null for TWD records.",
+            "nullable": true
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "twdAmount",
+          "fxRate",
+          "categoryId",
+          "budgetItemId",
+          "note"
+        ]
+      },
+      "RecordRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecordType"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "example": "12:30",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "counterAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Transfer only."
+          },
+          "counterAmount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Transfer only: the amount received."
+          },
+          "targetBalance": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true,
+            "description": "Adjustment only (ADR 0014)."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          },
+          "lines": {
+            "description": "In display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordLineRowDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "type",
+          "occurredOn",
+          "occurredAt",
+          "accountId",
+          "currency",
+          "counterAccountId",
+          "counterAmount",
+          "targetBalance",
+          "note",
+          "lines"
+        ]
+      },
+      "Section": {
+        "type": "string",
+        "enum": [
+          "income",
+          "government",
+          "offering",
+          "saving",
+          "expense"
+        ]
+      },
+      "Cadence": {
+        "type": "string",
+        "enum": [
+          "daily",
+          "weekly",
+          "monthly",
+          "yearly",
+          "one_time"
+        ]
+      },
+      "Anchor": {
+        "type": "string",
+        "enum": [
+          "amount",
+          "percent"
+        ]
+      },
+      "PercentBase": {
+        "type": "string",
+        "enum": [
+          "net_income",
+          "gross_income"
+        ]
+      },
+      "ResetCycle": {
+        "type": "string",
+        "enum": [
+          "never",
+          "week",
+          "month",
+          "year"
+        ]
+      },
+      "ResetAction": {
+        "type": "string",
+        "enum": [
+          "drop",
+          "carry"
+        ]
+      },
+      "PlanOverrideRowDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD for that month."
+          }
+        },
+        "required": [
+          "month",
+          "amount"
+        ]
+      },
+      "PlanItemRowDto": {
+        "type": "object",
+        "properties": {
+          "budgetItemId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The stable item id (ADR 0012)."
+          },
+          "section": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Section"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Daily Food"
+          },
+          "parentItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "cadence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cadence"
+              }
+            ]
+          },
+          "cadenceMonth": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 12
+          },
+          "cadenceDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "nullable": true
+          },
+          "anchor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Anchor"
+              }
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "nullable": true
+          },
+          "percent": {
+            "type": "string",
+            "pattern": "^(100(\\.0{1,4})?|\\d{1,2}(\\.\\d{1,4})?)$",
+            "example": "12.5",
+            "description": "Percentage points: \"12.5\" means 12.5%.",
+            "nullable": true
+          },
+          "percentBase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PercentBase"
+              }
+            ]
+          },
+          "rollover": {
+            "type": "boolean"
+          },
+          "resetCycle": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetCycle"
+              }
+            ]
+          },
+          "onReset": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResetAction"
+              }
+            ]
+          },
+          "carryToItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "overrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanOverrideRowDto"
+            }
+          }
+        },
+        "required": [
+          "budgetItemId",
+          "section",
+          "name",
+          "parentItemId",
+          "cadence",
+          "cadenceMonth",
+          "cadenceDate",
+          "anchor",
+          "amount",
+          "percent",
+          "percentBase",
+          "rollover",
+          "resetCycle",
+          "onReset",
+          "carryToItemId",
+          "overrides"
+        ]
+      },
+      "PlanVersionRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "effectiveFromMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10",
+            "description": "The first month this version applies to."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          },
+          "items": {
+            "description": "In display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItemRowDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "effectiveFromMonth",
+          "note",
+          "items"
+        ]
+      },
+      "BudgetTransferKind": {
+        "type": "string",
+        "enum": [
+          "manual",
+          "reset"
+        ]
+      },
+      "BudgetTransferRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetTransferKind"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "occurredAt": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "example": "12:30",
+            "nullable": true
+          },
+          "fromItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null only for a reset that dropped the leftover."
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^-?\\d{1,12}(\\.\\d{1,2})?$",
+            "example": "1234.00",
+            "description": "Whole TWD."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "kind",
+          "occurredOn",
+          "occurredAt",
+          "fromItemId",
+          "toItemId",
+          "amount",
+          "note"
+        ]
+      },
+      "SettingsRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "settings"
+            ]
+          },
+          "weekStartDay": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "example": 1,
+            "description": "ISO day of week: 1 = Monday … 7 = Sunday."
+          },
+          "defaultCurrency": {
+            "description": "Preselected for new accounts and entries.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              }
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "weekStartDay",
+          "defaultCurrency",
+          "updatedAt"
+        ]
+      },
+      "StoreSnapshotDto": {
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountRowDto"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryRowDto"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordRowDto"
+            }
+          },
+          "planVersions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanVersionRowDto"
+            }
+          },
+          "budgetTransfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BudgetTransferRowDto"
+            }
+          },
+          "settings": {
+            "nullable": true,
+            "description": "Null until the settings are first saved.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SettingsRowDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "accounts",
+          "categories",
+          "records",
+          "planVersions",
+          "budgetTransfers",
+          "settings"
+        ]
+      },
+      "ProblemDetailsDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "detail": {
+            "type": "string",
+            "example": "The request is invalid."
+          },
+          "errors": {
+            "type": "object",
+            "description": "Messages per field (400 and 422).",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "name": [
+                "name should not be empty"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status"
+        ]
+      },
+      "StoreChangesDto": {
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountRowDto"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryRowDto"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordRowDto"
+            }
+          },
+          "planVersions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanVersionRowDto"
+            }
+          },
+          "budgetTransfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BudgetTransferRowDto"
+            }
+          },
+          "settings": {
+            "$ref": "#/components/schemas/SettingsRowDto"
+          }
+        }
+      }
+    }
+  }
+}
