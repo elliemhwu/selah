@@ -1,10 +1,12 @@
 import { computed, inject, Injectable } from '@angular/core';
-import type { ApiSchemas } from '@selah/api-client';
-import { DEFAULT_SETTINGS } from '@selah/finance-core';
+import { DEFAULT_SETTINGS, type SettingsValues } from '@selah/finance-core';
 import { DeviceStore } from '../data/device-store';
 
-export type SettingsDto = ApiSchemas['SettingsDto'];
-export type UpdateSettingsDto = ApiSchemas['UpdateSettingsDto'];
+export interface SettingsDto extends SettingsValues {
+  /** Null until the settings are first saved; the defaults apply until then. */
+  updatedAt: string | null;
+}
+export type UpdateSettingsDto = SettingsValues;
 
 /**
  * App-wide settings (ADR 0024), kept on the device with everything else

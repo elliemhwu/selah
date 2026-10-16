@@ -1,22 +1,31 @@
 import { computed, inject, Injectable } from '@angular/core';
-import type { ApiSchemas } from '@selah/api-client';
 import {
+  type AccountInput,
   activeVersionOrThrow,
   assertAccountDeletable,
   assertBudgetTransferDeletable,
   assertCategoryDeletable,
   assertDateRange,
+  type BudgetMovement,
   budgetMovements,
+  type BudgetTransferInput,
+  type CategoryInput,
+  type ChecklistReport,
   checklistReport,
   compareRecordsNewestFirst,
   DEFAULT_SETTINGS,
   duplicateAccountName,
   duplicateCategoryName,
+  type EnvelopeReport,
   envelopesReport,
+  type ItemReview,
+  type LastUsedRate,
   lastUsedRates,
   matchesRecordFilters,
+  type MonthlyReview,
   monthlyReview,
   NotFoundError,
+  type PlanVersionInput,
   prepareAccount,
   prepareBudgetTransfer,
   prepareCategory,
@@ -30,7 +39,13 @@ import {
 } from '@selah/finance-core';
 import type { LocalDate, Section, YearMonth } from '@selah/shared-types';
 import { deviceResource, IDLE } from '../../data/device-resource';
-import type { StoredPlanVersion, StoredRecord } from '../../data/device-storage';
+import type {
+  StoredAccount,
+  StoredBudgetTransfer,
+  StoredCategory,
+  StoredPlanVersion,
+  StoredRecord,
+} from '../../data/device-storage';
 import { DeviceStore } from '../../data/device-store';
 
 // The finance screens' data, kept on the device (ADR 0025, 0026). Reads are
@@ -38,25 +53,35 @@ import { DeviceStore } from '../../data/device-store';
 // finance-core rules, the same ones the API runs, then save. Resource methods
 // must be called in an injection context, such as a component field initializer.
 
-export type AccountDto = ApiSchemas['AccountDto'];
-export type UpsertAccountDto = ApiSchemas['UpsertAccountDto'];
-export type CategoryDto = ApiSchemas['CategoryDto'];
-export type UpsertCategoryDto = ApiSchemas['UpsertCategoryDto'];
-export type PlanVersionDto = ApiSchemas['PlanVersionDto'];
-export type PlanItemDto = ApiSchemas['PlanItemDto'];
-export type PlanVersionSummaryDto = ApiSchemas['PlanVersionSummaryDto'];
-export type UpsertPlanVersionDto = ApiSchemas['UpsertPlanVersionDto'];
-export type RecordDto = ApiSchemas['RecordDto'];
-export type UpsertRecordDto = ApiSchemas['UpsertRecordDto'];
-export type BatchRecordInput = ApiSchemas['BatchRecordInput'];
-export type LastUsedRateDto = ApiSchemas['LastUsedRateDto'];
-export type EnvelopeDto = ApiSchemas['EnvelopeDto'];
-export type ChecklistItemDto = ApiSchemas['ChecklistItemDto'];
-export type MonthlyReviewDto = ApiSchemas['MonthlyReviewDto'];
-export type ItemReviewDto = ApiSchemas['ItemReviewDto'];
-export type BudgetMovementDto = ApiSchemas['BudgetMovementDto'];
-export type BudgetTransferDto = ApiSchemas['BudgetTransferDto'];
-export type UpsertBudgetTransferDto = ApiSchemas['UpsertBudgetTransferDto'];
+// What the screens read: stored rows without `deletedAt`, plus what is
+// calculated from them. What they write: the finance-core inputs.
+type Live<T> = Omit<T, 'deletedAt'>;
+
+export type AccountDto = Live<StoredAccount> & { balance: string };
+export type UpsertAccountDto = AccountInput;
+export type CategoryDto = Live<StoredCategory>;
+export type UpsertCategoryDto = CategoryInput;
+export type PlanVersionDto = Live<StoredPlanVersion> & { editable: boolean };
+export type PlanItemDto = StoredPlanVersion['items'][number];
+export interface PlanVersionSummaryDto {
+  id: string;
+  effectiveFromMonth: string;
+  note: string | null;
+  editable: boolean;
+  itemCount: number;
+}
+export type UpsertPlanVersionDto = PlanVersionInput;
+export type RecordDto = Live<StoredRecord>;
+export type UpsertRecordDto = Omit<RecordInput, 'id'>;
+export type BatchRecordInput = RecordInput;
+export type LastUsedRateDto = LastUsedRate;
+export type EnvelopeDto = EnvelopeReport;
+export type ChecklistItemDto = ChecklistReport;
+export type MonthlyReviewDto = MonthlyReview;
+export type ItemReviewDto = ItemReview;
+export type BudgetMovementDto = BudgetMovement;
+export type BudgetTransferDto = Live<StoredBudgetTransfer>;
+export type UpsertBudgetTransferDto = BudgetTransferInput;
 
 export interface RecordQuery {
   from: LocalDate;

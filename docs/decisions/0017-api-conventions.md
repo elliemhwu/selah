@@ -1,6 +1,6 @@
 # 0017. API conventions
 
-- Status: Accepted
+- Status: Accepted. The per-feature endpoints were replaced by the row store in [0029](0029-generic-row-store-and-two-builds.md); Problem Details, the error classes and client ids still apply.
 - Date: 2026-10-06
 
 ## Context

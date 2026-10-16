@@ -1,26 +1,17 @@
 import type { ApiSchemas } from '@selah/api-client';
-import type { Currency, IsoWeekday } from '@selah/shared-types';
 import Dexie, { type DexieOptions, liveQuery, type Table } from 'dexie';
 
-// What the device keeps (ADR 0025, 0026): every row in the shape the API
-// returns, plus `deletedAt` for soft deletes (ADR 0007). Derived values such
-// as balances and a plan version's `editable` are calculated, not stored.
+// What the app keeps (ADR 0025, 0026, 0029): every row in the shape of the
+// API's row store, deleted ones included (ADR 0007). Derived values such as
+// balances and a plan version's `editable` are calculated, not stored.
 
-type Deletable = { deletedAt: string | null };
-
-export type StoredAccount = Omit<ApiSchemas['AccountDto'], 'balance'> & Deletable;
-export type StoredCategory = ApiSchemas['CategoryDto'] & Deletable;
-export type StoredRecord = ApiSchemas['RecordDto'] & Deletable;
-export type StoredPlanVersion = Omit<ApiSchemas['PlanVersionDto'], 'editable'> & Deletable;
-export type StoredBudgetTransfer = ApiSchemas['BudgetTransferDto'] & Deletable;
-
+export type StoredAccount = ApiSchemas['AccountRowDto'];
+export type StoredCategory = ApiSchemas['CategoryRowDto'];
+export type StoredRecord = ApiSchemas['RecordRowDto'];
+export type StoredPlanVersion = ApiSchemas['PlanVersionRowDto'];
+export type StoredBudgetTransfer = ApiSchemas['BudgetTransferRowDto'];
 /** The single settings row (ADR 0024). */
-export interface StoredSettings {
-  id: 'settings';
-  weekStartDay: IsoWeekday;
-  defaultCurrency: Currency;
-  updatedAt: string;
-}
+export type StoredSettings = ApiSchemas['SettingsRowDto'];
 
 /** Everything on the device, deleted rows included. */
 export interface DeviceSnapshot {

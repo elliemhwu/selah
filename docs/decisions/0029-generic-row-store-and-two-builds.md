@@ -28,7 +28,7 @@ Building each feature twice, once in the app's device path and once as NestJS en
 - **The per-feature endpoints are replaced, not frozen**: accounts, categories, records, plan, budget transfers, reports and settings, with their integration tests. They are no longer a spec, because the .NET port ports the store. Git history keeps them.
 - **Store or API:** anything the rules read lives in the store (finance data and the app settings). Anything about the user or the server (sign-in, profile, devices) will be real endpoints, when the hosted stage adds them.
 - **Local `serve` stays the web app with the API**, on Postgres in Docker. The production preview and Pages are the device build.
-- **Order of stages:** release and phone testing, then the generic store and the API build, then the next module, then a feature freeze and the .NET port, then the hosted service.
+- **Order of stages:** the generic store and the API build, then the first release and phone testing, then the next module, then a feature freeze and the .NET port, then the hosted service.
 
 **Chosen during the discussion**
 

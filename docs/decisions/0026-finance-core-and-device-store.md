@@ -1,6 +1,6 @@
 # 0026. Rules and reports in libs/finance-core; the device store uses Dexie
 
-- Status: Accepted
+- Status: Accepted. The API no longer runs `finance-core`; it stores the rows the app sends ([0029](0029-generic-row-store-and-two-builds.md)).
 - Date: 2026-10-15
 - Builds on: [0025](0025-offline-first.md) (offline-first), [0005](0005-finance-math-in-shared-utils.md) (finance math)
 

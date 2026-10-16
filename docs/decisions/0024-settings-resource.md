@@ -1,6 +1,6 @@
 # 0024. Settings are one resource with no id, loaded once by the web app
 
-- Status: Accepted
+- Status: Accepted. The settings endpoint was replaced by the settings row in the row store ([0029](0029-generic-row-store-and-two-builds.md)).
 - Date: 2026-10-14
 
 ## Context

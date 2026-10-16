@@ -21,305 +21,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/core/settings": {
+    "/api/v1/store": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** The app settings, or the defaults if never saved */
-        get: operations["getSettings"];
-        /** Replace the app settings (a single resource, no id) */
-        put: operations["updateSettings"];
+        /** Every stored row, deleted ones included */
+        get: operations["loadStore"];
+        /** Replace everything, such as when restoring a backup */
+        put: operations["replaceStore"];
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/accounts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Accounts with their derived balances */
-        get: operations["listAccounts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/accounts/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One account with its derived balance */
-        get: operations["getAccount"];
-        /** Create or replace an account (the client generates the id) */
-        put: operations["upsertAccount"];
-        post?: never;
-        /** Soft-delete an account without records */
-        delete: operations["deleteAccount"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** All categories as a flat list (tree via parentId) */
-        get: operations["listCategories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/categories/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One category */
-        get: operations["getCategory"];
-        /** Create or replace a category (the client generates the id) */
-        put: operations["upsertCategory"];
-        post?: never;
-        /** Soft-delete a category without subcategories */
-        delete: operations["deleteCategory"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/records": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Records in a date range, newest first, with their lines */
-        get: operations["listRecords"];
-        /** Create or replace several records at once, all or nothing (batch entry) */
-        put: operations["upsertRecordBatch"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/records/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One record with its lines */
-        get: operations["getRecord"];
-        /** Create or replace a record and its lines (the client generates the id) */
-        put: operations["upsertRecord"];
-        post?: never;
-        /** Soft-delete a record and its lines */
-        delete: operations["deleteRecord"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/fx-rates/last-used": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The most recent exchange rate used per currency, to pre-fill the record form */
-        get: operations["listLastUsedRates"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/plan-versions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Plan versions, oldest first */
-        get: operations["listPlanVersions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/plan-versions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** A plan version with all its items */
-        get: operations["getPlanVersion"];
-        /** Create or replace a whole plan version (only the newest can change) */
-        put: operations["upsertPlanVersion"];
-        post?: never;
-        /** Delete the newest plan version */
-        delete: operations["deletePlanVersion"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/plan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The plan version in effect for a month */
-        get: operations["getActivePlan"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/budget-transfers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Stored budget transfers in a date range, oldest first (computed resets are in the reports) */
-        get: operations["listBudgetTransfers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/budget-transfers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One budget transfer */
-        get: operations["getBudgetTransfer"];
-        /** Create or replace a manual budget transfer (the client generates the id) */
-        put: operations["upsertBudgetTransfer"];
-        post?: never;
-        /** Soft-delete a manual budget transfer */
-        delete: operations["deleteBudgetTransfer"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/reports/envelopes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** What is left in every rollover budget on a day, with its current period */
-        get: operations["getEnvelopes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/reports/checklist": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The recurring checklist for the periods containing a day: what's recorded and what isn't yet */
-        get: operations["getChecklist"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/reports/monthly": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Plan vs. actual per section and item for a month */
-        get: operations["getMonthlyReview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/finance/reports/budget-transfers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Manual budget transfers and computed resets in a date range, in date order */
-        get: operations["getBudgetTransfersReport"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
+        /**
+         * Create or replace rows, by table, all or nothing
+         * @description Each row replaces the stored row with its id. A record or plan version replaces its lines or items.
+         */
+        patch: operations["saveStoreChanges"];
         trace?: never;
     };
 }
@@ -338,25 +59,265 @@ export interface components {
              */
             database: "ok" | "unavailable";
         };
-        /**
-         * @description Preselected for new accounts and entries. Reports stay in TWD.
-         * @enum {string}
-         */
+        /** @enum {string} */
+        AccountType: "cash" | "bank" | "credit_card" | "stored_value" | "gift_card";
+        /** @enum {string} */
         Currency: "TWD" | "JPY" | "EUR" | "GBP" | "USD";
-        SettingsDto: {
+        AccountRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** @example Wallet */
+            name: string;
+            type: components["schemas"]["AccountType"];
+            currency: components["schemas"]["Currency"];
+            /** @example 1234.00 */
+            openingBalance: string;
+            sortOrder: number;
+        };
+        CategoryRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** @example Food */
+            name: string;
+            /** Format: uuid */
+            parentId: string | null;
+            sortOrder: number;
+        };
+        /** @enum {string} */
+        RecordType: "income" | "expense" | "transfer" | "adjustment";
+        RecordLineRowDto: {
+            /** Format: uuid */
+            id: string;
+            /**
+             * @description In the record currency.
+             * @example 1234.00
+             */
+            amount: string;
+            /**
+             * @description Whole TWD.
+             * @example 1234.00
+             */
+            twdAmount: string;
+            /**
+             * @description Null for TWD records.
+             * @example 0.2083
+             */
+            fxRate: string | null;
+            /** Format: uuid */
+            categoryId: string | null;
+            /** Format: uuid */
+            budgetItemId: string | null;
+            note: string | null;
+        };
+        RecordRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            type: components["schemas"]["RecordType"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            accountId: string;
+            currency: components["schemas"]["Currency"];
+            /**
+             * Format: uuid
+             * @description Transfer only.
+             */
+            counterAccountId: string | null;
+            /**
+             * @description Transfer only: the amount received.
+             * @example 1234.00
+             */
+            counterAmount: string | null;
+            /**
+             * @description Adjustment only (ADR 0014).
+             * @example 1234.00
+             */
+            targetBalance: string | null;
+            note: string | null;
+            /** @description In display order. */
+            lines: components["schemas"]["RecordLineRowDto"][];
+        };
+        /** @enum {string} */
+        Section: "income" | "government" | "offering" | "saving" | "expense";
+        /** @enum {string} */
+        Cadence: "daily" | "weekly" | "monthly" | "yearly" | "one_time";
+        /** @enum {string} */
+        Anchor: "amount" | "percent";
+        /** @enum {string} */
+        PercentBase: "net_income" | "gross_income";
+        /** @enum {string} */
+        ResetCycle: "never" | "week" | "month" | "year";
+        /** @enum {string} */
+        ResetAction: "drop" | "carry";
+        PlanOverrideRowDto: {
+            /** @example 2026-10 */
+            month: string;
+            /**
+             * @description Whole TWD for that month.
+             * @example 1234.00
+             */
+            amount: string;
+        };
+        PlanItemRowDto: {
+            /**
+             * Format: uuid
+             * @description The stable item id (ADR 0012).
+             */
+            budgetItemId: string;
+            section: components["schemas"]["Section"];
+            /** @example Daily Food */
+            name: string;
+            /** Format: uuid */
+            parentItemId: string | null;
+            cadence: components["schemas"]["Cadence"];
+            cadenceMonth: number | null;
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            cadenceDate: string | null;
+            anchor: components["schemas"]["Anchor"];
+            /** @example 1234.00 */
+            amount: string | null;
+            /**
+             * @description Percentage points: "12.5" means 12.5%.
+             * @example 12.5
+             */
+            percent: string | null;
+            percentBase: components["schemas"]["PercentBase"];
+            rollover: boolean;
+            resetCycle: components["schemas"]["ResetCycle"] | null;
+            onReset: components["schemas"]["ResetAction"] | null;
+            /** Format: uuid */
+            carryToItemId: string | null;
+            overrides: components["schemas"]["PlanOverrideRowDto"][];
+        };
+        PlanVersionRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /**
+             * @description The first month this version applies to.
+             * @example 2026-10
+             */
+            effectiveFromMonth: string;
+            note: string | null;
+            /** @description In display order. */
+            items: components["schemas"]["PlanItemRowDto"][];
+        };
+        /** @enum {string} */
+        BudgetTransferKind: "manual" | "reset";
+        BudgetTransferRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            kind: components["schemas"]["BudgetTransferKind"];
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /** @example 12:30 */
+            occurredAt: string | null;
+            /** Format: uuid */
+            fromItemId: string;
+            /**
+             * Format: uuid
+             * @description Null only for a reset that dropped the leftover.
+             */
+            toItemId: string | null;
+            /**
+             * @description Whole TWD.
+             * @example 1234.00
+             */
+            amount: string;
+            note: string | null;
+        };
+        SettingsRowDto: {
+            /** @enum {string} */
+            id: "settings";
             /**
              * @description ISO day of week: 1 = Monday … 7 = Sunday.
              * @example 1
              * @enum {integer}
              */
             weekStartDay: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-            /** @description Preselected for new accounts and entries. Reports stay in TWD. */
+            /** @description Preselected for new accounts and entries. */
             defaultCurrency: components["schemas"]["Currency"];
-            /**
-             * Format: date-time
-             * @description Null until the settings are first saved; the defaults apply until then.
-             */
-            updatedAt: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        StoreSnapshotDto: {
+            accounts: components["schemas"]["AccountRowDto"][];
+            categories: components["schemas"]["CategoryRowDto"][];
+            records: components["schemas"]["RecordRowDto"][];
+            planVersions: components["schemas"]["PlanVersionRowDto"][];
+            budgetTransfers: components["schemas"]["BudgetTransferRowDto"][];
+            /** @description Null until the settings are first saved. */
+            settings: components["schemas"]["SettingsRowDto"] | null;
         };
         ProblemDetailsDto: {
             /** @example about:blank */
@@ -379,594 +340,13 @@ export interface components {
                 [key: string]: string[];
             };
         };
-        UpdateSettingsDto: {
-            /**
-             * @description ISO day of week: 1 = Monday … 7 = Sunday.
-             * @example 1
-             * @enum {integer}
-             */
-            weekStartDay: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-            defaultCurrency: components["schemas"]["Currency"];
-        };
-        /** @enum {string} */
-        AccountType: "cash" | "bank" | "credit_card" | "stored_value" | "gift_card";
-        AccountDto: {
-            /** Format: uuid */
-            id: string;
-            /** @example Wallet */
-            name: string;
-            type: components["schemas"]["AccountType"];
-            currency: components["schemas"]["Currency"];
-            /** @example 1000.00 */
-            openingBalance: string;
-            /**
-             * @description Derived from the opening balance and all records (ADR 0011).
-             * @example 850.00
-             */
-            balance: string;
-            sortOrder: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpsertAccountDto: {
-            /** @example Wallet */
-            name: string;
-            type: components["schemas"]["AccountType"];
-            currency: components["schemas"]["Currency"];
-            /**
-             * @description May be negative, e.g. a credit card that starts with debt.
-             * @example 1234.00
-             */
-            openingBalance: string;
-            /** @default 0 */
-            sortOrder: number;
-        };
-        CategoryDto: {
-            /** Format: uuid */
-            id: string;
-            /** @example Food */
-            name: string;
-            /** Format: uuid */
-            parentId: string | null;
-            sortOrder: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpsertCategoryDto: {
-            /** @example Food */
-            name: string;
-            /** Format: uuid */
-            parentId?: string | null;
-            /** @default 0 */
-            sortOrder: number;
-        };
-        /** @enum {string} */
-        RecordType: "income" | "expense" | "transfer" | "adjustment";
-        RecordLineDto: {
-            /** Format: uuid */
-            id: string;
-            /**
-             * @description In the record currency; always positive.
-             * @example 150.00
-             */
-            amount: string;
-            /**
-             * @description Whole TWD.
-             * @example 150.00
-             */
-            twdAmount: string;
-            /**
-             * @description Null for TWD records.
-             * @example null
-             */
-            fxRate: string | null;
-            /** Format: uuid */
-            categoryId: string | null;
-            /** Format: uuid */
-            budgetItemId: string | null;
-            note: string | null;
-        };
-        RecordDto: {
-            /** Format: uuid */
-            id: string;
-            type: components["schemas"]["RecordType"];
-            /**
-             * Format: date
-             * @example 2026-10-06
-             */
-            occurredOn: string;
-            /** @example 12:30 */
-            occurredAt: string | null;
-            /** Format: uuid */
-            accountId: string;
-            currency: components["schemas"]["Currency"];
-            /**
-             * Format: uuid
-             * @description Transfer only.
-             */
-            counterAccountId: string | null;
-            /** @description Transfer only: the amount received. */
-            counterAmount: string | null;
-            /** @description Adjustment only (ADR 0014). */
-            targetBalance: string | null;
-            note: string | null;
-            lines: components["schemas"]["RecordLineDto"][];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        RecordLineInput: {
-            /**
-             * Format: uuid
-             * @description Client-generated. Keep it when editing so the line keeps its identity.
-             */
-            id?: string;
-            /**
-             * @description In the record currency; must be positive.
-             * @example 1234.00
-             */
-            amount: string;
-            /**
-             * @description Required for foreign-currency records; omit for TWD.
-             * @example 0.2083
-             */
-            fxRate?: string;
-            /**
-             * @description Whole TWD. Omit to calculate it from amount × fxRate; set it to match a statement.
-             * @example 1234.00
-             */
-            twdAmount?: string;
-            /** Format: uuid */
-            categoryId?: string | null;
-            /** Format: uuid */
-            budgetItemId?: string | null;
-            note?: string | null;
-        };
-        BatchRecordInput: {
-            type: components["schemas"]["RecordType"];
-            /**
-             * Format: date
-             * @example 2026-10-06
-             */
-            occurredOn: string;
-            /** @example 12:30 */
-            occurredAt?: string | null;
-            /** Format: uuid */
-            accountId: string;
-            currency: components["schemas"]["Currency"];
-            /**
-             * Format: uuid
-             * @description Transfer only.
-             */
-            counterAccountId?: string | null;
-            /**
-             * @description Transfer only: the amount received, in the receiving account currency.
-             * @example 1234.00
-             */
-            counterAmount?: string | null;
-            /**
-             * @description Adjustment only: the actual balance (ADR 0014).
-             * @example 1234.00
-             */
-            targetBalance?: string | null;
-            note?: string | null;
-            /** @description One or more for income/expense; exactly one for a transfer; none for an adjustment. */
-            lines: components["schemas"]["RecordLineInput"][];
-            /**
-             * Format: uuid
-             * @description Client-generated.
-             */
-            id: string;
-        };
-        UpsertRecordBatchDto: {
-            records: components["schemas"]["BatchRecordInput"][];
-        };
-        UpsertRecordDto: {
-            type: components["schemas"]["RecordType"];
-            /**
-             * Format: date
-             * @example 2026-10-06
-             */
-            occurredOn: string;
-            /** @example 12:30 */
-            occurredAt?: string | null;
-            /** Format: uuid */
-            accountId: string;
-            currency: components["schemas"]["Currency"];
-            /**
-             * Format: uuid
-             * @description Transfer only.
-             */
-            counterAccountId?: string | null;
-            /**
-             * @description Transfer only: the amount received, in the receiving account currency.
-             * @example 1234.00
-             */
-            counterAmount?: string | null;
-            /**
-             * @description Adjustment only: the actual balance (ADR 0014).
-             * @example 1234.00
-             */
-            targetBalance?: string | null;
-            note?: string | null;
-            /** @description One or more for income/expense; exactly one for a transfer; none for an adjustment. */
-            lines: components["schemas"]["RecordLineInput"][];
-        };
-        LastUsedRateDto: {
-            currency: components["schemas"]["Currency"];
-            /** @example 0.2083 */
-            rate: string;
-            /**
-             * Format: date
-             * @example 2026-10-06
-             */
-            occurredOn: string;
-        };
-        PlanVersionSummaryDto: {
-            /** Format: uuid */
-            id: string;
-            /** @example 2026-10 */
-            effectiveFromMonth: string;
-            note: string | null;
-            editable: boolean;
-            itemCount: number;
-        };
-        /** @enum {string} */
-        Section: "income" | "government" | "offering" | "saving" | "expense";
-        /** @enum {string} */
-        Cadence: "daily" | "weekly" | "monthly" | "yearly" | "one_time";
-        /** @enum {string} */
-        Anchor: "amount" | "percent";
-        /** @enum {string} */
-        PercentBase: "net_income" | "gross_income";
-        /** @enum {string} */
-        ResetCycle: "never" | "week" | "month" | "year";
-        /** @enum {string} */
-        ResetAction: "drop" | "carry";
-        PlanOverrideDto: {
-            /** @example 2026-10 */
-            month: string;
-            /**
-             * @description Whole TWD for that month.
-             * @example 1234.00
-             */
-            amount: string;
-        };
-        PlanItemDto: {
-            /** Format: uuid */
-            budgetItemId: string;
-            section: components["schemas"]["Section"];
-            name: string;
-            /** Format: uuid */
-            parentItemId: string | null;
-            cadence: components["schemas"]["Cadence"];
-            cadenceMonth: number | null;
-            /** Format: date */
-            cadenceDate: string | null;
-            anchor: components["schemas"]["Anchor"];
-            /** @example 185.00 */
-            amount: string | null;
-            /** @example null */
-            percent: string | null;
-            percentBase: components["schemas"]["PercentBase"];
-            rollover: boolean;
-            resetCycle: components["schemas"]["ResetCycle"] | null;
-            onReset: components["schemas"]["ResetAction"] | null;
-            /** Format: uuid */
-            carryToItemId: string | null;
-            overrides: components["schemas"]["PlanOverrideDto"][];
-        };
-        PlanVersionDto: {
-            /** Format: uuid */
-            id: string;
-            /** @example 2026-10 */
-            effectiveFromMonth: string;
-            note: string | null;
-            /** @description Only the newest version can be changed (ADR 0018). */
-            editable: boolean;
-            items: components["schemas"]["PlanItemDto"][];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        PlanItemInput: {
-            /**
-             * Format: uuid
-             * @description The stable item id (ADR 0012). New ids create items.
-             */
-            budgetItemId: string;
-            /** @description Fixed once the item exists. */
-            section: components["schemas"]["Section"];
-            /** @example Daily Food */
-            name: string;
-            /**
-             * Format: uuid
-             * @description Another item in this version.
-             */
-            parentItemId?: string | null;
-            cadence: components["schemas"]["Cadence"];
-            /** @description Yearly only. */
-            cadenceMonth?: number | null;
-            /**
-             * Format: date
-             * @description One-time only.
-             * @example 2026-10-06
-             */
-            cadenceDate?: string | null;
-            anchor: components["schemas"]["Anchor"];
-            /**
-             * @description Whole TWD per cadence period. Anchor `amount` only.
-             * @example 1234.00
-             */
-            amount?: string | null;
-            /**
-             * @description Anchor `percent` only.
-             * @example 12.5
-             */
-            percent?: string | null;
-            /** @default net_income */
-            percentBase: components["schemas"]["PercentBase"];
-            /** @default false */
-            rollover: boolean;
-            /** @description Rollover only. */
-            resetCycle?: components["schemas"]["ResetCycle"] | null;
-            /** @description When the cycle resets. */
-            onReset?: components["schemas"]["ResetAction"] | null;
-            /**
-             * Format: uuid
-             * @description For `onReset: carry`: an item in this version.
-             */
-            carryToItemId?: string | null;
-            /** @description Monthly items only. */
-            overrides?: components["schemas"]["PlanOverrideDto"][];
-        };
-        UpsertPlanVersionDto: {
-            /**
-             * @description The first month this version applies to.
-             * @example 2026-10
-             */
-            effectiveFromMonth: string;
-            note?: string | null;
-            /** @description In display order. */
-            items: components["schemas"]["PlanItemInput"][];
-        };
-        /** @enum {string} */
-        BudgetTransferKind: "manual" | "reset";
-        BudgetTransferDto: {
-            /** Format: uuid */
-            id: string;
-            kind: components["schemas"]["BudgetTransferKind"];
-            /**
-             * Format: date
-             * @example 2026-10-31
-             */
-            occurredOn: string;
-            /** @example 21:00 */
-            occurredAt: string | null;
-            /** Format: uuid */
-            fromItemId: string;
-            /**
-             * Format: uuid
-             * @description Null only for a stored reset that dropped the leftover.
-             */
-            toItemId: string | null;
-            /**
-             * @description Whole TWD.
-             * @example 500.00
-             */
-            amount: string;
-            note: string | null;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpsertBudgetTransferDto: {
-            /**
-             * Format: date
-             * @example 2026-10-06
-             */
-            occurredOn: string;
-            /** @example 12:30 */
-            occurredAt?: string | null;
-            /**
-             * Format: uuid
-             * @description The budget item the amount leaves.
-             */
-            fromItemId: string;
-            /**
-             * Format: uuid
-             * @description The budget item that receives it.
-             */
-            toItemId: string;
-            /**
-             * @description Whole TWD; must be positive.
-             * @example 1234.00
-             */
-            amount: string;
-            note?: string | null;
-        };
-        PeriodDto: {
-            /**
-             * Format: date
-             * @example 2026-10-05
-             */
-            start: string;
-            /**
-             * Format: date
-             * @example 2026-10-11
-             */
-            end: string;
-        };
-        EnvelopeDto: {
-            /** Format: uuid */
-            budgetItemId: string;
-            name: string;
-            section: components["schemas"]["Section"];
-            /** Format: uuid */
-            parentItemId: string | null;
-            cadence: components["schemas"]["Cadence"];
-            resetCycle: components["schemas"]["ResetCycle"];
-            onReset: components["schemas"]["ResetAction"] | null;
-            /** Format: uuid */
-            carryToItemId: string | null;
-            /**
-             * Format: date
-             * @description When this envelope started (ADR 0019).
-             */
-            envelopeStart: string;
-            /**
-             * Format: date
-             * @description The end of the current reset cycle; null if it never resets.
-             */
-            resetsOn: string | null;
-            /** @description The current cadence period. */
-            period: components["schemas"]["PeriodDto"];
-            /**
-             * @description The current period's allotment.
-             * @example 185.00
-             */
-            allotment: string;
-            /**
-             * @description Carried in from earlier periods (negative = overspent).
-             * @example 35.00
-             */
-            carryIn: string;
-            /**
-             * @description Net budget transfers in this period, resets carried in included.
-             * @example 0.00
-             */
-            transfers: string;
-            /**
-             * @description Spent in this period, up to the report date.
-             * @example 0.00
-             */
-            spent: string;
-            /**
-             * @description What is left now (negative = overspent).
-             * @example 220.00
-             */
-            available: string;
-        };
-        ChecklistItemDto: {
-            /** Format: uuid */
-            budgetItemId: string;
-            name: string;
-            section: components["schemas"]["Section"];
-            /** Format: uuid */
-            parentItemId: string | null;
-            cadence: components["schemas"]["Cadence"];
-            period: components["schemas"]["PeriodDto"];
-            /**
-             * @description Planned for the period; pre-fills batch entry.
-             * @example 1200.00
-             */
-            planned: string;
-            /**
-             * @description Recorded in the period, on the item and its descendants.
-             * @example 0.00
-             */
-            recorded: string;
-            /** @description Record lines behind `recorded`. */
-            lineCount: number;
-            /** @description True once any line is recorded. */
-            done: boolean;
-        };
-        PlanBasesDto: {
-            /** @example 60000.00 */
-            grossIncome: string;
-            /** @example 3000.00 */
-            government: string;
-            /**
-             * @description Gross income minus Government: the default base.
-             * @example 57000.00
-             */
-            netIncome: string;
-        };
-        SectionReviewDto: {
-            /** @description Planned for the month. */
-            planned: string;
-            /** @description Net budget transfers in the month, computed resets included. */
-            transfers: string;
-            /** @description Received (income) or spent (other sections). */
-            actual: string;
-            /** @description planned + transfers − actual. */
-            remaining: string;
-            section: components["schemas"]["Section"];
-        };
-        YearToDateDto: {
-            /** @description Planned for the whole year, across versions. */
-            planned: string;
-            /** @description Actual from January to the end of this month. */
-            actual: string;
-        };
-        ItemReviewDto: {
-            /** @description Planned for the month. */
-            planned: string;
-            /** @description Net budget transfers in the month, computed resets included. */
-            transfers: string;
-            /** @description Received (income) or spent (other sections). */
-            actual: string;
-            /** @description planned + transfers − actual. */
-            remaining: string;
-            /** Format: uuid */
-            budgetItemId: string;
-            name: string;
-            section: components["schemas"]["Section"];
-            /** Format: uuid */
-            parentItemId: string | null;
-            cadence: components["schemas"]["Cadence"];
-            /** @description Yearly and one-time items only. */
-            year: components["schemas"]["YearToDateDto"] | null;
-        };
-        UnplannedDto: {
-            /** @description Income on no item, or on an item outside this version. */
-            income: string;
-            /** @description Spending on no item, or on an item outside this version. */
-            expense: string;
-        };
-        MonthlyReviewDto: {
-            /** @example 2026-10 */
-            month: string;
-            /** Format: uuid */
-            planVersionId: string;
-            bases: components["schemas"]["PlanBasesDto"];
-            /** @description Totals of the top-level items, in section order. */
-            sections: components["schemas"]["SectionReviewDto"][];
-            /** @description In plan order. A parent's transfers and actual include its descendants'. */
-            items: components["schemas"]["ItemReviewDto"][];
-            unplanned: components["schemas"]["UnplannedDto"];
-        };
-        BudgetMovementDto: {
-            kind: components["schemas"]["BudgetTransferKind"];
-            /**
-             * Format: uuid
-             * @description Null for a computed reset.
-             */
-            id: string | null;
-            /** Format: date */
-            occurredOn: string;
-            /** @example null */
-            occurredAt: string | null;
-            /** Format: uuid */
-            fromItemId: string;
-            /**
-             * Format: uuid
-             * @description Null when a reset drops the leftover.
-             */
-            toItemId: string | null;
-            /**
-             * @description Negative for a reset that carries an overspend.
-             * @example 620.00
-             */
-            amount: string;
-            note: string | null;
+        StoreChangesDto: {
+            accounts?: components["schemas"]["AccountRowDto"][];
+            categories?: components["schemas"]["CategoryRowDto"][];
+            records?: components["schemas"]["RecordRowDto"][];
+            planVersions?: components["schemas"]["PlanVersionRowDto"][];
+            budgetTransfers?: components["schemas"]["BudgetTransferRowDto"][];
+            settings?: components["schemas"]["SettingsRowDto"];
         };
     };
     responses: never;
@@ -996,7 +376,7 @@ export interface operations {
             };
         };
     };
-    getSettings: {
+    loadStore: {
         parameters: {
             query?: never;
             header?: never;
@@ -1010,12 +390,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SettingsDto"];
+                    "application/json": components["schemas"]["StoreSnapshotDto"];
                 };
             };
         };
     };
-    updateSettings: {
+    replaceStore: {
         parameters: {
             query?: never;
             header?: never;
@@ -1024,161 +404,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateSettingsDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SettingsDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    listAccounts: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountDto"][];
-                };
-            };
-        };
-    };
-    getAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertAccountDto"];
+                "application/json": components["schemas"]["StoreSnapshotDto"];
             };
         };
         responses: {
             /** @description Replaced. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountDto"];
-                };
-            };
-            /** @description Created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    deleteAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Deleted (or already deleted). */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -1194,126 +424,6 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetailsDto"];
                 };
             };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    listCategories: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryDto"][];
-                };
-            };
-        };
-    };
-    getCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Replaced. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryDto"];
-                };
-            };
-            /** @description Created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
             /** @description Conflict: duplicate, deleted, or still in use. */
             409: {
                 headers: {
@@ -1334,18 +444,20 @@ export interface operations {
             };
         };
     };
-    deleteCategory: {
+    saveStoreChanges: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreChangesDto"];
+            };
+        };
         responses: {
-            /** @description Deleted (or already deleted). */
+            /** @description Saved. */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -1361,853 +473,8 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetailsDto"];
                 };
             };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
             /** @description Conflict: duplicate, deleted, or still in use. */
             409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    listRecords: {
-        parameters: {
-            query: {
-                /** @description First day, inclusive. */
-                from: string;
-                /** @description Last day, inclusive. */
-                to: string;
-                /** @description Records from or to this account. */
-                accountId?: string;
-                /** @description Records with a line in this category. */
-                categoryId?: string;
-                /** @description Records with a line on this budget item. */
-                budgetItemId?: string;
-                type?: components["schemas"]["RecordType"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertRecordBatch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertRecordBatchDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getRecord: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertRecord: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertRecordDto"];
-            };
-        };
-        responses: {
-            /** @description Replaced. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordDto"];
-                };
-            };
-            /** @description Created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    deleteRecord: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Deleted (or already deleted). */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    listLastUsedRates: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LastUsedRateDto"][];
-                };
-            };
-        };
-    };
-    listPlanVersions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanVersionSummaryDto"][];
-                };
-            };
-        };
-    };
-    getPlanVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanVersionDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertPlanVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertPlanVersionDto"];
-            };
-        };
-        responses: {
-            /** @description Replaced. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanVersionDto"];
-                };
-            };
-            /** @description Created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanVersionDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    deletePlanVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Deleted (or already deleted). */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getActivePlan: {
-        parameters: {
-            query: {
-                month: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanVersionDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    listBudgetTransfers: {
-        parameters: {
-            query: {
-                /** @description First day, inclusive. */
-                from: string;
-                /** @description Last day, inclusive. */
-                to: string;
-                /** @description Transfers from or to this item. */
-                budgetItemId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BudgetTransferDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getBudgetTransfer: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BudgetTransferDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    upsertBudgetTransfer: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpsertBudgetTransferDto"];
-            };
-        };
-        responses: {
-            /** @description Replaced. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BudgetTransferDto"];
-                };
-            };
-            /** @description Created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BudgetTransferDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    deleteBudgetTransfer: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Deleted (or already deleted). */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Conflict: duplicate, deleted, or still in use. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getEnvelopes: {
-        parameters: {
-            query: {
-                /** @description The day to report on, usually today. */
-                date: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnvelopeDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getChecklist: {
-        parameters: {
-            query: {
-                /** @description The day to report on, usually today. */
-                date: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChecklistItemDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getMonthlyReview: {
-        parameters: {
-            query: {
-                month: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MonthlyReviewDto"];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-            /** @description A business rule refuses the request. */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetailsDto"];
-                };
-            };
-        };
-    };
-    getBudgetTransfersReport: {
-        parameters: {
-            query: {
-                /** @description First day, inclusive. */
-                from: string;
-                /** @description Last day, inclusive. */
-                to: string;
-                /** @description Transfers from or to this item. */
-                budgetItemId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BudgetMovementDto"][];
-                };
-            };
-            /** @description The request shape is invalid. */
-            400: {
                 headers: {
                     [name: string]: unknown;
                 };
