@@ -23,13 +23,15 @@ _Last updated: 2026-10-16_
 
 - **Local only** (decided 2026-10-15, [ADR 0028](decisions/0028-local-only.md), accepted): Selah stays a phone app with no sync, server or accounts. When it outgrows one device, it becomes a hosted service with accounts, as a stage of its own, not self-hosting. The drafted sync work (closed PRs #25 and #26) is kept on its branches for reference.
 
+- **Two builds, one app** (decided 2026-10-16, [ADR 0029](decisions/0029-generic-row-store-and-two-builds.md), accepted): every feature is written once, in the app. The release build picks the storage: the **device build** (Pages, the phone) keeps the data in IndexedDB, and the **API build** (local `nx serve web`) keeps it in Postgres through the API. The two don't share data. The API becomes a generic row store that loads and saves rows; the per-feature endpoints go. New modules come before a reachable server, and the API moves to .NET before it goes online.
+
 - **Phase 6a, step 1 (shared finance core):** done. `libs/finance-core` holds the rules and reports as pure functions ([ADR 0026](decisions/0026-finance-core-and-device-store.md)), and the API services only load data, call them, and save. All 123 integration tests pass unchanged.
 
 - **Phase 6a, step 2 (device store):** done. Every row lives in IndexedDB through Dexie; `DeviceStore` loads it into memory at start and follows changes from other tabs. `finance-api.ts` keeps its shape but reads the device and runs the `finance-core` rules before saving, and settings moved to the device too. The app no longer needs the API: the "can't reach the server" banner became a warning that shows only if the device's storage can't be opened. Web tests seed an in-memory store instead of stubbing HTTP.
 
 - **Phase 6b (backup and hosting):** done ([ADR 0027](decisions/0027-backups-and-hosting.md)). Settings downloads a backup file of everything on the device and restores one, replacing everything after a second tap; Home reminds to back up after 30 days without one. The app asks the browser to keep its storage and says whether it did. Selah has its own icon (a fermata over a ledger rule, `pnpm icons`), and a GitHub Action publishes the app to https://elliemhwu.github.io/selah/ on every push to `main`. The owner chose to start fresh: nothing from the local Postgres is brought over.
 
-**Next step:** merge the open PRs, then `develop` into `main` to publish the app, and try it on a phone (install it, enter a few days, download a backup). The Finance MVP is then complete. The open questions below are still waiting for the owner.
+**Next step:** stage A below: merge `develop` into `main` to publish v0.1.0, and try it on a phone (install it, enter a few days, download a backup). Stage B starts alongside it. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -47,12 +49,22 @@ _Last updated: 2026-10-16_
 
 Phases 1 and 2 can be swapped. The schema DDL can be written before the workspace exists, because the migrations are plain SQL.
 
+## Stages after the Finance MVP ([ADR 0029](decisions/0029-generic-row-store-and-two-builds.md))
+
+| #   | Stage                                                                                                                                          | Status  |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| A   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | ⏭️ Next |
+| B   | Generic row store in `apps/api` replacing the per-feature endpoints; `ApiStorage` and the API build; local `serve` runs the web app on the API | ⏭️ Next |
+| C   | Next module, written once and working in both builds (module to be decided)                                                                    | Planned |
+| D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later   |
+| E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later   |
+
 ## Beta / later
 
 - Switchable themes: the Paper (light) and Evening (dark) directions from the UI comparison, as extra token sets ([ADR 0021](decisions/0021-linen-ledger-ui.md)). An idea only, not planned.
 - Close Week / Close Month: persist computed resets as `reset` budget transfers. See requirements §5.
-- Migrating `apps/api` to .NET.
-- **Hosted service** ([ADR 0028](decisions/0028-local-only.md)): accounts, sync between devices, and where it runs; its own stage and ADRs. Revisit the API client approach ([ADR 0015](decisions/0015-api-client-generation.md)) then.
+- Native app: wrap the same build with Capacitor when the App Store, widgets or background tasks are wanted ([ADR 0029](decisions/0029-generic-row-store-and-two-builds.md)).
+- Revisit the API client approach ([ADR 0015](decisions/0015-api-client-generation.md)) at stage D.
 
 ## Open questions
 

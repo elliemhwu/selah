@@ -1,6 +1,6 @@
 # 0028. Local only on the device; a server is a later stage
 
-- Status: Accepted
+- Status: Accepted. The API is used again as a local second build, by [0029](0029-generic-row-store-and-two-builds.md).
 - Date: 2026-10-15
 - Changes: [0025](0025-offline-first.md) (its step 3, sync). Builds on [0027](0027-backups-and-hosting.md) (backups).
 
