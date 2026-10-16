@@ -76,7 +76,7 @@ A record can touch one layer or both. For example, lunch paid in cash lowers the
 
 ### 3.1 Rollover
 
-- Rollover is set per item. When it's on, leftover or overspend carries into the next period, e.g. daily food of 185 with 150 spent leaves 210 available the next day.
+- Rollover is set per item. When it's on, leftover or overspend carries into the next period, e.g. daily food of 185 with 150 spent leaves 220 (185 + 35) available the next day.
 - Each rollover item has:
   - a `reset_cycle`: `never` / `week` / `month` / `year`
   - an `on_reset` action: **drop** the leftover, or **carry it into** another budget item
