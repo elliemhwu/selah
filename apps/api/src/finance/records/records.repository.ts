@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { type RecordLookups, type RecordWrite, toBalanceRecord } from '@selah/finance-core';
 import type { Currency, RecordType, Section } from '@selah/shared-types';
-import { parseMoney, type RecordForBalance } from '@selah/shared-utils';
+import type { RecordForBalance } from '@selah/shared-utils';
 import type { Selectable } from 'kysely';
 import { ConflictError } from '../../common/errors';
 import { DATABASE } from '../../database/database.module';
@@ -17,31 +18,6 @@ export interface RecordWithLines {
   lines: LineRow[];
 }
 
-export interface LineWrite {
-  id: string;
-  amount: string;
-  twdAmount: string;
-  fxRate: string | null;
-  categoryId: string | null;
-  budgetItemId: string | null;
-  note: string | null;
-  sortOrder: number;
-}
-
-export interface RecordWrite {
-  id: string;
-  type: RecordType;
-  occurredOn: string;
-  occurredAt: string | null;
-  accountId: string;
-  currency: Currency;
-  counterAccountId: string | null;
-  counterAmount: string | null;
-  targetBalance: string | null;
-  note: string | null;
-  lines: LineWrite[];
-}
-
 export interface RecordFilters {
   from: string;
   to: string;
@@ -51,11 +27,6 @@ export interface RecordFilters {
   type?: RecordType;
 }
 
-export interface Lookups {
-  accounts: Map<string, { currency: Currency }>;
-  categories: Set<string>;
-  budgetItems: Map<string, { section: Section }>;
-}
 
 @Injectable()
 export class RecordsRepository {
@@ -117,7 +88,7 @@ export class RecordsRepository {
     accounts: string[];
     categories: string[];
     budgetItems: string[];
-  }): Promise<Lookups> {
+  }): Promise<RecordLookups> {
     const [accounts, categories, budgetItems] = await Promise.all([
       ids.accounts.length
         ? this.db
@@ -296,24 +267,15 @@ export class RecordsRepository {
       );
     }
     const records = await this.withLines(await query.execute());
-    return records.map(({ record: r, lines }) => ({
-      id: r.id,
-      type: r.type as RecordType,
-      occurredOn: r.occurredOn,
-      occurredAt: r.occurredAt,
-      createdAt: r.createdAt.toISOString(),
-      accountId: r.accountId,
-      currency: r.currency as Currency,
-      counterAccountId: r.counterAccountId,
-      counterAmount:
-        r.counterAmount === null ? null : parseMoney(r.counterAmount),
-      targetBalance:
-        r.targetBalance === null ? null : parseMoney(r.targetBalance),
-      lines: lines.map((l) => ({
-        amount: parseMoney(l.amount),
-        twdAmount: parseMoney(l.twdAmount),
-      })),
-    }));
+    return records.map(({ record: r, lines }) =>
+      toBalanceRecord({
+        ...r,
+        type: r.type as RecordType,
+        currency: r.currency as Currency,
+        createdAt: r.createdAt.toISOString(),
+        lines,
+      }),
+    );
   }
 
   async accountHasLiveRecords(accountId: string): Promise<boolean> {

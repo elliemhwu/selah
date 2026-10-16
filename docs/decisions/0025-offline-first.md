@@ -1,6 +1,6 @@
 # 0025. Offline-first: the device holds all the data
 
-- Status: Proposed (the owner decided offline-first and that the device holds all the data; points marked _to confirm_ are still open)
+- Status: Accepted
 - Date: 2026-10-14
 - Extends: [0007](0007-offline-ready-data-conventions.md). Changes how the web app reaches data, set in [0015](0015-api-client-generation.md) and [0020](0020-web-ui-foundation.md).
 
@@ -19,7 +19,7 @@ On 2026-10-14 the owner chose **offline-first, with the device holding all the d
 - **The device holds all the data.** The web app keeps every row in the browser's IndexedDB and reads and writes there. No screen waits for the network.
 - **Rules and reports run on the device.** The record, plan, transfer and category rules and the report building move out of the API services into shared pure functions, used by both the web app and the API. This applies [0005](0005-finance-math-in-shared-utils.md) to the rules as well as the math, so the device and the server give the same answers. The .NET port reimplements them, as it already must for the math.
 
-**Proposed, to confirm**
+**Confirmed by the owner (2026-10-14)**
 
 - **The server is a sync hub and backup**, not where screens read from. The API keeps its endpoints and integration tests.
   - **Push:** the device sends its changes from an outbox, using the existing idempotent `PUT` and `DELETE` endpoints ([0017](0017-api-conventions.md)).
