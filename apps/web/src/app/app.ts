@@ -4,6 +4,7 @@ import { type ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterL
 import { filter, map } from 'rxjs';
 import { Backups } from './data/backups';
 import { DeviceStore } from './data/device-store';
+import { STORAGE_MODE } from './data/storage-mode';
 import { Icon, type IconName } from './ui/icon';
 import { ToastOutlet } from './ui/toast';
 
@@ -44,11 +45,14 @@ export class App {
 
   constructor() {
     // Ask the browser to keep the data even when space runs low (ADR 0025).
-    void inject(Backups).requestPersistence();
+    // The API build keeps it in Postgres instead (ADR 0029).
+    const backups = inject(Backups);
+    if (STORAGE_MODE === 'device') void backups.requestPersistence();
   }
 
-  /** Shown when the data on this device can't be opened (ADR 0025); the app needs no server. */
+  /** Shown when the data can't be opened: on the device (ADR 0025), or from the API in the API build (ADR 0029). */
   protected readonly storageFailed = computed(() => this.store.status() === 'error');
+  protected readonly apiBuild = STORAGE_MODE === 'api';
 
   protected retry(): void {
     void this.store.reload();

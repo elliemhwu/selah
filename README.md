@@ -63,9 +63,11 @@ pnpm db:migrate              # apply SQL migrations (dbmate)
 pnpm start                   # API on :3000 and web on :4200 (proxies /api to the API)
 ```
 
-- Web app: http://localhost:4200
+- Web app: http://localhost:4200, the **API build**: the data is kept in Postgres through the API ([ADR 0029](docs/decisions/0029-generic-row-store-and-two-builds.md)).
 - Swagger UI: http://localhost:3000/api/docs
 - Health check: http://localhost:4200/api/v1/health
+
+The app has two builds that share every feature ([ADR 0029](docs/decisions/0029-generic-row-store-and-two-builds.md)). The release build (GitHub Pages, the phone) keeps the data on the device in IndexedDB. `pnpm nx serve web -c device` serves that build locally. To preview the release build as published, with offline support, run `pnpm nx run web:build` and serve `dist/apps/web/browser` (for example `npx http-server dist/apps/web/browser -c-1`). The two builds don't share data.
 
 ### 4. Everyday commands
 

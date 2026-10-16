@@ -33,7 +33,9 @@ _Last updated: 2026-10-16_
 
 - **Stage A, step 1 (row store):** done. `apps/api` is a generic row store: `GET`, `PATCH` and `PUT /api/v1/store` load, save and replace rows in the shape the app keeps, in the existing typed tables. The per-feature endpoints, their services and their 123 integration tests are gone; 13 store tests cover every table round trip, line and item replacement, soft deletes, all-or-nothing saves, database constraints, validation and a large restore. A migration lets the client's `updated_at` stand. The app's view types now come from `finance-core` and the row DTOs.
 
-**Next step:** stage A, step 2: `ApiStorage` and the API build. Then stage B: merge `develop` into `main` to publish v0.1.0, and try it on a phone (install it, enter a few days, download a backup). The owner chose to finish stage A before the first release. The open questions below are still waiting for the owner.
+- **Stage A, step 2 (API build):** done. `ApiStorage` implements the same storage interface as IndexedDB over `/api/v1/store`, and the build picks it: the development build (`nx serve web`, with the API and Postgres) keeps the data in Postgres; the release build and `nx serve web -c device` keep it on the device. Unit tests run in the device build. The shell says when the server can't be reached, and the API build doesn't ask the browser to keep storage. Stage A is done.
+
+**Next step:** stage B: merge `develop` into `main` to publish v0.1.0, and try it on a phone (install it, enter a few days, download a backup). The owner chose to finish stage A before the first release. The open questions below are still waiting for the owner.
 
 ## Phases (Finance MVP)
 
@@ -53,13 +55,13 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Stages after the Finance MVP ([ADR 0029](decisions/0029-generic-row-store-and-two-builds.md))
 
-| #   | Stage                                                                                                                                          | Status         |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| A   | Generic row store in `apps/api` replacing the per-feature endpoints; `ApiStorage` and the API build; local `serve` runs the web app on the API | 🚧 In progress |
-| B   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | ⏭️ Next        |
-| C   | Next module, written once and working in both builds (module to be decided)                                                                    | Planned        |
-| D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later          |
-| E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later          |
+| #   | Stage                                                                                                                                          | Status  |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| A   | Generic row store in `apps/api` replacing the per-feature endpoints; `ApiStorage` and the API build; local `serve` runs the web app on the API | ✅ Done |
+| B   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | ⏭️ Next |
+| C   | Next module, written once and working in both builds (module to be decided)                                                                    | Planned |
+| D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later   |
+| E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later   |
 
 ## Beta / later
 

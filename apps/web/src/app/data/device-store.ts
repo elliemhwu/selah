@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { computed, DestroyRef, inject, Injectable, InjectionToken, signal } from '@angular/core';
+import { ApiStorage } from './api-storage';
 import {
   applyChanges,
   type DeviceChanges,
@@ -7,11 +9,16 @@ import {
   DexieStorage,
   EMPTY_SNAPSHOT,
 } from './device-storage';
+import { STORAGE_MODE } from './storage-mode';
 
-/** Where the data is kept; tests provide a MemoryStorage instead. */
+/**
+ * Where the data is kept, chosen by the build (ADR 0029): IndexedDB in the
+ * release build, the API in the development build. Tests provide a
+ * MemoryStorage instead.
+ */
 export const DEVICE_STORAGE = new InjectionToken<DeviceStorage>('DEVICE_STORAGE', {
   providedIn: 'root',
-  factory: () => new DexieStorage(),
+  factory: () => (STORAGE_MODE === 'api' ? new ApiStorage(inject(HttpClient)) : new DexieStorage()),
 });
 
 /**
