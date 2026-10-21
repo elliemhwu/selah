@@ -1,11 +1,15 @@
 import { BackupError, backupFileName, parseBackup, toBackupJson } from './backup';
 import { EMPTY_SNAPSHOT } from './device-storage';
-import { storedAccount, storedRecord } from './testing';
+import { storedAccount, storedComment, storedGodNote, storedJournal, storedMoment, storedRecord } from './testing';
 
 const snapshot = {
   ...EMPTY_SNAPSHOT,
   accounts: [storedAccount('cash')],
   records: [storedRecord('r1'), storedRecord('gone', { deletedAt: '2026-10-02T00:00:00Z' })],
+  moments: [storedMoment('m1')],
+  journals: [storedJournal('j1', { momentId: 'm1' })],
+  comments: [storedComment('c1', { journalId: 'j1' })],
+  godNotes: [storedGodNote('g1', 'j1')],
   settings: { id: 'settings' as const, weekStartDay: 7 as const, defaultCurrency: 'JPY' as const, updatedAt: 'x' },
 };
 
@@ -30,10 +34,29 @@ describe('backup files', () => {
     expect(parseBackup(json).snapshot.settings).toBeNull();
   });
 
+  it('restores a backup from before the Journal module with no journal rows (ADR 0030)', () => {
+    const json = JSON.stringify({
+      format: 'selah-backup',
+      version: 1,
+      exportedAt: 'x',
+      data: { accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], settings: null },
+    });
+    expect(parseBackup(json).snapshot).toMatchObject({ moments: [], journals: [], comments: [], godNotes: [] });
+  });
+
   it.each([
     ['text that is not JSON', 'hello'],
     ['another JSON file', JSON.stringify({ name: 'something' })],
     ['a backup with a broken table', JSON.stringify({ format: 'selah-backup', version: 1, exportedAt: 'x', data: { accounts: [{}] } })],
+    [
+      'a backup with a broken journal table',
+      JSON.stringify({
+        format: 'selah-backup',
+        version: 1,
+        exportedAt: 'x',
+        data: { accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], journals: [{}] },
+      }),
+    ],
   ])('refuses %s', (_, text) => {
     expect(() => parseBackup(text)).toThrow(BackupError);
     expect(() => parseBackup(text)).toThrow("This file isn't a Selah backup.");

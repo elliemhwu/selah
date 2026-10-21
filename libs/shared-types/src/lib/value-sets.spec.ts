@@ -12,6 +12,7 @@ import {
   RESET_CYCLES,
   SECTIONS,
 } from './finance';
+import { DATE_PRECISIONS } from './journal';
 
 // The value sets must match the CHECK constraints in the SQL migrations.
 const migrationsDir = join(__dirname, '../../../../db/migrations');
@@ -19,7 +20,7 @@ const sql = readdirSync(migrationsDir)
   .map((file) => readFileSync(join(migrationsDir, file), 'utf8'))
   .join('\n');
 
-describe('finance value sets', () => {
+describe('value sets', () => {
   it.each([
     ['CURRENCIES', CURRENCIES],
     ['ACCOUNT_TYPES', ACCOUNT_TYPES],
@@ -31,6 +32,7 @@ describe('finance value sets', () => {
     ['RESET_CYCLES', RESET_CYCLES],
     ['RESET_ACTIONS', RESET_ACTIONS],
     ['BUDGET_TRANSFER_KINDS', BUDGET_TRANSFER_KINDS],
+    ['DATE_PRECISIONS', DATE_PRECISIONS],
   ])('%s matches a CHECK constraint in the migrations', (_name, values) => {
     expect(sql).toContain(`IN (${values.map((v) => `'${v}'`).join(', ')})`);
   });

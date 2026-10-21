@@ -139,6 +139,49 @@ export interface FinanceRecords {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface JournalComments {
+  body: string;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  journalId: string | null;
+  momentId: string | null;
+  updatedAt: Generated<Timestamp>;
+  writtenAt: Timestamp;
+}
+
+export interface JournalGodNotes {
+  body: string;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  journalId: string;
+  updatedAt: Generated<Timestamp>;
+  verseRef: string | null;
+  writtenAt: Timestamp;
+}
+
+export interface JournalJournals {
+  body: string;
+  createdAt: Generated<Timestamp>;
+  datePrecision: Generated<string>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  momentId: string | null;
+  updatedAt: Generated<Timestamp>;
+  writtenAt: Timestamp;
+}
+
+export interface JournalMoments {
+  createdAt: Generated<Timestamp>;
+  date: string;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  summary: string | null;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface DB {
   "core.settings": CoreSettings;
   "finance.accounts": FinanceAccounts;
@@ -150,4 +193,8 @@ export interface DB {
   "finance.categories": FinanceCategories;
   "finance.recordLines": FinanceRecordLines;
   "finance.records": FinanceRecords;
+  "journal.comments": JournalComments;
+  "journal.godNotes": JournalGodNotes;
+  "journal.journals": JournalJournals;
+  "journal.moments": JournalMoments;
 }
