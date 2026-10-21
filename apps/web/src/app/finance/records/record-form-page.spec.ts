@@ -99,7 +99,7 @@ describe('RecordFormPage', () => {
         lines: [{ id: lineId, amount: '150.00', twdAmount: '150.00', fxRate: null, budgetItemId: null, categoryId: null, note: null }],
       }),
     ]);
-    expect(leave).toHaveBeenCalledWith('/', 'Saved.');
+    expect(leave).toHaveBeenCalledWith('/finance', 'Saved.');
   });
 
   it('starts from a checklist item and keeps the ids when saving again', async () => {
@@ -150,7 +150,7 @@ describe('RecordFormPage', () => {
       ['l1', '150.00'],
       ['l2', '90.00'],
     ]);
-    expect(leave).toHaveBeenCalledWith('/records', 'Saved.');
+    expect(leave).toHaveBeenCalledWith('/finance/records', 'Saved.');
     fixture.detectChanges(); // the button is enabled again once saving ends
 
     const button = () => el.querySelector('.danger button') as HTMLButtonElement;
@@ -160,14 +160,14 @@ describe('RecordFormPage', () => {
     button().click();
     await flushSaves();
     expect(savedRecords()[0].deletedAt).not.toBeNull();
-    expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
+    expect(leave).toHaveBeenLastCalledWith('/finance/records', 'Entry deleted.');
   });
 
   it('sends transfers to their own form', async () => {
     const transfer = storedRecord('t1', { type: 'transfer', counterAccountId: 'usd', counterAmount: '1.00', lines: [storedLine('l1', '33.00')] });
     const navigate = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
     await render({ params: { id: 't1' } }, { records: [transfer] });
-    expect(navigate).toHaveBeenCalledWith(['/accounts', 'transfer', 't1'], { replaceUrl: true });
+    expect(navigate).toHaveBeenCalledWith(['/finance/accounts', 'transfer', 't1'], { replaceUrl: true });
     navigate.mockRestore();
   });
 

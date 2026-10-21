@@ -29,8 +29,8 @@ const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * An income or expense record with one or more lines (requirements §2, ADR 0013).
- * Routes: `/records/new?type=income&item=<budget item id>&amount=1200.00`
- * (every parameter optional, e.g. from a checklist item) and `/records/:id`
+ * Routes: `/finance/records/new?type=income&item=<budget item id>&amount=1200.00`
+ * (every parameter optional, e.g. from a checklist item) and `/finance/records/:id`
  * to edit; transfers and adjustments open in their own forms (ADR 0022).
  */
 @Component({
@@ -118,7 +118,7 @@ export class RecordFormPage {
       if (!this.loaded.hasValue() || this.form.dirty) return;
       const record = this.loaded.value();
       if (record.type === 'transfer' || record.type === 'adjustment') {
-        void this.router.navigate(['/accounts', record.type === 'transfer' ? 'transfer' : 'adjust', record.id], {
+        void this.router.navigate(['/finance/accounts', record.type === 'transfer' ? 'transfer' : 'adjust', record.id], {
           replaceUrl: true,
         });
         return;
@@ -180,7 +180,7 @@ export class RecordFormPage {
   }
 
   protected cancel(): void {
-    this.nav.leave(this.editing ? '/records' : '/');
+    this.nav.leave(this.editing ? '/finance/records' : '/finance');
   }
 
   async save(): Promise<void> {
@@ -208,7 +208,7 @@ export class RecordFormPage {
           note: line.note.trim() || null,
         })),
       });
-      this.nav.leave(this.editing ? '/records' : '/', $localize`:@@record.saved:Saved.`);
+      this.nav.leave(this.editing ? '/finance/records' : '/finance', $localize`:@@record.saved:Saved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));
@@ -226,7 +226,7 @@ export class RecordFormPage {
     this.saving.set(true);
     try {
       await this.recordsApi.remove(this.editId);
-      this.nav.leave('/records', $localize`:@@record.deleted:Entry deleted.`);
+      this.nav.leave('/finance/records', $localize`:@@record.deleted:Entry deleted.`);
     } catch (error) {
       this.toast.show(problemOf(error).message);
       this.confirmingDelete.set(false);

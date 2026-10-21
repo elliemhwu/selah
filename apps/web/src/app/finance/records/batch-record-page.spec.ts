@@ -65,7 +65,7 @@ describe('BatchRecordPage', () => {
       lines: [{ amount: '60000.00', budgetItemId: 'salary' }],
     });
     expect(records.find((r) => r.type === 'expense')).toMatchObject({ lines: [{ amount: '1342.00', budgetItemId: 'power' }] });
-    expect(leave).toHaveBeenCalledWith('/', 'Saved 2 entries.');
+    expect(leave).toHaveBeenCalledWith('/finance', 'Saved 2 entries.');
   });
 
   it('puts errors on the row that was sent', async () => {

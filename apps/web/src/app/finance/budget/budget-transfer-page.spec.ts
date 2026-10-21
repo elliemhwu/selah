@@ -73,7 +73,7 @@ describe('BudgetTransferPage', () => {
         note: 'Japan',
       }),
     ]);
-    expect(leave).toHaveBeenCalledWith('/review', 'Budget moved.');
+    expect(leave).toHaveBeenCalledWith('/finance/review', 'Budget moved.');
   });
 
   it('takes whole TWD only', async () => {
@@ -108,6 +108,6 @@ describe('BudgetTransferPage', () => {
     button().click();
     await flushSaves();
     expect(storage.snapshot().budgetTransfers[0].deletedAt).not.toBeNull();
-    expect(leave).toHaveBeenLastCalledWith('/review', 'Transfer deleted.');
+    expect(leave).toHaveBeenLastCalledWith('/finance/review', 'Transfer deleted.');
   });
 });

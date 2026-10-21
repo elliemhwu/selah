@@ -1,0 +1,21 @@
+<header class="page-header">
+  <div class="masthead small muted">
+    <span>{{ today() | date: 'EEE d MMM y' }}</span>
+    <a class="settings-link" routerLink="/settings">
+      <selah-icon name="settings" [size]="20" i18n-label="@@settings.title" label="Settings" />
+    </a>
+  </div>
+  <h1 class="brand">Selah</h1>
+</header>
+
+<nav class="modules" i18n-aria-label="@@selahHome.modules" aria-label="Modules">
+  @for (entry of modules; track entry.path) {
+    <a class="module" [routerLink]="entry.path">
+      <selah-icon [name]="entry.icon" [size]="24" />
+      <span class="module-text">
+        <span class="module-name">{{ entry.name }}</span>
+        <span class="small muted">{{ entry.description }}</span>
+      </span>
+    </a>
+  }
+</nav>

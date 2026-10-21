@@ -68,7 +68,7 @@ describe('ReviewPage', () => {
     expect(text(byName('Food'))).toContain('3,500 left · -2,350 moved');
     expect(text(byName('Rent'))).toContain('300 over');
     expect(text(byName('Rent')?.querySelector('.item-amount'))).toBe('15,300 of 15,000');
-    expect(byName('Rent')?.getAttribute('href')).toBe('/records?item=Rent');
+    expect(byName('Rent')?.getAttribute('href')).toBe('/finance/records?item=Rent');
   });
 
   it('shows section totals, what no item covers, and the month’s budget movements', async () => {
@@ -89,9 +89,9 @@ describe('ReviewPage', () => {
     const el = await render();
     const movements = [...el.querySelectorAll('.movement')];
     expect(movements[0].getAttribute('href')).toBeNull();
-    expect(movements[1].getAttribute('href')).toBe('/budget/transfers/m1');
+    expect(movements[1].getAttribute('href')).toBe('/finance/budget/transfers/m1');
     // In the current month, a new move is dated today.
-    expect(el.querySelector('.move-budget')?.getAttribute('href')).toBe('/budget/transfers/new?date=2026-10-07');
+    expect(el.querySelector('.move-budget')?.getAttribute('href')).toBe('/finance/budget/transfers/new?date=2026-10-07');
   });
 
   it('says when no plan covers the month', async () => {

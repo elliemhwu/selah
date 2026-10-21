@@ -2,7 +2,7 @@
   <div class="masthead small muted">
     <span>{{ today() | date: 'EEE d MMM y' }}</span>
     <span class="masthead-end">
-      <span class="brand">Selah</span>
+      <a class="brand" routerLink="/">Selah</a>
       <a class="settings-link" routerLink="/settings">
         <selah-icon name="settings" [size]="20" i18n-label="@@settings.title" label="Settings" />
       </a>
@@ -26,7 +26,7 @@
   @if (noPlan()) {
     <div class="empty">
       <p class="section-title" i18n="@@home.noPlan">No budget plan covers this month yet.</p>
-      <a class="btn" routerLink="/budget" i18n="@@home.createPlan">Set up the budget</a>
+      <a class="btn" routerLink="/finance/budget" i18n="@@home.createPlan">Set up the budget</a>
     </div>
   } @else if (failed()) {
     <div class="empty">
@@ -84,7 +84,7 @@
                 [attr.aria-label]="item.name"
               />
             }
-            <a class="item" routerLink="/records/new" [queryParams]="recordParams(item)">
+            <a class="item" routerLink="/finance/records/new" [queryParams]="recordParams(item)">
               <span class="item-name">{{ item.name }}</span>
               <span class="leader" aria-hidden="true"></span>
               <span class="amount item-amount">{{ (item.done ? item.recorded : item.planned) | money }}</span>
@@ -98,11 +98,11 @@
 
 <div class="actions">
   @if (selected().size > 0) {
-    <a class="btn btn-primary" routerLink="/records/batch" [queryParams]="batchParams()" i18n="@@home.recordSelected">
+    <a class="btn btn-primary" routerLink="/finance/records/batch" [queryParams]="batchParams()" i18n="@@home.recordSelected">
       Record {{ selected().size }} selected
     </a>
   } @else {
-    <a class="btn new-entry" routerLink="/records/new">
+    <a class="btn new-entry" routerLink="/finance/records/new">
       <selah-icon name="add" [size]="16" [weight]="1.8" />
       <span i18n="@@home.add">New entry</span>
     </a>

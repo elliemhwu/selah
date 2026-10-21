@@ -124,9 +124,9 @@ export class RecordsPage {
 
   /** Where tapping a record goes: transfers and adjustments have their own forms (ADR 0022). */
   protected link(record: RecordDto): string[] {
-    if (record.type === 'transfer') return ['/accounts/transfer', record.id];
-    if (record.type === 'adjustment') return ['/accounts/adjust', record.id];
-    return ['/records', record.id];
+    if (record.type === 'transfer') return ['/finance/accounts/transfer', record.id];
+    if (record.type === 'adjustment') return ['/finance/accounts/adjust', record.id];
+    return ['/finance/records', record.id];
   }
 
   /** The line a reader recognises the record by. */

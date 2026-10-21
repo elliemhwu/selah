@@ -16,7 +16,7 @@ import { errorText, MONEY_PATTERN, positiveAmount } from './form-errors';
 /**
  * Checklist batch create (requirements §2): one record per selected plan item,
  * pre-filled with the planned amount, saved all or nothing.
- * Route: `/records/batch?items=<id>,<id>&date=YYYY-MM-DD`; the items are read
+ * Route: `/finance/records/batch?items=<id>,<id>&date=YYYY-MM-DD`; the items are read
  * from that day's checklist, so a reload opens the same form (ADR 0022).
  */
 @Component({
@@ -81,7 +81,7 @@ export class BatchRecordPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/');
+    this.nav.leave('/finance');
   }
 
   async save(): Promise<void> {
@@ -114,7 +114,7 @@ export class BatchRecordPage {
           };
         }),
       );
-      this.nav.leave('/', $localize`:@@batch.saved:Saved ${saved.length}:count: entries.`);
+      this.nav.leave('/finance', $localize`:@@batch.saved:Saved ${saved.length}:count: entries.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field, included.map((i) => i.index)));
       if (unmatched.length) this.toast.show(unmatched.join(' '));
