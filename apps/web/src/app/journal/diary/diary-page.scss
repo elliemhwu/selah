@@ -1,0 +1,170 @@
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  // Room for the memo bar.
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.save-status {
+  margin-left: 4px;
+}
+
+.missing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 32px var(--gutter);
+}
+
+// The lined page: ruled lines every --diary-line and a margin rule, scrolling with the writing.
+.sheet-wrap {
+  margin: 8px 12px 0;
+  border-radius: 2px;
+  background:
+    linear-gradient(to right, transparent 39px, var(--page-margin) 39px 40px, transparent 40px),
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--diary-line) - 1px), var(--page-line) calc(var(--diary-line) - 1px) var(--diary-line)),
+    var(--page-lined);
+  background-attachment: local;
+  box-shadow: 0 1px 3px var(--memo-shadow);
+}
+
+.sheet {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 60dvh;
+  margin: 0;
+  padding: calc(var(--diary-line) - 8px) 16px var(--diary-line) 52px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 18px / var(--diary-line) var(--font-title);
+  resize: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+}
+
+.memos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px var(--gutter) 8px;
+}
+
+.memo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-start;
+  box-sizing: border-box;
+  width: min(84%, 420px);
+  min-height: var(--touch);
+  padding: 14px 16px 16px;
+  box-shadow: 0 2px 6px var(--memo-shadow);
+  color: var(--ink);
+  text-decoration: none;
+
+  &.right {
+    align-self: flex-end;
+  }
+}
+
+.memo-comment {
+  background: var(--memo-comment);
+}
+
+.memo-god-note {
+  background: var(--memo-god-note);
+}
+
+.memo-moment {
+  background: var(--memo-moment);
+}
+
+.memo-label {
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.verse {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  color: var(--ink-muted);
+  font: italic 12px var(--font-title);
+}
+
+.memo-title {
+  font-family: var(--font-title);
+  font-size: 17px;
+}
+
+.memo-text {
+  font-family: var(--font-title);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.stick-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px var(--gutter) max(10px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--rule-strong);
+  background: var(--paper);
+}
+
+.stick-title {
+  text-align: center;
+}
+
+.stick-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 592px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.stick {
+  min-height: var(--touch);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px var(--memo-shadow);
+  color: var(--ink);
+  font: 600 14px var(--font-text);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.stick-comment {
+  background: var(--memo-comment);
+}
+
+.stick-god-note {
+  background: var(--memo-god-note);
+}
+
+.stick-moment {
+  background: var(--memo-moment);
+}

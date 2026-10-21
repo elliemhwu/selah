@@ -1,0 +1,57 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="memo-title">
+      @if (kind === 'comment') {
+        <ng-container i18n="@@memo.commentTitle">Comment</ng-container>
+      } @else {
+        <ng-container i18n="@@memo.godNoteTitle">God note</ng-container>
+      }
+    </h1>
+    <button type="submit" form="memo-form" class="btn btn-primary" [disabled]="saving()" i18n="@@memo.stick">Stick</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@memo.notFound">This memo isn't on the page.</p>
+}
+
+<form id="memo-form" class="form-body" [formGroup]="form" (ngSubmit)="save()" aria-labelledby="memo-title">
+  <div class="paper">
+    <label class="paper-label small muted" for="memo-body">
+      @if (kind === 'comment') {
+        <ng-container i18n="@@memo.commentHint">What would you say to yourself back then?</ng-container>
+      } @else {
+        <ng-container i18n="@@memo.godNoteHint">What would God say to this?</ng-container>
+      }
+    </label>
+    <textarea id="memo-body" class="paper-text" rows="7" formControlName="body"></textarea>
+  </div>
+  @if (form.controls.body.touched && form.controls.body.invalid) {
+    <p class="field-error">{{ errorText(form.controls.body) }}</p>
+  }
+
+  @if (kind === 'godNote') {
+    <div class="ledger-row">
+      <label for="memo-verse" i18n="@@memo.verse">Verse</label>
+      <input id="memo-verse" formControlName="verseRef" autocomplete="off" i18n-placeholder="@@memo.versePlaceholder" placeholder="Optional, e.g. Psalm 23:1" />
+    </div>
+    @if (form.controls.verseRef.invalid) {
+      <p class="field-error">{{ errorText(form.controls.verseRef) }}</p>
+    }
+  }
+
+  @if (editing) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@memo.confirmDelete">Tap again to take it off the page</ng-container>
+        } @else {
+          <ng-container i18n="@@memo.delete">Delete memo</ng-container>
+        }
+      </button>
+    </div>
+  }
+</form>

@@ -37,9 +37,9 @@ _Last updated: 2026-10-21_
 
 - **Stage B (first release):** `develop` was merged into `main` (PR #32), which publishes the device build to Pages. Phone testing goes on alongside the next module; fixes come in small PRs.
 
-- **Stage C (Journal module):** started 2026-10-21. The design is in [selah-journal-framework.md](selah-journal-framework.md), and the structure in [ADR 0030](decisions/0030-journal-module.md): the journal tables are rows in the store, the rules are in `libs/journal-core`, and each module has its own route (Finance at `/finance`, Journal at `/journal`, a home page at `/`). The first phase, in four stacked PRs: these docs; Finance moved to `/finance`; the `journal` schema, `journal-core` and the store; the journal list and the Dear Diary page with its memos. Life is a placeholder; photos, people and places, import, the module lock and encryption come later.
+- **Stage C (Journal module):** started 2026-10-21. The design is in [selah-journal-framework.md](selah-journal-framework.md), and the structure in [ADR 0030](decisions/0030-journal-module.md): the journal tables are rows in the store, the rules are in `libs/journal-core`, and each module has its own route (Finance at `/finance`, Journal at `/journal`, a home page at `/`). The first phase is built, in four stacked PRs: the docs; Finance moved to `/finance` (old links redirect); the `journal` schema, `journal-core` and the store tables, with integration tests; and the journal list, the Dear Diary page (lined page with autosave, memos placed from their id, the "Stick a memo" bar), the memo forms and a Life placeholder. Photos, people and places, import, the module lock and encryption come later.
 
-**Next step:** finish the first Journal phase (the PRs above). The open questions below and in the framework doc are still waiting for the owner.
+**Next step:** try the Journal on a phone (write a few nights, stick memos, link a moment), then choose the next Journal phase: the Life view (framework open question 1) or photos and import. The open questions below and in the framework doc are still waiting for the owner.
 
 ## Phases (Finance MVP)
 

@@ -24,6 +24,16 @@
   --gutter: 24px;
   --touch: 44px;
   --nav-height: 76px;
+
+  // Journal papers (ADR 0030): a calm lined page, and one paper per memo type.
+  --page-lined: #f6f2ea;
+  --page-line: #dcd4c5;
+  --page-margin: #e4c0b0;
+  --diary-line: 32px;
+  --memo-comment: #f2e5a9;
+  --memo-god-note: #d3e0ea;
+  --memo-moment: #d7e5c9;
+  --memo-shadow: rgb(47 44 39 / 0.18);
 }
 
 @include cdk.overlay();

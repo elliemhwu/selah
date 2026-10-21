@@ -1,0 +1,65 @@
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px var(--gutter) 32px;
+}
+
+.intro {
+  margin: 0;
+  font-style: italic;
+}
+
+.moments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moment {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: var(--touch);
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.moment-name {
+  font-family: var(--font-title);
+  font-size: 17px;
+}
+
+.moment-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 18px 20px;
+  background: var(--memo-moment);
+  box-shadow: 0 2px 6px var(--memo-shadow);
+
+  h1 {
+    font-size: 24px;
+  }
+}
+
+.summary {
+  margin: 0;
+  font-family: var(--font-title);
+  white-space: pre-wrap;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

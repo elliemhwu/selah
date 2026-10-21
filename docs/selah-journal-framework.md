@@ -1,6 +1,6 @@
 # Selah Journal — Module Framework
 
-_Snapshot: 2026-10-20 · Status: concept, first mockup done_
+_Snapshot: 2026-10-21 · Status: first phase built (Dear Diary, journal list, Life placeholder)_
 
 ## Purpose
 
@@ -54,9 +54,9 @@ Decisions behind it:
 
 ## Memo layout
 
-- No placement table. Memo position is computed in code (e.g. stacked at the bottom, alternating left/right).
-- Side and tilt are derived deterministically from the memo id (e.g. a hash), so memos look random but never jump between renders.
-- Memos ordered by `written_at`, so replies read as a timeline down the page.
+- No placement table. Memos are stacked below the writing, each on the left or the right.
+- Side, tilt (0.6° to 3° either way) and a small nudge come from a hash (FNV-1a) of the memo id alone, not from its place in the stack, so memos look scattered by hand, never jump between renders, and adding or linking one never moves the others. A run of memos on the same side is fine. A test pins the hash, since changing it would move every memo already on a page.
+- The linked moment comes first, as the page's context; then comments and god notes by `written_at`, so replies read as a timeline down the page. Comments on a moment show in Life, not on the diary page.
 
 ## Architecture
 
@@ -93,6 +93,14 @@ Journal content is the most sensitive data in Selah.
 
 - Tracking: menstrual cycle, bed time, wake time, exercise, water and other habits, shown alongside emotional entries to reveal patterns. Likely shared with Goal Tracker / Food Planner after integration.
 - Cross-module links (e.g. a Calendar record becoming or linking to a moment) once the module is in place.
+
+## Decisions in the first phase (2026-10-21)
+
+- **Writing:** a new page is an empty lined sheet. It is stored on its first words, autosaves after a short pause (and when the page is left or the app goes to the background), and its address becomes `/journal/:id` without leaving the page. A page left empty is never stored. The body is kept exactly as written.
+- **Memos are form routes** (ADR 0022) in their own paper colour: `/journal/:id/comment`, `/journal/:id/god-note`, `/journal/:id/moment` (pick a moment, create one, or take it off the page). Editing a memo keeps its `written_at`, so it doesn't move down the page.
+- **Deleting** a journal also deletes its comments and god notes; deleting a moment unlinks its journals and deletes its comments. All are soft deletes.
+- **Label:** a comment reads "Replied by Ellie · YYYY.MM" from its `written_at`. The name is part of the translatable text for now.
+- **Photos** wait until Selah has file storage.
 
 ## Open questions
 
