@@ -1,119 +1,33 @@
-import { Route } from '@angular/router';
+import { inject } from '@angular/core';
+import { Route, Router, type UrlMatcher } from '@angular/router';
 
-/** Form routes hide the bottom navigation and fill the screen on a phone (ADR 0022). */
-const form = { form: true };
+/** Where Finance's screens were before it moved to /finance (ADR 0030). */
+const OLD_FINANCE_PATHS = new Set(['records', 'budget', 'review', 'accounts']);
 
-// Feature screens are lazy-loaded per route (ADR 0020).
+/** Matches a link from before the move, such as `/records/:id` or `/settings/categories/new`. */
+const oldFinanceLink: UrlMatcher = (segments) => {
+  const [first, second] = segments.map((segment) => segment.path);
+  const old = OLD_FINANCE_PATHS.has(first) || (first === 'settings' && second === 'categories');
+  return old ? { consumed: segments } : null;
+};
+
+// Each module is lazy-loaded under its own route (ADR 0030); the /selah/ prefix
+// on Pages comes from the base href, not from these paths.
 export const appRoutes: Route[] = [
   {
     path: '',
     pathMatch: 'full',
-    title: $localize`:@@nav.home:Home`,
-    loadComponent: () => import('./finance/home/home-page').then((m) => m.HomePage),
+    title: $localize`:@@selahHome.title:Selah`,
+    loadComponent: () => import('./home/selah-home-page').then((m) => m.SelahHomePage),
   },
   {
-    path: 'records/new',
-    title: $localize`:@@record.title:New entry`,
-    data: form,
-    loadComponent: () => import('./finance/records/record-form-page').then((m) => m.RecordFormPage),
+    path: 'finance',
+    loadChildren: () => import('./finance/finance.routes').then((m) => m.financeRoutes),
   },
   {
-    path: 'records/batch',
-    title: $localize`:@@batch.routeTitle:Record items`,
-    data: form,
-    loadComponent: () => import('./finance/records/batch-record-page').then((m) => m.BatchRecordPage),
-  },
-  {
-    path: 'records/catch-up',
-    title: $localize`:@@catchUp.title:Catch up`,
-    data: form,
-    loadComponent: () => import('./finance/records/catch-up-page').then((m) => m.CatchUpPage),
-  },
-  {
-    path: 'records',
-    title: $localize`:@@nav.records:Records`,
-    loadComponent: () => import('./finance/records/records-page').then((m) => m.RecordsPage),
-  },
-  {
-    path: 'records/:id',
-    title: $localize`:@@record.editTitle:Edit entry`,
-    data: form,
-    loadComponent: () => import('./finance/records/record-form-page').then((m) => m.RecordFormPage),
-  },
-  {
-    path: 'budget',
-    title: $localize`:@@nav.budget:Budget`,
-    loadComponent: () => import('./finance/budget/budget-page').then((m) => m.BudgetPage),
-  },
-  {
-    path: 'budget/versions',
-    title: $localize`:@@versions.title:Plan versions`,
-    data: form,
-    loadComponent: () => import('./finance/budget/budget-versions-page').then((m) => m.BudgetVersionsPage),
-  },
-  {
-    path: 'budget/items/:id',
-    title: $localize`:@@budgetItem.routeTitle:Budget item`,
-    data: form,
-    loadComponent: () => import('./finance/budget/budget-item-page').then((m) => m.BudgetItemPage),
-  },
-  {
-    path: 'budget/transfers/new',
-    title: $localize`:@@budgetTransfer.title:Move budget`,
-    data: form,
-    loadComponent: () => import('./finance/budget/budget-transfer-page').then((m) => m.BudgetTransferPage),
-  },
-  {
-    path: 'budget/transfers/:id',
-    title: $localize`:@@budgetTransfer.editTitle:Edit budget move`,
-    data: form,
-    loadComponent: () => import('./finance/budget/budget-transfer-page').then((m) => m.BudgetTransferPage),
-  },
-  {
-    path: 'review',
-    title: $localize`:@@nav.review:Review`,
-    loadComponent: () => import('./finance/review/review-page').then((m) => m.ReviewPage),
-  },
-  {
-    path: 'accounts',
-    title: $localize`:@@nav.accounts:Accounts`,
-    loadComponent: () => import('./finance/accounts/accounts-page').then((m) => m.AccountsPage),
-  },
-  {
-    path: 'accounts/new',
-    title: $localize`:@@account.newTitle:New account`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/account-form-page').then((m) => m.AccountFormPage),
-  },
-  {
-    path: 'accounts/transfer',
-    title: $localize`:@@transfer.title:Transfer`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/transfer-page').then((m) => m.TransferPage),
-  },
-  {
-    path: 'accounts/adjust',
-    title: $localize`:@@adjust.title:Adjust balance`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/adjust-page').then((m) => m.AdjustPage),
-  },
-  {
-    path: 'accounts/transfer/:id',
-    title: $localize`:@@transfer.editTitle:Edit transfer`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/transfer-page').then((m) => m.TransferPage),
-  },
-  {
-    path: 'accounts/adjust/:id',
-    title: $localize`:@@adjust.editTitle:Edit adjustment`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/adjust-page').then((m) => m.AdjustPage),
-  },
-  {
-    path: 'accounts/:id',
-    title: $localize`:@@account.editTitle:Edit account`,
-    data: form,
-    loadComponent: () => import('./finance/accounts/account-form-page').then((m) => m.AccountFormPage),
+    // The module lock (PIN or biometric) will sit here as a canMatch guard.
+    path: 'journal',
+    loadChildren: () => import('./journal/journal.routes').then((m) => m.journalRoutes),
   },
   {
     path: 'settings',
@@ -121,16 +35,13 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./settings/settings-page').then((m) => m.SettingsPage),
   },
   {
-    path: 'settings/categories/new',
-    title: $localize`:@@category.newTitle:New category`,
-    data: form,
-    loadComponent: () => import('./finance/categories/category-form-page').then((m) => m.CategoryFormPage),
-  },
-  {
-    path: 'settings/categories/:id',
-    title: $localize`:@@category.editTitle:Edit category`,
-    data: form,
-    loadComponent: () => import('./finance/categories/category-form-page').then((m) => m.CategoryFormPage),
+    // Old links keep working: the same path under /finance, with its query and fragment.
+    matcher: oldFinanceLink,
+    redirectTo: ({ url, queryParams, fragment }) => {
+      const paths = url.map((segment) => segment.path);
+      const rest = paths[0] === 'settings' ? paths.slice(1) : paths;
+      return inject(Router).createUrlTree(['/finance', ...rest], { queryParams, fragment: fragment ?? undefined });
+    },
   },
   { path: '**', redirectTo: '' },
 ];

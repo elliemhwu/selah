@@ -11,6 +11,8 @@ const PATHS = {
   check: 'M5.5 11.3l3.5 3.5 7.5-8',
   tools: 'M14 4l4 4-9 9H5v-4zM12 6l4 4',
   settings: 'M4 6h8M16 6h2M4 16h2M10 16h8M14 4v4M8 14v4',
+  back: 'M13 5l-6 6 6 6',
+  journal: 'M6 3h9a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2zM6 17a2 2 0 0 1 2-2h9M9 7h5',
 } as const;
 
 export type IconName = keyof typeof PATHS;

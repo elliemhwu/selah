@@ -1,7 +1,7 @@
 <header class="page-header">
   <div class="title-row">
     <h1 i18n="@@budget.title">Budget</h1>
-    <a class="muted small" routerLink="/budget/versions" i18n="@@budget.versions">Versions</a>
+    <a class="muted small" routerLink="/finance/budget/versions" i18n="@@budget.versions">Versions</a>
   </div>
   <div class="month-row small muted">
     @if (source(); as s) {
@@ -81,7 +81,7 @@
           @for (row of section.rows; track row.item.budgetItemId) {
             <li [class.child]="row.depth > 0" [style.margin-inline-start.px]="row.depth * 16">
               @if (editing()) {
-                <a class="item" [routerLink]="['/budget/items', row.item.budgetItemId]">
+                <a class="item" [routerLink]="['/finance/budget/items', row.item.budgetItemId]">
                   <ng-container *ngTemplateOutlet="itemContent; context: { $implicit: row }" />
                 </a>
               } @else {

@@ -23,7 +23,7 @@ type EntryType = 'income' | 'expense';
  * Batch entry for catching up on past days (requirements §2), one day at a
  * time: the day's income and expenses on one account, saved all or nothing,
  * then on to the next day. Rows left without an amount are skipped.
- * Route: `/records/catch-up?date=YYYY-MM-DD&account=<id>` (both optional;
+ * Route: `/finance/records/catch-up?date=YYYY-MM-DD&account=<id>` (both optional;
  * the day defaults to yesterday) (ADR 0022).
  */
 @Component({
@@ -127,13 +127,13 @@ export class CatchUpPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/records');
+    this.nav.leave('/finance/records');
   }
 
   /** Saves the day and leaves. */
   async save(): Promise<void> {
     const saved = await this.saveDay();
-    if (saved !== null) this.nav.leave('/records', saved > 0 ? savedMessage(saved) : undefined);
+    if (saved !== null) this.nav.leave('/finance/records', saved > 0 ? savedMessage(saved) : undefined);
   }
 
   /** Saves the day, then starts the next one with an empty row. */

@@ -802,6 +802,223 @@
           "note"
         ]
       },
+      "MomentRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "example": "Moving day"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "date",
+          "title",
+          "summary"
+        ]
+      },
+      "DatePrecision": {
+        "type": "string",
+        "enum": [
+          "day",
+          "month",
+          "season",
+          "year"
+        ],
+        "description": "How sure `writtenAt` is."
+      },
+      "JournalRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "momentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "The moment it belongs to, if any."
+          },
+          "writtenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "datePrecision": {
+            "description": "How sure `writtenAt` is.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DatePrecision"
+              }
+            ]
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "momentId",
+          "writtenAt",
+          "datePrecision",
+          "body"
+        ]
+      },
+      "CommentRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Set when it replies to a journal. Exactly one of journalId and momentId is set."
+          },
+          "momentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Set when it replies to a moment."
+          },
+          "writtenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "journalId",
+          "momentId",
+          "writtenAt",
+          "body"
+        ]
+      },
+      "GodNoteRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "writtenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "body": {
+            "type": "string"
+          },
+          "verseRef": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true,
+            "example": "Matthew 11:28"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "journalId",
+          "writtenAt",
+          "body",
+          "verseRef"
+        ]
+      },
       "SettingsRowDto": {
         "type": "object",
         "properties": {
@@ -878,6 +1095,30 @@
               "$ref": "#/components/schemas/BudgetTransferRowDto"
             }
           },
+          "moments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MomentRowDto"
+            }
+          },
+          "journals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalRowDto"
+            }
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentRowDto"
+            }
+          },
+          "godNotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GodNoteRowDto"
+            }
+          },
           "settings": {
             "nullable": true,
             "description": "Null until the settings are first saved.",
@@ -895,6 +1136,10 @@
           "records",
           "planVersions",
           "budgetTransfers",
+          "moments",
+          "journals",
+          "comments",
+          "godNotes",
           "settings"
         ]
       },
@@ -970,6 +1215,30 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BudgetTransferRowDto"
+            }
+          },
+          "moments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MomentRowDto"
+            }
+          },
+          "journals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalRowDto"
+            }
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentRowDto"
+            }
+          },
+          "godNotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GodNoteRowDto"
             }
           },
           "settings": {

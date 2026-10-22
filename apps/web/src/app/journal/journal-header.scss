@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.journal-header {
+  padding: max(8px, env(safe-area-inset-top)) var(--gutter) 8px;
+}
+
+.journal-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.back,
+.back-spacer {
+  display: inline-flex;
+  flex: 0 0 var(--touch);
+  align-items: center;
+  justify-content: center;
+  height: var(--touch);
+  margin-left: -12px;
+  color: var(--ink-muted);
+}
+
+.back-spacer {
+  margin: 0 -12px 0 0;
+}
+
+.views {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-title);
+  font-style: italic;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    padding: 0 12px;
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+
+  a + a {
+    border-left: 1px solid var(--rule);
+  }
+
+  a.active {
+    color: var(--ink);
+    text-decoration: underline 1.5px var(--accent);
+    text-underline-offset: 6px;
+  }
+}
+
+.journal-header-date {
+  min-height: 18px;
+  text-align: center;
+}

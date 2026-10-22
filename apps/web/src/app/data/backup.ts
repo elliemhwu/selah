@@ -7,6 +7,8 @@ import { type DeviceSnapshot, EMPTY_SNAPSHOT } from './device-storage';
 const FORMAT = 'selah-backup';
 const VERSION = 1;
 const TABLES = ['accounts', 'categories', 'records', 'planVersions', 'budgetTransfers'] as const;
+/** Added with the Journal module (ADR 0030); backups from before it don't have them. */
+const LATER_TABLES = ['moments', 'journals', 'comments', 'godNotes'] as const;
 
 export interface BackupFile {
   format: typeof FORMAT;
@@ -53,10 +55,9 @@ export function parseBackup(text: string): { snapshot: DeviceSnapshot; summary: 
   }
   const data = file.data as Partial<DeviceSnapshot> | undefined;
   if (!data || typeof data !== 'object') throw notOurs();
-  for (const table of TABLES) {
-    const rows = data[table];
-    if (!Array.isArray(rows) || rows.some((row) => !row || typeof (row as { id?: unknown }).id !== 'string')) throw notOurs();
-  }
+  const isRows = (rows: unknown) => Array.isArray(rows) && rows.every((row) => !!row && typeof (row as { id?: unknown }).id === 'string');
+  if (!TABLES.every((table) => isRows(data[table]))) throw notOurs();
+  if (!LATER_TABLES.every((table) => data[table] === undefined || isRows(data[table]))) throw notOurs();
   const settings = data.settings ?? null;
   if (settings !== null && (typeof settings !== 'object' || settings.id !== 'settings')) throw notOurs();
 

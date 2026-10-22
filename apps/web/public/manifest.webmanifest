@@ -1,7 +1,7 @@
 {
   "name": "Selah",
   "short_name": "Selah",
-  "description": "A quiet ledger for your budget and spending. Your data stays on this device.",
+  "description": "A quiet place for your budget and your journal. Your data stays on this device.",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",
@@ -76,5 +76,19 @@
     }
   ],
   "theme_color": "#eee9df",
-  "background_color": "#eee9df"
+  "background_color": "#eee9df",
+  "shortcuts": [
+    {
+      "name": "New journal entry",
+      "short_name": "Write",
+      "url": "./journal/new",
+      "icons": [
+        {
+          "src": "icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }

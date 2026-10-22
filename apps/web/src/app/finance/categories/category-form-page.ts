@@ -10,8 +10,8 @@ import { categoryTree, categoryWithDescendants } from './category-tree';
 
 /**
  * Creates, renames, moves or deletes a category (requirements §2).
- * Routes: `/settings/categories/new?parent=<id>` (parent optional) and
- * `/settings/categories/:id` (ADR 0022).
+ * Routes: `/finance/categories/new?parent=<id>` (parent optional) and
+ * `/finance/categories/:id` (ADR 0022).
  */
 @Component({
   selector: 'selah-category-form-page',
@@ -24,7 +24,7 @@ export class CategoryFormPage {
   private readonly nav = inject(FormNavigation);
   private readonly toast = inject(Toast);
   private readonly route = inject(ActivatedRoute).snapshot;
-  /** The category being edited; undefined on `/settings/categories/new`. */
+  /** The category being edited; undefined on `/finance/categories/new`. */
   private readonly editId = this.route.paramMap.get('id') ?? undefined;
   /** A new category's id is generated once, so a retry never duplicates it (ADR 0017). */
   private readonly id = this.editId ?? crypto.randomUUID();

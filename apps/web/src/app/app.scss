@@ -21,41 +21,5 @@
 
 main {
   flex: 1;
-  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-
-  &.form {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-.bottom-nav {
-  position: fixed;
-  inset: auto 0 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  height: var(--nav-height);
   padding-bottom: env(safe-area-inset-bottom);
-  border-top: 1px solid var(--rule-strong);
-  background: var(--paper);
-
-  a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    color: var(--ink-muted);
-    text-decoration: none;
-    font-size: 12px;
-  }
-
-  a.active {
-    color: var(--ink);
-    font-weight: 600;
-
-    .label {
-      border-bottom: 1.5px solid var(--accent);
-    }
-  }
 }

@@ -8,6 +8,10 @@ import {
   type StoredAccount,
   type StoredBudgetTransfer,
   type StoredCategory,
+  type StoredComment,
+  type StoredGodNote,
+  type StoredJournal,
+  type StoredMoment,
   type StoredPlanVersion,
   type StoredRecord,
 } from './device-storage';
@@ -100,6 +104,54 @@ export function storedTransfer(id: string, fields: Partial<StoredBudgetTransfer>
     toItemId: 'allowance',
     amount: '300.00',
     note: null,
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+// Journal rows (ADR 0030).
+
+export function storedMoment(id: string, fields: Partial<StoredMoment> = {}): StoredMoment {
+  return { id, date: '2026-10-01', title: id, summary: null, createdAt: CREATED, updatedAt: CREATED, deletedAt: null, ...fields };
+}
+
+export function storedJournal(id: string, fields: Partial<StoredJournal> = {}): StoredJournal {
+  return {
+    id,
+    momentId: null,
+    writtenAt: '2026-10-20T14:30:00.000Z',
+    datePrecision: 'day',
+    body: 'Dear Diary,',
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+export function storedComment(id: string, fields: Partial<StoredComment> = {}): StoredComment {
+  return {
+    id,
+    journalId: null,
+    momentId: null,
+    writtenAt: '2026-10-21T08:00:00.000Z',
+    body: 'Looking back, it was all right.',
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+export function storedGodNote(id: string, journalId: string, fields: Partial<StoredGodNote> = {}): StoredGodNote {
+  return {
+    id,
+    journalId,
+    writtenAt: '2026-10-21T09:00:00.000Z',
+    body: 'Come to me, and rest.',
+    verseRef: null,
     createdAt: CREATED,
     updatedAt: CREATED,
     deletedAt: null,

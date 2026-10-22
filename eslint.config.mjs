@@ -48,6 +48,19 @@ export default [
               sourceTag: 'scope:web',
               onlyDependOnLibsWithTags: ['scope:shared', 'scope:web'],
             },
+            // Modules stay independent: each builds only on itself and shared libs (ADR 0030).
+            {
+              sourceTag: 'module:finance',
+              onlyDependOnLibsWithTags: ['module:finance', 'module:shared'],
+            },
+            {
+              sourceTag: 'module:journal',
+              onlyDependOnLibsWithTags: ['module:journal', 'module:shared'],
+            },
+            {
+              sourceTag: 'module:shared',
+              onlyDependOnLibsWithTags: ['module:shared'],
+            },
           ],
         },
       ],

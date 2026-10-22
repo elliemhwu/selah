@@ -296,6 +296,113 @@ export interface components {
             amount: string;
             note: string | null;
         };
+        MomentRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            date: string;
+            /** @example Moving day */
+            title: string;
+            summary: string | null;
+        };
+        /**
+         * @description How sure `writtenAt` is.
+         * @enum {string}
+         */
+        DatePrecision: "day" | "month" | "season" | "year";
+        JournalRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /**
+             * Format: uuid
+             * @description The moment it belongs to, if any.
+             */
+            momentId: string | null;
+            /** Format: date-time */
+            writtenAt: string;
+            /** @description How sure `writtenAt` is. */
+            datePrecision: components["schemas"]["DatePrecision"];
+            body: string;
+        };
+        CommentRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /**
+             * Format: uuid
+             * @description Set when it replies to a journal. Exactly one of journalId and momentId is set.
+             */
+            journalId: string | null;
+            /**
+             * Format: uuid
+             * @description Set when it replies to a moment.
+             */
+            momentId: string | null;
+            /** Format: date-time */
+            writtenAt: string;
+            body: string;
+        };
+        GodNoteRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: uuid */
+            journalId: string;
+            /** Format: date-time */
+            writtenAt: string;
+            body: string;
+            /** @example Matthew 11:28 */
+            verseRef: string | null;
+        };
         SettingsRowDto: {
             /** @enum {string} */
             id: "settings";
@@ -316,6 +423,10 @@ export interface components {
             records: components["schemas"]["RecordRowDto"][];
             planVersions: components["schemas"]["PlanVersionRowDto"][];
             budgetTransfers: components["schemas"]["BudgetTransferRowDto"][];
+            moments: components["schemas"]["MomentRowDto"][];
+            journals: components["schemas"]["JournalRowDto"][];
+            comments: components["schemas"]["CommentRowDto"][];
+            godNotes: components["schemas"]["GodNoteRowDto"][];
             /** @description Null until the settings are first saved. */
             settings: components["schemas"]["SettingsRowDto"] | null;
         };
@@ -346,6 +457,10 @@ export interface components {
             records?: components["schemas"]["RecordRowDto"][];
             planVersions?: components["schemas"]["PlanVersionRowDto"][];
             budgetTransfers?: components["schemas"]["BudgetTransferRowDto"][];
+            moments?: components["schemas"]["MomentRowDto"][];
+            journals?: components["schemas"]["JournalRowDto"][];
+            comments?: components["schemas"]["CommentRowDto"][];
+            godNotes?: components["schemas"]["GodNoteRowDto"][];
             settings?: components["schemas"]["SettingsRowDto"];
         };
     };

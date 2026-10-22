@@ -16,10 +16,8 @@ describe('App', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('shows the navigation, with no server to reach', async () => {
+  it('shows no warning when the data opens', async () => {
     const el = await render();
-    const labels = [...el.querySelectorAll('.bottom-nav .label')].map((l) => l.textContent?.trim());
-    expect(labels).toEqual(['Home', 'Records', 'Budget', 'Review', 'Accounts']);
     expect(el.querySelector('.offline')).toBeNull();
   });
 

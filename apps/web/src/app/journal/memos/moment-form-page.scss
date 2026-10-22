@@ -1,0 +1,70 @@
+.header-spacer {
+  width: 60px;
+}
+
+.form-body {
+  gap: 28px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.moment-paper,
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  background: var(--memo-moment);
+  box-shadow: 0 1px 3px var(--memo-shadow);
+}
+
+.moment-name {
+  font-family: var(--font-title);
+  font-size: 17px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.choice {
+  width: 100%;
+  min-height: var(--touch);
+  border: 0;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.summary-label {
+  display: block;
+  margin-top: 12px;
+}
+
+.summary {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px dotted var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font: 16px / 1.5 var(--font-text);
+  resize: vertical;
+}
+
+.create {
+  width: 100%;
+  margin-top: 20px;
+}

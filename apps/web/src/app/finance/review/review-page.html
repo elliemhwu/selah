@@ -21,7 +21,7 @@
   @if (noPlan()) {
     <div class="empty">
       <p class="section-title" i18n="@@review.noPlan">No plan covers this month, so there is nothing to compare.</p>
-      <a class="btn" routerLink="/budget" i18n="@@home.createPlan">Set up the budget</a>
+      <a class="btn" routerLink="/finance/budget" i18n="@@home.createPlan">Set up the budget</a>
     </div>
   } @else if (review.error()) {
     <div class="empty">
@@ -41,7 +41,7 @@
       <ul class="items">
         @for (row of section.rows; track row.item.budgetItemId) {
           <li [class.child]="row.depth > 0" [style.margin-inline-start.px]="row.depth * 16">
-            <a class="item" routerLink="/records" [queryParams]="recordsLink(row.item)" [class.quiet]="quietThisMonth(row.item)">
+            <a class="item" routerLink="/finance/records" [queryParams]="recordsLink(row.item)" [class.quiet]="quietThisMonth(row.item)">
               <span class="item-text">
                 <span class="item-name">{{ row.item.name }}</span>
                 <span class="small muted">
@@ -95,7 +95,7 @@
         @for (movement of movements.value(); track $index) {
           <li>
             <!-- Manual transfers open for editing; computed resets have no id and no link. -->
-            <a class="movement" [routerLink]="movement.kind === 'manual' && movement.id ? ['/budget/transfers', movement.id] : null">
+            <a class="movement" [routerLink]="movement.kind === 'manual' && movement.id ? ['/finance/budget/transfers', movement.id] : null">
               <span class="item-text">
                 <span>
                   {{ itemName(movement.fromItemId) }} →
@@ -120,7 +120,7 @@
           </li>
         }
       </ul>
-      <a class="btn move-budget" routerLink="/budget/transfers/new" [queryParams]="{ date: transferDate() }" i18n="@@review.moveBudget">Move between budgets</a>
+      <a class="btn move-budget" routerLink="/finance/budget/transfers/new" [queryParams]="{ date: transferDate() }" i18n="@@review.moveBudget">Move between budgets</a>
       @if (monthOpen()) {
         <p class="small muted note" i18n="@@review.resetNote">Resets later this month assume nothing more is spent.</p>
       }

@@ -13,7 +13,7 @@ import { ACCOUNT_TYPE_OPTIONS } from './account-labels';
 
 /**
  * Creates, edits or deletes an account (requirements §1).
- * Routes: `/accounts/new`, `/accounts/:id` (ADR 0022).
+ * Routes: `/finance/accounts/new`, `/finance/accounts/:id` (ADR 0022).
  */
 @Component({
   selector: 'selah-account-form-page',
@@ -25,7 +25,7 @@ export class AccountFormPage {
   private readonly accountsApi = inject(AccountsApi);
   private readonly nav = inject(FormNavigation);
   private readonly toast = inject(Toast);
-  /** The account being edited; undefined on `/accounts/new`. */
+  /** The account being edited; undefined on `/finance/accounts/new`. */
   private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
   /** A new account's id is generated once, so a retry never duplicates it (ADR 0017). */
   private readonly id = this.editId ?? crypto.randomUUID();
@@ -71,7 +71,7 @@ export class AccountFormPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/accounts');
+    this.nav.leave('/finance/accounts');
   }
 
   async save(): Promise<void> {
@@ -89,7 +89,7 @@ export class AccountFormPage {
         openingBalance: v.openingBalance,
         sortOrder: this.account()?.sortOrder ?? 0,
       });
-      this.nav.leave('/accounts', $localize`:@@accounts.saved:Account saved.`);
+      this.nav.leave('/finance/accounts', $localize`:@@accounts.saved:Account saved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));
@@ -107,7 +107,7 @@ export class AccountFormPage {
     this.saving.set(true);
     try {
       await this.accountsApi.remove(this.editId);
-      this.nav.leave('/accounts', $localize`:@@accounts.deleted:Account deleted.`);
+      this.nav.leave('/finance/accounts', $localize`:@@accounts.deleted:Account deleted.`);
     } catch (error) {
       // 409 while the account still has records.
       this.toast.show(problemOf(error).message);

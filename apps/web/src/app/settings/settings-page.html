@@ -1,4 +1,8 @@
 <header class="page-header">
+  <a class="back-link small muted" routerLink="/">
+    <selah-icon name="back" [size]="18" />
+    <span>Selah</span>
+  </a>
   <h1 i18n="@@settings.title">Settings</h1>
   <p class="small muted subtitle" i18n="@@settings.subtitle">How this ledger is kept.</p>
 </header>
@@ -91,12 +95,12 @@
       <ul class="categories">
         @for (category of tree(); track category.id) {
           <li [style.--depth]="category.depth">
-            <a class="category" [class.sub]="category.depth > 0" [routerLink]="['/settings/categories', category.id]">{{ category.name }}</a>
+            <a class="category" [class.sub]="category.depth > 0" [routerLink]="['/finance/categories', category.id]">{{ category.name }}</a>
           </li>
         }
       </ul>
     }
-    <a class="btn new-category" routerLink="/settings/categories/new">
+    <a class="btn new-category" routerLink="/finance/categories/new">
       <selah-icon name="add" [size]="16" [weight]="1.8" />
       <span i18n="@@settings.newCategory">New category</span>
     </a>

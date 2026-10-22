@@ -1,0 +1,68 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 id="moment-title" i18n="@@moment.title">Moment</h1>
+    <span class="header-spacer"></span>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@journal.notFound">This entry isn't in the journal.</p>
+} @else {
+  <div class="form-body">
+    @if (linked(); as moment) {
+      <section class="linked" aria-labelledby="linked-heading">
+        <h2 id="linked-heading" class="section-title" i18n="@@moment.current">On this page</h2>
+        <div class="moment-paper">
+          <span class="small muted">{{ moment.date | date: 'd MMM y' }}</span>
+          <span class="moment-name">{{ moment.title }}</span>
+        </div>
+        <button type="button" class="btn" [disabled]="saving()" (click)="pick(null)" i18n="@@moment.unlink">Take it off this page</button>
+      </section>
+    }
+
+    @if (moments().length) {
+      <section aria-labelledby="pick-heading">
+        <h2 id="pick-heading" class="section-title" i18n="@@moment.pick">Pick a moment</h2>
+        <ul class="choices">
+          @for (moment of moments(); track moment.id) {
+            <li>
+              <button type="button" class="choice" [disabled]="saving()" (click)="pick(moment.id)">
+                <span class="small muted">{{ moment.date | date: 'd MMM y' }}</span>
+                <span class="moment-name">{{ moment.title }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section aria-labelledby="new-heading">
+      <h2 id="new-heading" class="section-title" i18n="@@moment.new">A new moment</h2>
+      <form id="moment-form" [formGroup]="form" (ngSubmit)="create()" aria-labelledby="new-heading">
+        <div class="ledger-row">
+          <label for="moment-date" i18n="@@moment.date">Date</label>
+          <input id="moment-date" type="date" formControlName="date" />
+        </div>
+        @if (form.controls.date.touched && form.controls.date.invalid) {
+          <p class="field-error">{{ errorText(form.controls.date) }}</p>
+        }
+        <div class="ledger-row">
+          <label for="moment-name" i18n="@@moment.name">What happened</label>
+          <input id="moment-name" formControlName="title" autocomplete="off" [attr.maxlength]="maxTitle" />
+        </div>
+        @if (form.controls.title.touched && form.controls.title.invalid) {
+          <p class="field-error">{{ errorText(form.controls.title) }}</p>
+        }
+        <label class="summary-label small muted" for="moment-summary" i18n="@@moment.summary">In a few words (optional)</label>
+        <textarea id="moment-summary" class="summary" rows="3" formControlName="summary"></textarea>
+        @if (form.controls.summary.invalid) {
+          <p class="field-error">{{ errorText(form.controls.summary) }}</p>
+        }
+        <button type="submit" class="btn btn-primary create" [disabled]="saving()" i18n="@@moment.create">Stick it on this page</button>
+      </form>
+    </section>
+  </div>
+}

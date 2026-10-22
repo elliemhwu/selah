@@ -11,7 +11,7 @@ import { PlanDraft } from './plan-draft';
 
 /**
  * The plan's versions: a read-only log of how the plan changed, and starting
- * a new version as a copy of the newest one (ADR 0018). Route: `/budget/versions`.
+ * a new version as a copy of the newest one (ADR 0018). Route: `/finance/budget/versions`.
  */
 @Component({
   selector: 'selah-budget-versions-page',
@@ -59,7 +59,7 @@ export class BudgetVersionsPage {
   }
 
   protected back(): void {
-    this.nav.leave('/budget');
+    this.nav.leave('/finance/budget');
   }
 
   protected start(): void {
@@ -79,6 +79,6 @@ export class BudgetVersionsPage {
     }
     const note = this.form.controls.note.value.trim();
     this.draft.startNew(from, month, note || null);
-    void this.router.navigate(['/budget'], { queryParams: { month } });
+    void this.router.navigate(['/finance/budget'], { queryParams: { month } });
   }
 }

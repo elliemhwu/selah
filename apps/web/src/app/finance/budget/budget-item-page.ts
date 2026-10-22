@@ -37,7 +37,7 @@ const RESETS: Partial<Record<Cadence, readonly ResetCycle[]>> = {
 /**
  * One item of the plan being edited (requirements §3). Done keeps the change
  * in the draft; the plan is saved as a whole from the budget screen (ADR 0018).
- * Routes: `/budget/items/:id`, `/budget/items/new?section=expense` (ADR 0022).
+ * Routes: `/finance/budget/items/:id`, `/finance/budget/items/new?section=expense` (ADR 0022).
  */
 @Component({
   selector: 'selah-budget-item-page',
@@ -157,14 +157,14 @@ export class BudgetItemPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/budget');
+    this.nav.leave('/finance/budget');
   }
 
   protected done(): void {
     const item = this.toItem(true);
     if (!item) return;
     this.draft.putItem(item);
-    this.nav.leave('/budget');
+    this.nav.leave('/finance/budget');
   }
 
   protected remove(): void {
@@ -173,7 +173,7 @@ export class BudgetItemPage {
       return;
     }
     this.draft.removeItem(this.id);
-    this.nav.leave('/budget');
+    this.nav.leave('/finance/budget');
   }
 
   /**

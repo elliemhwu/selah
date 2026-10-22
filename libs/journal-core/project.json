@@ -1,0 +1,23 @@
+{
+  "name": "journal-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/journal-core/src",
+  "projectType": "library",
+  "tags": ["type:domain", "scope:shared", "module:journal"],
+  "// targets": "to see all targets run: nx show project journal-core --web",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "tsc --noEmit -p tsconfig.lib.json",
+          "tsc --noEmit -p tsconfig.spec.json"
+        ],
+        "parallel": false
+      }
+    }
+  }
+}

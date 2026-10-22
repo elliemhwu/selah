@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import type { AbstractControl } from '@angular/forms';
 import type { ApiSchemas } from '@selah/api-client';
-import { ConflictError, NotFoundError, RuleViolationError } from '@selah/finance-core';
+import { ConflictError, NotFoundError, RuleViolationError } from '@selah/shared-utils';
 
 export interface Problem {
   /** What to tell the user when no field matches. */
@@ -33,7 +33,7 @@ export function applyFieldErrors(
 }
 
 /**
- * Reads a refusal from the finance rules on the device (ADR 0025), an API
+ * Reads a refusal from a module's rules on the device (ADR 0025), an API
  * error as Problem Details, or describes a network failure.
  */
 export function problemOf(error: unknown): Problem {

@@ -1,6 +1,6 @@
 # 0027. Backups to a file, and the app on GitHub Pages, until sync exists
 
-- Status: Accepted
+- Status: Accepted. Publishing now happens on a release, not on every push to `main` ([0031](0031-publish-on-release.md)).
 - Date: 2026-10-15
 - Builds on: [0025](0025-offline-first.md) (offline-first, step 2 of its order of work)
 

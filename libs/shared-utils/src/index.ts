@@ -1,3 +1,4 @@
+export * from './lib/errors';
 export * from './lib/money';
 export * from './lib/percent';
 export * from './lib/fx';

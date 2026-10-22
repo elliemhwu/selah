@@ -2,7 +2,7 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-16_
+_Last updated: 2026-10-22_
 
 ## Current state
 
@@ -35,7 +35,11 @@ _Last updated: 2026-10-16_
 
 - **Stage A, step 2 (API build):** done. `ApiStorage` implements the same storage interface as IndexedDB over `/api/v1/store`, and the build picks it: the development build (`nx serve web`, with the API and Postgres) keeps the data in Postgres; the release build and `nx serve web -c device` keep it on the device. Unit tests run in the device build. The shell says when the server can't be reached, and the API build doesn't ask the browser to keep storage. Stage A is done.
 
-**Next step:** stage B: merge `develop` into `main` to publish v0.1.0, and try it on a phone (install it, enter a few days, download a backup). The owner chose to finish stage A before the first release. The open questions below are still waiting for the owner.
+- **Stage B (first release):** `develop` was merged into `main` (PR #32). Since [ADR 0031](decisions/0031-publish-on-release.md), the app is published to Pages when a GitHub release is created from `main`, not on every merge. The first tagged release carries Finance and the first Journal phase; the owner tries it on a phone and a laptop for several days.
+
+- **Stage C (Journal module):** started 2026-10-21. The design is in [selah-journal-framework.md](selah-journal-framework.md), and the structure in [ADR 0030](decisions/0030-journal-module.md): the journal tables are rows in the store, the rules are in `libs/journal-core`, and each module has its own route (Finance at `/finance`, Journal at `/journal`, a home page at `/`). The first phase is built, in four stacked PRs: the docs; Finance moved to `/finance` (old links redirect); the `journal` schema, `journal-core` and the store tables, with integration tests; and the journal list, the Dear Diary page (lined page with autosave, memos placed from their id, the "Stick a memo" bar), the memo forms and a Life placeholder. Photos, people and places, import, the module lock and encryption come later.
+
+**Next step:** merge `develop` into `main` and create the release, then try it on a phone and a laptop for several days (write a few nights, stick memos, link a moment; enter a few days of spending). After that, choose the next Journal phase: the Life view (framework open question 1) or photos and import.
 
 ## Phases (Finance MVP)
 
@@ -55,13 +59,13 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 
 ## Stages after the Finance MVP ([ADR 0029](decisions/0029-generic-row-store-and-two-builds.md))
 
-| #   | Stage                                                                                                                                          | Status  |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| A   | Generic row store in `apps/api` replacing the per-feature endpoints; `ApiStorage` and the API build; local `serve` runs the web app on the API | ✅ Done |
-| B   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | ⏭️ Next |
-| C   | Next module, written once and working in both builds (module to be decided)                                                                    | Planned |
-| D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later   |
-| E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later   |
+| #   | Stage                                                                                                                                          | Status            |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| A   | Generic row store in `apps/api` replacing the per-feature endpoints; `ApiStorage` and the API build; local `serve` runs the web app on the API | ✅ Done           |
+| B   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | Released; testing |
+| C   | Journal module, written once and working in both builds ([ADR 0030](decisions/0030-journal-module.md))                                         | 🚧 In progress    |
+| D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later             |
+| E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later             |
 
 ## Beta / later
 

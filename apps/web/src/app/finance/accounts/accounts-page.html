@@ -21,7 +21,7 @@
     <ul class="accounts">
       @for (account of accounts.value(); track account.id) {
         <li>
-          <a class="account" [routerLink]="['/accounts', account.id]">
+          <a class="account" [routerLink]="['/finance/accounts', account.id]">
             <span class="account-name">
               {{ account.name }}
               <span class="small muted type">{{ typeLabels[account.type] }}</span>
@@ -52,12 +52,12 @@
 
   <div class="actions">
     @if (accounts.value().length > 1) {
-      <a class="btn" routerLink="/accounts/transfer" i18n="@@accounts.transfer">Transfer</a>
+      <a class="btn" routerLink="/finance/accounts/transfer" i18n="@@accounts.transfer">Transfer</a>
     }
     @if (accounts.value().length > 0) {
-      <a class="btn" routerLink="/accounts/adjust" i18n="@@accounts.adjust">Adjust balance</a>
+      <a class="btn" routerLink="/finance/accounts/adjust" i18n="@@accounts.adjust">Adjust balance</a>
     }
-    <a class="btn new-account" routerLink="/accounts/new">
+    <a class="btn new-account" routerLink="/finance/accounts/new">
       <selah-icon name="add" [size]="16" [weight]="1.8" />
       <span i18n="@@accounts.new">New account</span>
     </a>
