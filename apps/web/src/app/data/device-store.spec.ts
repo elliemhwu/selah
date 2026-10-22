@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { NotFoundError } from '@selah/finance-core';
+import { NotFoundError } from '@selah/shared-utils';
+import Dexie from 'dexie';
 import { IDBFactory, IDBKeyRange } from 'fake-indexeddb';
 import { deviceResource, IDLE } from './device-resource';
 import { applyChanges, DexieStorage, EMPTY_SNAPSHOT, MemoryStorage } from './device-storage';
 import { DEVICE_STORAGE, DeviceStore } from './device-store';
-import { storedAccount, storedRecord } from './testing';
+import { storedAccount, storedJournal, storedRecord } from './testing';
 
 describe('DexieStorage', () => {
   it('keeps rows and settings in IndexedDB across instances', async () => {
@@ -22,6 +23,26 @@ describe('DexieStorage', () => {
     expect(reopened.records.map((r) => r.id)).toEqual(['r1']);
     expect(reopened.settings).toMatchObject({ weekStartDay: 7, defaultCurrency: 'JPY' });
     expect(reopened.planVersions).toEqual([]);
+  });
+
+  it('opens a database from before the Journal module, keeping its rows (ADR 0030)', async () => {
+    const indexedDB = new IDBFactory();
+    const before = new Dexie('selah', { indexedDB, IDBKeyRange });
+    before.version(1).stores({
+      accounts: 'id',
+      categories: 'id',
+      records: 'id, occurredOn',
+      planVersions: 'id',
+      budgetTransfers: 'id, occurredOn',
+      settings: 'id',
+    });
+    await before.table('accounts').put(storedAccount('cash'));
+    before.close();
+
+    const storage = new DexieStorage({ indexedDB, IDBKeyRange });
+    expect((await storage.load()).accounts.map((a) => a.id)).toEqual(['cash']);
+    await storage.save({ journals: [storedJournal('j1')] });
+    expect((await storage.load()).journals.map((j) => j.id)).toEqual(['j1']);
   });
 });
 

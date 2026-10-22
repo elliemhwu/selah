@@ -12,6 +12,10 @@ export type StoredPlanVersion = ApiSchemas['PlanVersionRowDto'];
 export type StoredBudgetTransfer = ApiSchemas['BudgetTransferRowDto'];
 /** The single settings row (ADR 0024). */
 export type StoredSettings = ApiSchemas['SettingsRowDto'];
+export type StoredMoment = ApiSchemas['MomentRowDto'];
+export type StoredJournal = ApiSchemas['JournalRowDto'];
+export type StoredComment = ApiSchemas['CommentRowDto'];
+export type StoredGodNote = ApiSchemas['GodNoteRowDto'];
 
 /** Everything on the device, deleted rows included. */
 export interface DeviceSnapshot {
@@ -20,6 +24,11 @@ export interface DeviceSnapshot {
   records: StoredRecord[];
   planVersions: StoredPlanVersion[];
   budgetTransfers: StoredBudgetTransfer[];
+  // Journal (ADR 0030)
+  moments: StoredMoment[];
+  journals: StoredJournal[];
+  comments: StoredComment[];
+  godNotes: StoredGodNote[];
   /** Null until the settings are first saved. */
   settings: StoredSettings | null;
 }
@@ -33,10 +42,24 @@ export const EMPTY_SNAPSHOT: DeviceSnapshot = {
   records: [],
   planVersions: [],
   budgetTransfers: [],
+  moments: [],
+  journals: [],
+  comments: [],
+  godNotes: [],
   settings: null,
 };
 
-const TABLES = ['accounts', 'categories', 'records', 'planVersions', 'budgetTransfers'] as const;
+const TABLES = [
+  'accounts',
+  'categories',
+  'records',
+  'planVersions',
+  'budgetTransfers',
+  'moments',
+  'journals',
+  'comments',
+  'godNotes',
+] as const;
 
 /** Where the device keeps its data: IndexedDB in the app, memory in tests. */
 export interface DeviceStorage {
@@ -89,15 +112,31 @@ export class DexieStorage implements DeviceStorage {
   }
 
   private async read(): Promise<DeviceSnapshot> {
-    const [accounts, categories, records, planVersions, budgetTransfers, settings] = await Promise.all([
-      this.db.accounts.toArray(),
-      this.db.categories.toArray(),
-      this.db.records.toArray(),
-      this.db.planVersions.toArray(),
-      this.db.budgetTransfers.toArray(),
-      this.db.settings.get('settings'),
-    ]);
-    return { accounts, categories, records, planVersions, budgetTransfers, settings: settings ?? null };
+    const [accounts, categories, records, planVersions, budgetTransfers, moments, journals, comments, godNotes, settings] =
+      await Promise.all([
+        this.db.accounts.toArray(),
+        this.db.categories.toArray(),
+        this.db.records.toArray(),
+        this.db.planVersions.toArray(),
+        this.db.budgetTransfers.toArray(),
+        this.db.moments.toArray(),
+        this.db.journals.toArray(),
+        this.db.comments.toArray(),
+        this.db.godNotes.toArray(),
+        this.db.settings.get('settings'),
+      ]);
+    return {
+      accounts,
+      categories,
+      records,
+      planVersions,
+      budgetTransfers,
+      moments,
+      journals,
+      comments,
+      godNotes,
+      settings: settings ?? null,
+    };
   }
 }
 
@@ -108,6 +147,10 @@ class SelahDb extends Dexie {
   planVersions!: Table<StoredPlanVersion, string>;
   budgetTransfers!: Table<StoredBudgetTransfer, string>;
   settings!: Table<StoredSettings, string>;
+  moments!: Table<StoredMoment, string>;
+  journals!: Table<StoredJournal, string>;
+  comments!: Table<StoredComment, string>;
+  godNotes!: Table<StoredGodNote, string>;
 
   constructor(options?: DexieOptions) {
     super('selah', options);
@@ -119,6 +162,13 @@ class SelahDb extends Dexie {
       planVersions: 'id',
       budgetTransfers: 'id, occurredOn',
       settings: 'id',
+    });
+    // The Journal module's tables (ADR 0030). Adding tables needs no upgrade function.
+    this.version(2).stores({
+      moments: 'id',
+      journals: 'id',
+      comments: 'id',
+      godNotes: 'id',
     });
   }
 }

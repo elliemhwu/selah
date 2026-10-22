@@ -8,6 +8,10 @@ import { BudgetTransferRowDto } from '../finance/rows/budget-transfers';
 import { CategoryRowDto } from '../finance/rows/categories';
 import { PlanVersionRowDto } from '../finance/rows/plan-versions';
 import { RecordRowDto } from '../finance/rows/records';
+import { CommentRowDto } from '../journal/rows/comments';
+import { GodNoteRowDto } from '../journal/rows/god-notes';
+import { JournalRowDto } from '../journal/rows/journals';
+import { MomentRowDto } from '../journal/rows/moments';
 
 // The whole store, and a set of row changes (ADR 0029). The shapes match the
 // app's DeviceSnapshot and DeviceChanges, so the API build stores exactly
@@ -42,6 +46,18 @@ export class StoreSnapshotDto {
   @Rows(() => BudgetTransferRowDto, true)
   budgetTransfers!: BudgetTransferRowDto[];
 
+  @Rows(() => MomentRowDto, true)
+  moments!: MomentRowDto[];
+
+  @Rows(() => JournalRowDto, true)
+  journals!: JournalRowDto[];
+
+  @Rows(() => CommentRowDto, true)
+  comments!: CommentRowDto[];
+
+  @Rows(() => GodNoteRowDto, true)
+  godNotes!: GodNoteRowDto[];
+
   @ApiProperty({ type: SettingsRowDto, nullable: true, description: 'Null until the settings are first saved.' })
   @IsOptional()
   @ValidateNested()
@@ -65,6 +81,18 @@ export class StoreChangesDto {
 
   @Rows(() => BudgetTransferRowDto, false)
   budgetTransfers?: BudgetTransferRowDto[];
+
+  @Rows(() => MomentRowDto, false)
+  moments?: MomentRowDto[];
+
+  @Rows(() => JournalRowDto, false)
+  journals?: JournalRowDto[];
+
+  @Rows(() => CommentRowDto, false)
+  comments?: CommentRowDto[];
+
+  @Rows(() => GodNoteRowDto, false)
+  godNotes?: GodNoteRowDto[];
 
   @ApiPropertyOptional({ type: SettingsRowDto })
   @IsOptional()

@@ -2,6 +2,8 @@ import { createTestApp, newId, resetDatabase, type TestApp } from '../testing/te
 
 const BASE = '/api/v1/store';
 
+const NO_JOURNAL_ROWS = { moments: [], journals: [], comments: [], godNotes: [] };
+
 // Rows as the app stores them (ADR 0029). Timestamps are the client's own.
 const T1 = '2026-10-01T08:00:00.000Z';
 const T2 = '2026-10-02T09:30:00.123Z';
@@ -176,6 +178,8 @@ function fullSnapshot() {
         deletedAt: null,
       },
     ],
+    // The journal tables have their own tests (journal-store.int-spec.ts).
+    ...NO_JOURNAL_ROWS,
     settings: settings({ weekStartDay: 7, defaultCurrency: 'JPY', updatedAt: T2 }),
   };
 }
@@ -215,6 +219,10 @@ describe('store API', () => {
       records: [],
       planVersions: [],
       budgetTransfers: [],
+      moments: [],
+      journals: [],
+      comments: [],
+      godNotes: [],
       settings: null,
     });
   });
@@ -340,6 +348,7 @@ describe('store API', () => {
       planVersions: [],
       records,
       budgetTransfers: [],
+      ...NO_JOURNAL_ROWS,
       settings: null,
     }).expect(204);
     expect((await load()).records).toHaveLength(3000);

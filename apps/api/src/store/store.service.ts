@@ -8,11 +8,15 @@ import { budgetTransfersTable } from '../finance/rows/budget-transfers';
 import { categoriesTable } from '../finance/rows/categories';
 import { planVersionsTable } from '../finance/rows/plan-versions';
 import { recordsTable } from '../finance/rows/records';
+import { commentsTable } from '../journal/rows/comments';
+import { godNotesTable } from '../journal/rows/god-notes';
+import { journalsTable } from '../journal/rows/journals';
+import { momentsTable } from '../journal/rows/moments';
 import type { StoreChangesDto, StoreSnapshotDto } from './store.dto';
 
 /**
  * The generic row store (ADR 0029). It stores what the app sends: the app
- * runs the finance-core rules before saving, in both builds. The database
+ * runs each module's rules (finance-core, journal-core) before saving, in both builds. The database
  * still enforces its own constraints.
  */
 @Injectable()
@@ -30,6 +34,10 @@ export class StoreService {
         records: await recordsTable.load(trx),
         planVersions: await planVersionsTable.load(trx),
         budgetTransfers: await budgetTransfersTable.load(trx),
+        moments: await momentsTable.load(trx),
+        journals: await journalsTable.load(trx),
+        comments: await commentsTable.load(trx),
+        godNotes: await godNotesTable.load(trx),
         settings: await settingsTable.load(trx),
       }));
   }
@@ -43,6 +51,10 @@ export class StoreService {
   async replace(snapshot: StoreSnapshotDto): Promise<void> {
     await this.write(async (trx) => {
       // Rows that refer to others go first.
+      await godNotesTable.clear(trx);
+      await commentsTable.clear(trx);
+      await journalsTable.clear(trx);
+      await momentsTable.clear(trx);
       await budgetTransfersTable.clear(trx);
       await recordsTable.clear(trx);
       await planVersionsTable.clear(trx);
@@ -64,7 +76,8 @@ export class StoreService {
 
 /**
  * Saves in foreign-key order: a row refers only to tables saved before it.
- * Plan versions create the budget items that records and transfers use.
+ * Plan versions create the budget items that records and transfers use;
+ * moments come before the journals and comments that link to them.
  */
 async function saveAll(trx: Database, changes: StoreChangesDto): Promise<void> {
   await accountsTable.save(trx, changes.accounts ?? []);
@@ -72,5 +85,9 @@ async function saveAll(trx: Database, changes: StoreChangesDto): Promise<void> {
   await planVersionsTable.save(trx, changes.planVersions ?? []);
   await recordsTable.save(trx, changes.records ?? []);
   await budgetTransfersTable.save(trx, changes.budgetTransfers ?? []);
+  await momentsTable.save(trx, changes.moments ?? []);
+  await journalsTable.save(trx, changes.journals ?? []);
+  await commentsTable.save(trx, changes.comments ?? []);
+  await godNotesTable.save(trx, changes.godNotes ?? []);
   if (changes.settings) await settingsTable.save(trx, changes.settings);
 }
