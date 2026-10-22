@@ -1,0 +1,33 @@
+<selah-journal-header view="life" back="/journal/life" />
+
+<div class="page">
+  @if (page.isLoading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  } @else if (notFound()) {
+    <p class="muted" i18n="@@life.notFound">This moment isn't in Life.</p>
+  } @else if (view(); as view) {
+    <article class="moment-canvas">
+      <span class="small muted">{{ view.moment.date | date: 'EEEE d MMMM y' }}</span>
+      <h1>{{ view.moment.title }}</h1>
+      @if (view.moment.summary) {
+        <p class="summary">{{ view.moment.summary }}</p>
+      }
+    </article>
+
+    @if (view.journals.length) {
+      <section aria-labelledby="moment-journals">
+        <h2 id="moment-journals" class="section-title" i18n="@@life.entries">Written about it</h2>
+        <ul class="moments">
+          @for (journal of view.journals; track journal.id) {
+            <li>
+              <a class="moment" [routerLink]="['/journal', journal.id]">
+                <span class="small muted">{{ journal.writtenAt | date: 'd MMM y · HH:mm' }}</span>
+                <span>{{ excerptOf(journal.body) }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</div>

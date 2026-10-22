@@ -28,5 +28,11 @@ export class SelahHomePage {
       name: $localize`:@@selahHome.finance:Finance`,
       description: $localize`:@@selahHome.financeHint:Budget, spending and accounts`,
     },
+    {
+      path: '/journal',
+      icon: 'journal',
+      name: $localize`:@@selahHome.journal:Journal`,
+      description: $localize`:@@selahHome.journalHint:Dear Diary, and what really happened`,
+    },
   ];
 }

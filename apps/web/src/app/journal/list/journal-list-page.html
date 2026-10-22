@@ -1,0 +1,30 @@
+<selah-journal-header view="diary" back="/" />
+
+<div class="page">
+  <a class="btn btn-primary new-entry" routerLink="/journal/new" i18n="@@journal.newEntry">New entry</a>
+
+  @if (journals.isLoading()) {
+    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+  } @else if (journals.error()) {
+    <p class="muted" i18n="@@journal.listFailed">Couldn't open the journal.</p>
+  } @else if (entries().length === 0) {
+    <p class="muted empty" i18n="@@journal.empty">No entries yet. Start with an empty page.</p>
+  } @else {
+    <ol class="entries" i18n-aria-label="@@journal.entries" aria-label="Entries">
+      @for (entry of entries(); track entry.id) {
+        <li>
+          <a class="entry" [routerLink]="['/journal', entry.id]">
+            <span class="entry-date small muted">{{ entry.writtenAt | date: 'EEE d MMM y · HH:mm' }}</span>
+            <span class="entry-excerpt">
+              @if (entry.excerpt) {
+                {{ entry.excerpt }}
+              } @else {
+                <span class="muted" i18n="@@journal.blankEntry">An empty page</span>
+              }
+            </span>
+          </a>
+        </li>
+      }
+    </ol>
+  }
+</div>

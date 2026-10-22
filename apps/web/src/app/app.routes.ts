@@ -25,6 +25,11 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./finance/finance.routes').then((m) => m.financeRoutes),
   },
   {
+    // The module lock (PIN or biometric) will sit here as a canMatch guard.
+    path: 'journal',
+    loadChildren: () => import('./journal/journal.routes').then((m) => m.journalRoutes),
+  },
+  {
     path: 'settings',
     title: $localize`:@@settings.title:Settings`,
     loadComponent: () => import('./settings/settings-page').then((m) => m.SettingsPage),

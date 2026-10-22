@@ -1,0 +1,86 @@
+<selah-journal-header view="diary">
+  <time [attr.datetime]="writtenAt()">{{ writtenAt() | date: 'EEE d MMM y · HH:mm' }}</time>
+  <span class="save-status" role="status">
+    @switch (status()) {
+      @case ('saving') {
+        <ng-container i18n="@@journal.saving">· Saving…</ng-container>
+      }
+      @case ('saved') {
+        <ng-container i18n="@@journal.saved">· Saved</ng-container>
+      }
+      @case ('failed') {
+        <ng-container i18n="@@journal.notSaved">· Not saved yet</ng-container>
+      }
+    }
+  </span>
+</selah-journal-header>
+
+@if (notFound()) {
+  <div class="missing">
+    <p class="muted" i18n="@@journal.notFound">This entry isn't in the journal.</p>
+    <a class="btn" routerLink="/journal" i18n="@@journal.toList">All entries</a>
+  </div>
+} @else {
+  <div class="sheet-wrap">
+    <label class="cdk-visually-hidden" for="diary-sheet" i18n="@@journal.sheetLabel">Dear Diary</label>
+    <textarea
+      #sheet
+      id="diary-sheet"
+      class="sheet"
+      rows="12"
+      [disabled]="loading()"
+      (input)="onInput()"
+      (blur)="flush()"
+      i18n-placeholder="@@journal.sheetPlaceholder"
+      placeholder="Dear Diary,"
+    ></textarea>
+  </div>
+
+  <section class="memos" i18n-aria-label="@@journal.memos" aria-label="Memos">
+    @for (view of memos(); track trackMemo(view.memo)) {
+      @if (view.memo.kind === 'comment') {
+        <a class="memo memo-comment" [class.right]="view.side === 'right'" [style]="view.style" [routerLink]="['/journal', id, 'comment', view.memo.id]">
+          <span class="memo-label" i18n="@@journal.repliedBy">Replied by Ellie · {{ view.memo.comment.writtenAt | date: 'yyyy.MM' }}</span>
+          <span class="memo-text">{{ view.memo.comment.body }}</span>
+        </a>
+      } @else if (view.memo.kind === 'godNote') {
+        <a class="memo memo-god-note" [class.right]="view.side === 'right'" [style]="view.style" [routerLink]="['/journal', id, 'god-note', view.memo.id]">
+          <span class="memo-label" i18n="@@journal.godNote">God note</span>
+          @if (view.memo.godNote.verseRef) {
+            <span class="verse">{{ view.memo.godNote.verseRef }}</span>
+          }
+          <span class="memo-text">{{ view.memo.godNote.body }}</span>
+        </a>
+      } @else {
+        <a class="memo memo-moment" [class.right]="view.side === 'right'" [style]="view.style" [routerLink]="['/journal/life/moments', view.memo.id]">
+          <span class="memo-label"><ng-container i18n="@@journal.moment">Moment</ng-container> · {{ view.memo.moment.date | date: 'd MMM y' }}</span>
+          <span class="memo-title">{{ view.memo.moment.title }}</span>
+          @if (view.memo.moment.summary) {
+            <span class="memo-text">{{ view.memo.moment.summary }}</span>
+          }
+        </a>
+      }
+    }
+  </section>
+
+  @if (saved()) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@journal.confirmDelete">Tap again to delete this entry and its memos</ng-container>
+        } @else {
+          <ng-container i18n="@@journal.delete">Delete entry</ng-container>
+        }
+      </button>
+    </div>
+  }
+
+  <nav class="stick-bar" i18n-aria-label="@@journal.stick" aria-label="Stick a memo">
+    <span class="stick-title small muted" i18n="@@journal.stick">Stick a memo</span>
+    <div class="stick-buttons">
+      <button type="button" class="stick stick-comment" [disabled]="!saved()" (click)="stick('comment')" i18n="@@journal.addComment">Comment</button>
+      <button type="button" class="stick stick-god-note" [disabled]="!saved()" (click)="stick('god-note')" i18n="@@journal.addGodNote">God note</button>
+      <button type="button" class="stick stick-moment" [disabled]="!saved()" (click)="stick('moment')" i18n="@@journal.addMoment">Moment</button>
+    </div>
+  </nav>
+}

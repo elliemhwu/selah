@@ -1,0 +1,45 @@
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px var(--gutter) 32px;
+}
+
+.new-entry {
+  min-height: 52px;
+  font-size: 16px;
+}
+
+.empty {
+  padding-top: 16px;
+  font-style: italic;
+}
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 64px;
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.entry-excerpt {
+  font-family: var(--font-title);
+  overflow-wrap: anywhere;
+}
