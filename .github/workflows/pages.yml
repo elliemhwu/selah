@@ -1,11 +1,13 @@
 # Publishes the web app to GitHub Pages (https://elliemhwu.github.io/selah/)
-# whenever main changes. Only the app's files are published; every user's
-# data stays on their own device (ADR 0025).
+# when a release is published (ADR 0031), from the release's tag, which must
+# be on main. Merging into main no longer publishes by itself. Only the app's
+# files are published; every user's data stays on their own device (ADR 0025).
 name: Publish the app
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
+  # Publishes again by hand, e.g. after a failed run: choose a release tag.
   workflow_dispatch:
 
 permissions:
@@ -26,6 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The whole history, to check that the release is on main.
+          fetch-depth: 0
+
+      - name: Check that the release is on main
+        run: git merge-base --is-ancestor HEAD origin/main
 
       - uses: pnpm/action-setup@v4
 
@@ -37,7 +45,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Test
-        run: pnpm nx run-many -t test -p web finance-core shared-utils shared-types
+        run: pnpm nx run-many -t test -p web finance-core journal-core shared-utils shared-types
 
       - name: Build for /selah/
         run: pnpm nx run web:build --base-href=/selah/

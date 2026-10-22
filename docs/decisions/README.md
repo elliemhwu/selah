@@ -36,10 +36,11 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0024](0024-settings-resource.md)                    | Settings are one resource with no id, loaded once by the web app                 | Accepted                                                              |
 | [0025](0025-offline-first.md)                        | Offline-first: the device holds all the data                                     | Accepted                                                              |
 | [0026](0026-finance-core-and-device-store.md)        | Rules and reports in libs/finance-core; the device store uses Dexie              | Accepted                                                              |
-| [0027](0027-backups-and-hosting.md)                  | Backups to a file, and the app on GitHub Pages, until sync exists                | Accepted                                                              |
+| [0027](0027-backups-and-hosting.md)                  | Backups to a file, and the app on GitHub Pages, until sync exists                | Accepted, publishing changed by [0031](0031-publish-on-release.md)    |
 | [0028](0028-local-only.md)                           | Local only on the device; a server is a later stage                              | Accepted, changed by [0029](0029-generic-row-store-and-two-builds.md) |
 | [0029](0029-generic-row-store-and-two-builds.md)     | One app, two storage builds; the API becomes a generic row store                 | Accepted                                                              |
 | [0030](0030-journal-module.md)                       | The Journal module: rows in the store, rules in journal-core, a route per module | Accepted                                                              |
+| [0031](0031-publish-on-release.md)                   | Publish the app when a release is created, not on every merge into main          | Accepted                                                              |
 
 ## Template
 
