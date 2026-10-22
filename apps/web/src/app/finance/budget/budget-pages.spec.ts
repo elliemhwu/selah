@@ -88,7 +88,7 @@ describe('budget pages', () => {
       [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Edit this plan'))?.click();
       fixture.detectChanges();
       expect(el.querySelector('.draft-bar')?.textContent).toContain('no changes yet');
-      expect(el.querySelector('a.item')?.getAttribute('href')).toBe('/budget/items/salary');
+      expect(el.querySelector('a.item')?.getAttribute('href')).toBe('/finance/budget/items/salary');
 
       const draft = TestBed.inject(PlanDraft);
       draft.putItem({ ...version.items[0], amount: '62000.00' });
@@ -130,7 +130,7 @@ describe('budget pages', () => {
       form.patchValue({ amount: '200' });
       el.querySelector('form')?.dispatchEvent(new Event('submit'));
       expect(TestBed.inject(PlanDraft).item('daily')).toMatchObject({ amount: '200.00', resetCycle: 'week', carryToItemId: 'allowance' });
-      expect(leave).toHaveBeenCalledWith('/budget');
+      expect(leave).toHaveBeenCalledWith('/finance/budget');
     });
 
     it('adds a new item to the section asked for', async () => {
@@ -186,7 +186,7 @@ describe('budget pages', () => {
       form.patchValue({ month: '2027-01', note: 'New job' });
       el.querySelector('form')?.dispatchEvent(new Event('submit'));
       expect(TestBed.inject(PlanDraft).state()).toMatchObject({ effectiveFromMonth: '2027-01', note: 'New job', isNew: true, items: version.items });
-      expect(navigate).toHaveBeenCalledWith(['/budget'], { queryParams: { month: '2027-01' } });
+      expect(navigate).toHaveBeenCalledWith(['/finance/budget'], { queryParams: { month: '2027-01' } });
     });
   });
 });

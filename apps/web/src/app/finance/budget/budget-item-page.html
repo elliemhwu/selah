@@ -15,7 +15,7 @@
 @if (missing) {
   <div class="form-status">
     <p class="muted" i18n="@@budgetItem.missing">This item isn't in the plan you're editing.</p>
-    <a class="btn" routerLink="/budget" i18n="@@budgetItem.backToBudget">Back to the budget</a>
+    <a class="btn" routerLink="/finance/budget" i18n="@@budgetItem.backToBudget">Back to the budget</a>
   </div>
 } @else {
   <form id="item-form" class="form-body" [formGroup]="form" (ngSubmit)="done()" aria-labelledby="item-title">

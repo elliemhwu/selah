@@ -62,7 +62,7 @@ describe('HomePage', () => {
   it('links a checklist item to the entry form, pre-filled', async () => {
     const { el } = await render([monthly('salary', 'Salary', 'income')]);
     const href = el.querySelector<HTMLAnchorElement>('.checklist .item')?.getAttribute('href');
-    expect(href).toBe('/records/new?type=income&item=salary&amount=1200.00');
+    expect(href).toBe('/finance/records/new?type=income&item=salary&amount=1200.00');
   });
 
   it('links the selected items to batch entry', async () => {
@@ -72,12 +72,12 @@ describe('HomePage', () => {
     boxes[0].click();
     fixture.detectChanges();
     const link = [...el.querySelectorAll('a')].find((a) => a.textContent?.includes('Record 2 selected'));
-    expect(link?.getAttribute('href')).toBe('/records/batch?items=rent,water&date=2026-10-07');
+    expect(link?.getAttribute('href')).toBe('/finance/records/batch?items=rent,water&date=2026-10-07');
   });
 
   it('links New entry to an empty form', async () => {
     const { el } = await render([]);
-    expect(el.querySelector('.new-entry')?.getAttribute('href')).toBe('/records/new');
+    expect(el.querySelector('.new-entry')?.getAttribute('href')).toBe('/finance/records/new');
   });
 
   describe('backup reminder', () => {

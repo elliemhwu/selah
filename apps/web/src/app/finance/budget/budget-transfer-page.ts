@@ -20,8 +20,8 @@ const LOCAL_DATE = /^\d{4}-\d{2}-\d{2}$/;
  * never touching accounts (requirements §3.2, ADR 0019). Dated the last day of
  * the previous month unless the route says otherwise, since leftovers are
  * usually moved once a month is over.
- * Routes: `/budget/transfers/new?from=&to=&date=` (all optional) and
- * `/budget/transfers/:id` (ADR 0022).
+ * Routes: `/finance/budget/transfers/new?from=&to=&date=` (all optional) and
+ * `/finance/budget/transfers/:id` (ADR 0022).
  */
 @Component({
   selector: 'selah-budget-transfer-page',
@@ -100,7 +100,7 @@ export class BudgetTransferPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/review');
+    this.nav.leave('/finance/review');
   }
 
   async save(): Promise<void> {
@@ -119,7 +119,7 @@ export class BudgetTransferPage {
         amount: v.amount,
         note: v.note.trim() || null,
       });
-      this.nav.leave('/review', $localize`:@@budgetTransfer.saved:Budget moved.`);
+      this.nav.leave('/finance/review', $localize`:@@budgetTransfer.saved:Budget moved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));
@@ -137,7 +137,7 @@ export class BudgetTransferPage {
     this.saving.set(true);
     try {
       await this.transfersApi.remove(this.editId);
-      this.nav.leave('/review', $localize`:@@budgetTransfer.deleted:Transfer deleted.`);
+      this.nav.leave('/finance/review', $localize`:@@budgetTransfer.deleted:Transfer deleted.`);
     } catch (error) {
       this.toast.show(problemOf(error).message);
       this.confirmingDelete.set(false);

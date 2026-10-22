@@ -59,9 +59,9 @@ describe('AccountsPage', () => {
 
   it('links to the account forms', async () => {
     const el = await render({ accounts });
-    expect(el.querySelector('.account')?.getAttribute('href')).toBe('/accounts/Cash');
+    expect(el.querySelector('.account')?.getAttribute('href')).toBe('/finance/accounts/Cash');
     const hrefs = [...el.querySelectorAll('.actions a')].map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/accounts/transfer', '/accounts/adjust', '/accounts/new']);
+    expect(hrefs).toEqual(['/finance/accounts/transfer', '/finance/accounts/adjust', '/finance/accounts/new']);
   });
 
   it('invites a first account', async () => {
@@ -107,7 +107,7 @@ describe('account form pages', () => {
       expect(storage.snapshot().accounts).toEqual([
         expect.objectContaining({ name: 'Card', type: 'credit_card', currency: 'TWD', openingBalance: '-3200.00', sortOrder: 0, deletedAt: null }),
       ]);
-      expect(leave).toHaveBeenCalledWith('/accounts', 'Account saved.');
+      expect(leave).toHaveBeenCalledWith('/finance/accounts', 'Account saved.');
     });
 
     it('starts a new account in the default currency', async () => {
@@ -151,13 +151,13 @@ describe('account form pages', () => {
       button().click();
       await flushSaves();
       expect(storage.snapshot().accounts[0].deletedAt).not.toBeNull();
-      expect(leave).toHaveBeenCalledWith('/accounts', 'Account deleted.');
+      expect(leave).toHaveBeenCalledWith('/finance/accounts', 'Account deleted.');
     });
 
     it('cancels back to the accounts', async () => {
       const { fixture } = await setup<AccountFormPage, AccountFormPage['form']>(AccountFormPage, {});
       (fixture.nativeElement.querySelector('.form-header .btn-quiet') as HTMLButtonElement).click();
-      expect(leave).toHaveBeenCalledWith('/accounts');
+      expect(leave).toHaveBeenCalledWith('/finance/accounts');
     });
   });
 
@@ -184,7 +184,7 @@ describe('account form pages', () => {
           lines: [expect.objectContaining({ amount: '3200.00', twdAmount: '3200.00' })],
         }),
       ]);
-      expect(leave).toHaveBeenCalledWith('/accounts', 'Transfer saved.');
+      expect(leave).toHaveBeenCalledWith('/finance/accounts', 'Transfer saved.');
     });
 
     it('asks for the amount received and the rate in an exchange', async () => {
@@ -234,7 +234,7 @@ describe('account form pages', () => {
       button().click();
       await flushSaves();
       expect(storage.snapshot().records[0].deletedAt).not.toBeNull();
-      expect(leave).toHaveBeenLastCalledWith('/records', 'Entry deleted.');
+      expect(leave).toHaveBeenLastCalledWith('/finance/records', 'Entry deleted.');
     });
   });
 
@@ -255,7 +255,7 @@ describe('account form pages', () => {
           lines: [],
         }),
       ]);
-      expect(leave).toHaveBeenCalledWith('/accounts', 'Balance adjusted.');
+      expect(leave).toHaveBeenCalledWith('/finance/accounts', 'Balance adjusted.');
     });
   });
 });

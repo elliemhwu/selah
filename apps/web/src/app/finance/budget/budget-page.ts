@@ -117,7 +117,7 @@ export class BudgetPage {
   }
 
   protected addItem(section: Section): void {
-    void this.router.navigate(['/budget/items/new'], { queryParams: { section } });
+    void this.router.navigate(['/finance/budget/items/new'], { queryParams: { section } });
   }
 
   protected discard(): void {

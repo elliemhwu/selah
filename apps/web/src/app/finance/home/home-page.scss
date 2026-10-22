@@ -23,8 +23,13 @@
   align-items: center;
 
   .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    color: inherit;
     font-family: var(--font-title);
     font-style: italic;
+    text-decoration: none;
   }
 }
 

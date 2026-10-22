@@ -15,7 +15,7 @@
   <ul class="log">
     @for (version of log(); track version.id) {
       <li>
-        <a class="version" routerLink="/budget" [queryParams]="{ version: version.id, month: version.effectiveFromMonth }">
+        <a class="version" routerLink="/finance/budget" [queryParams]="{ version: version.id, month: version.effectiveFromMonth }">
           <span class="version-text">
             <span class="amount range">
               {{ firstOfMonth(version.effectiveFromMonth) | date: 'MMM y' }}

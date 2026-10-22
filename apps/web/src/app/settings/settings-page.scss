@@ -5,7 +5,17 @@
 }
 
 .page-header {
-  padding-top: max(24px, env(safe-area-inset-top));
+  padding-top: max(12px, env(safe-area-inset-top));
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--touch);
+    margin-left: -6px;
+    color: inherit;
+    text-decoration: none;
+  }
 
   h1 {
     font-size: 30px;

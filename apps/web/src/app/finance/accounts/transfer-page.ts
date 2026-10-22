@@ -14,7 +14,7 @@ import { errorText, MONEY_PATTERN, positiveAmount, RATE_PATTERN } from '../recor
 /**
  * Moves money between two accounts (requirements §2). The amount sent and the
  * amount received are both stored, so an exchange keeps its exact rate.
- * Route: `/accounts/transfer?from=<account id>` (ADR 0022).
+ * Route: `/finance/accounts/transfer?from=<account id>` (ADR 0022).
  */
 @Component({
   selector: 'selah-transfer-page',
@@ -27,7 +27,7 @@ export class TransferPage {
   private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
-  /** The transfer being edited, from `/accounts/transfer/:id`; undefined for a new one. */
+  /** The transfer being edited, from `/finance/accounts/transfer/:id`; undefined for a new one. */
   private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
   protected readonly editing = !!this.editId;
   private readonly id = this.editId ?? crypto.randomUUID();
@@ -108,7 +108,7 @@ export class TransferPage {
     this.saving.set(true);
     try {
       await this.recordsApi.remove(this.editId);
-      this.nav.leave('/records', $localize`:@@record.deleted:Entry deleted.`);
+      this.nav.leave('/finance/records', $localize`:@@record.deleted:Entry deleted.`);
     } catch (error) {
       this.toast.show(problemOf(error).message);
       this.confirmingDelete.set(false);
@@ -118,7 +118,7 @@ export class TransferPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/accounts');
+    this.nav.leave('/finance/accounts');
   }
 
   async save(): Promise<void> {
@@ -145,7 +145,7 @@ export class TransferPage {
         note: v.note.trim() || null,
         lines: [{ id: this.lineId, amount: v.amount, fxRate: this.needsRate() ? v.fxRate : undefined }],
       });
-      this.nav.leave('/accounts', $localize`:@@accounts.transferSaved:Transfer saved.`);
+      this.nav.leave('/finance/accounts', $localize`:@@accounts.transferSaved:Transfer saved.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));

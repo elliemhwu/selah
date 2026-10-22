@@ -15,7 +15,7 @@ import { errorText, SIGNED_MONEY_PATTERN } from '../records/form-errors';
 /**
  * Sets an account to its actual balance (ADR 0014). Only the target is
  * stored; the difference is calculated, so later edits keep it exact.
- * Route: `/accounts/adjust?account=<account id>` (ADR 0022).
+ * Route: `/finance/accounts/adjust?account=<account id>` (ADR 0022).
  */
 @Component({
   selector: 'selah-adjust-page',
@@ -28,7 +28,7 @@ export class AdjustPage {
   private readonly nav = inject(FormNavigation);
   private readonly recordsApi = inject(RecordsApi);
   private readonly toast = inject(Toast);
-  /** The adjustment being edited, from `/accounts/adjust/:id`; undefined for a new one. */
+  /** The adjustment being edited, from `/finance/accounts/adjust/:id`; undefined for a new one. */
   private readonly editId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? undefined;
   protected readonly editing = !!this.editId;
   private readonly id = this.editId ?? crypto.randomUUID();
@@ -83,7 +83,7 @@ export class AdjustPage {
     this.saving.set(true);
     try {
       await this.recordsApi.remove(this.editId);
-      this.nav.leave('/records', $localize`:@@record.deleted:Entry deleted.`);
+      this.nav.leave('/finance/records', $localize`:@@record.deleted:Entry deleted.`);
     } catch (error) {
       this.toast.show(problemOf(error).message);
       this.confirmingDelete.set(false);
@@ -93,7 +93,7 @@ export class AdjustPage {
   }
 
   protected cancel(): void {
-    this.nav.leave('/accounts');
+    this.nav.leave('/finance/accounts');
   }
 
   async save(): Promise<void> {
@@ -114,7 +114,7 @@ export class AdjustPage {
         note: v.note.trim() || null,
         lines: [],
       });
-      this.nav.leave('/accounts', $localize`:@@accounts.adjusted:Balance adjusted.`);
+      this.nav.leave('/finance/accounts', $localize`:@@accounts.adjusted:Balance adjusted.`);
     } catch (error) {
       const unmatched = applyFieldErrors(problemOf(error), (field) => this.controlFor(field));
       if (unmatched.length) this.toast.show(unmatched.join(' '));

@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/finance-core/src",
   "projectType": "library",
-  "tags": ["type:domain", "scope:shared"],
+  "tags": ["type:domain", "scope:shared", "module:finance"],
   "// targets": "to see all targets run: nx show project finance-core --web",
   "targets": {
     "typecheck": {

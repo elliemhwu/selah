@@ -54,10 +54,10 @@ describe('RecordsPage', () => {
     ]);
     expect(rows[1].textContent).toContain('Cash · 12:30');
     expect(rows.map((r) => r.getAttribute('href'))).toEqual([
-      '/records/salary',
-      '/records/lunch',
-      '/accounts/transfer/card',
-      '/accounts/adjust/fix',
+      '/finance/records/salary',
+      '/finance/records/lunch',
+      '/finance/accounts/transfer/card',
+      '/finance/accounts/adjust/fix',
     ]);
     expect(el.querySelector('.month-row')?.textContent).toContain('Spent 230');
     expect(el.querySelector('.month-row')?.textContent).toContain('received 60,000');
@@ -74,7 +74,7 @@ describe('RecordsPage', () => {
       queryParams: { month: '2026-09', account: null, category: null, item: null, type: null },
       replaceUrl: true,
     });
-    expect([...el.querySelectorAll('.record')].map((r) => r.getAttribute('href'))).toEqual(['/records/sept']);
+    expect([...el.querySelectorAll('.record')].map((r) => r.getAttribute('href'))).toEqual(['/finance/records/sept']);
     navigate.mockRestore();
   });
 });

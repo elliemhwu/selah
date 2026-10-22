@@ -95,8 +95,8 @@ describe('SettingsPage', () => {
       ['Lunch', true],
       ['Travel', false],
     ]);
-    expect(links[1].getAttribute('href')).toBe('/settings/categories/Lunch');
-    expect(el.querySelector('.new-category')?.getAttribute('href')).toBe('/settings/categories/new');
+    expect(links[1].getAttribute('href')).toBe('/finance/categories/Lunch');
+    expect(el.querySelector('.new-category')?.getAttribute('href')).toBe('/finance/categories/new');
   });
 
   describe('backup', () => {
