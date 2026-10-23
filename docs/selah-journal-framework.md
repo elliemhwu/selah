@@ -1,6 +1,6 @@
 # Selah Journal — Module Framework
 
-_Snapshot: 2026-10-21 · Status: first phase built (Dear Diary, journal list, Life placeholder)_
+_Snapshot: 2026-10-23 · Status: first phase built (Dear Diary, journal list, Life placeholder); Life and many-to-many links designed ([ADR 0032](decisions/0032-journal-moment-links.md), proposed)_
 
 ## Purpose
 
@@ -18,12 +18,13 @@ A place to organize thoughts and feelings over time and to practice answering de
 - Everything else appears as sticky memos on the page, each type its own paper color:
   - **Comment**: a short reply from a later Ellie ("Replied by Ellie from 2026.10").
   - **God note**: what God would say, written in a mentoring voice, with an optional verse reference.
-  - **Moment**: the linked life event, showing a brief summary or photo; tapping opens it in Life.
+  - **Moment**: a linked life event, showing a brief summary or photo; tapping opens it in Life. A page can hold several.
 - **Review is an action, not a mode.** Reviewing means picking a memo type and sticking it on the page.
 
 ### Life
 
 - Main canvas: what actually happened. A delightful record of daily life, life events and precious memories.
+- Written into directly (a new moment needs no journal) and built from journals: a moment can start a new journal, and journals and moments link from either side ([ADR 0032](decisions/0032-journal-moment-links.md)).
 - Gathers people, places and so on. Approach not decided yet (AI-assisted extraction is a candidate, see Open questions).
 - Reversed presentation: the moment is the canvas; journals, photos and comments become memos.
 
@@ -32,7 +33,10 @@ A place to organize thoughts and feelings over time and to practice answering de
 ```
 moments    (id, date, title, summary)
 
-journals   (id, moment_id NULL, written_at, date_precision, body)
+journals   (id, written_at, date_precision, body)
+
+journal_moments (id, journal_id, moment_id)
+             UNIQUE (journal_id, moment_id) among live rows
 
 photos     (id, moment_id NULL, journal_id NULL, taken_at, url)
 
@@ -44,9 +48,9 @@ god_notes  (id, journal_id, written_at, body, verse_ref)
 
 Decisions behind it:
 
-- **No hub table.** Content tables link to each other directly.
-- **Many journals → one moment.** A big event can collect many entries over weeks. Trade-off: one journal links to at most one moment; a night about two unrelated things becomes two entries.
-- **`journals.moment_id` is nullable.** Many emotional nights have no clear event; a moment can be linked later during review, or never.
+- **No hub table.** Content tables link to each other directly; `journal_moments` is a plain join between two of them.
+- **Journals and moments are many-to-many** ([ADR 0032](decisions/0032-journal-moment-links.md)). A big event can collect many entries over weeks, and a night about two things can link both. Unlinking soft-deletes the link row, and linking the pair again revives it.
+- **Links are optional.** Many emotional nights have no clear event, and many moments are never written about; a link can be added later during review, or never.
 - **Photos attach to either.** Scans of handwritten pages belong to a journal; photos of memories belong to a moment.
 - **One `comments` table** with two nullable foreign keys, so "everything I wrote back to myself in year X" is one query across both.
 - **`date_precision`** (`day | month | season | year`) lets imported journals with guessed dates sit honestly on the timeline.
@@ -56,7 +60,7 @@ Decisions behind it:
 
 - No placement table. Memos are stacked below the writing, each on the left or the right.
 - Side, tilt (0.6° to 3° either way) and a small nudge come from a hash (FNV-1a) of the memo id alone, not from its place in the stack, so memos look scattered by hand, never jump between renders, and adding or linking one never moves the others. A run of memos on the same side is fine. A test pins the hash, since changing it would move every memo already on a page.
-- The linked moment comes first, as the page's context; then comments and god notes by `written_at`, so replies read as a timeline down the page. Comments on a moment show in Life, not on the diary page.
+- The linked moments come first, as the page's context, in the order they were linked; then comments and god notes by `written_at`, so replies read as a timeline down the page. Comments on a moment show in Life, not on the diary page.
 
 ## Architecture
 
@@ -97,14 +101,20 @@ Journal content is the most sensitive data in Selah.
 ## Decisions in the first phase (2026-10-21)
 
 - **Writing:** a new page is an empty lined sheet. It is stored on its first words, autosaves after a short pause (and when the page is left or the app goes to the background), and its address becomes `/journal/:id` without leaving the page. A page left empty is never stored. The body is kept exactly as written.
-- **Memos are form routes** (ADR 0022) in their own paper colour: `/journal/:id/comment`, `/journal/:id/god-note`, `/journal/:id/moment` (pick a moment, create one, or take it off the page). Editing a memo keeps its `written_at`, so it doesn't move down the page.
-- **Deleting** a journal also deletes its comments and god notes; deleting a moment unlinks its journals and deletes its comments. All are soft deletes.
+- **Memos are form routes** (ADR 0022) in their own paper colour: `/journal/:id/comment`, `/journal/:id/god-note`, `/journal/:id/moment` (pick moments, create one, or take one off the page; since ADR 0032 a page holds several). Editing a memo keeps its `written_at`, so it doesn't move down the page.
+- **Deleting** a journal also deletes its comments and god notes; deleting a moment unlinks its journals and deletes its comments. All are soft deletes. Since ADR 0032, unlinking means soft-deleting the link rows.
 - **Label:** a comment reads "Replied by Ellie · YYYY.MM" from its `written_at`. The name is part of the translatable text for now.
 - **Photos** wait until Selah has file storage.
 
+## Life and links (designed 2026-10-23, [ADR 0032](decisions/0032-journal-moment-links.md), proposed)
+
+- `/journal/life` is a timeline of moments with **New moment** (`/journal/life/moments/new`). A moment page offers **Write about it** (`/journal/new?moment=:id`, linked when its first words are stored), **Link journals** (`/journal/life/moments/:id/journals`) and **Edit**.
+- Both pickers save one link per tap and list what's linked first, each with a way to take it off.
+- The moment page lists its journals for now; laying them out as memos around the moment comes later.
+
 ## Open questions
 
-1. **Life entry flow:** is Life mainly written into directly on good days, or built from journals and imports (more of a gallery/timeline)? Decides what to build first.
+1. ~~**Life entry flow:**~~ Both: written into directly and built from journals ([ADR 0032](decisions/0032-journal-moment-links.md)). Imports come later.
 2. **People and places:** how to model them (`people` with aliases for 媽 / Mom / nicknames; fuzzy places), and how much AI extraction does (suggest-and-confirm is the candidate).
 3. **"What I actually felt"** appears as a memo in the mockup but isn't in the schema yet: own table, or part of a comment?
 4. **Multiple writing bursts per page:** is one journal per sitting enough, or should a later burst attach to the same page?
