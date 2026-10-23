@@ -14,7 +14,7 @@ The budget plan is versioned ([0012](0012-plan-versioning.md)). A version is a t
 - **Copying a version** is done by the client: it reads a version and saves it under a new id with a later start month. No special endpoint is needed.
 - **Only the newest version can change.** Saving or deleting any other version returns `409`. A new version must start after the newest one. Older versions are a read-only log of how the plan changed.
 - `GET /api/v1/finance/plan?month=YYYY-MM` returns the version active in that month: the latest one starting on or before it.
-- The API stores and returns what was entered: amount *or* percent, as anchored. Derived numbers (the other half of the anchor, monthly totals, envelope balances) are computed by `libs/shared-utils`, in the web app's editor and in the report endpoints.
+- The API stores and returns what was entered: amount _or_ percent, as anchored. Derived numbers (the other half of the anchor, monthly totals, envelope balances) are computed by `libs/shared-utils`, in the web app's editor and in the report endpoints.
 
 Rules that keep the percentage math well-defined:
 

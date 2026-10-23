@@ -1,67 +1,53 @@
-# 0032. Journals and moments link many-to-many, and Life is written into directly
+# 0032. A moment is a page of its own, and journals stick to it as memos
 
 - Status: Proposed
 - Date: 2026-10-23
-- Builds on: [0030](0030-journal-module.md) (the Journal module), [0029](0029-generic-row-store-and-two-builds.md) (row store), [0007](0007-offline-ready-data-conventions.md) (offline-ready rows), [0022](0022-forms-are-routes.md) (forms are routes)
+- Builds on: [0030](0030-journal-module.md) (the Journal module), [0022](0022-forms-are-routes.md) (forms are routes)
 - Design: [docs/selah-journal-framework.md](../selah-journal-framework.md)
 
 ## Context
 
-In the first Journal phase a journal points to at most one moment (`journals.moment_id`), and a moment can only be made from a diary page's moment memo. Life is a placeholder that lists those moments.
+In the first Journal phase only one side works. A blank diary page can be written on, and its moment memo either picks an existing moment or creates a new one. A moment, though, can only be made from a diary page, and its page in Life just lists its journals.
 
-The owner asked for three things:
+The owner wants the two sides to mirror each other, on the web app:
 
-1. Create a moment ("life") directly in Life, without a journal.
-2. Start a journal from a moment.
-3. Link the two from either side, with **many journals per moment and many moments per journal**.
+- A blank moment can be created directly in Life, as a blank journal can.
+- A moment page has a **journal memo**, the way into its journals: it writes a new journal for this moment, or brings in an existing one.
 
-That answers framework open question 1: Life is both written into directly and built from journals. A single `moment_id` column can't hold item 3. v0.2.0 is already released, so phones may hold journals with `momentId` set, and backups may contain it too.
+The relation stays as it is: **one moment, many journals; one journal, at most one moment** (`journals.moment_id`). A many-to-many link table was considered and turned down by the owner.
 
 ## Decision
 
 ### Data
 
-- **A link table, `journal.journal_moments`**, replaces `journals.moment_id`:
+- **No schema change.** `journals.moment_id` stays the only link, so no migration is needed for SQL, the device or backups.
+- **Bringing an existing journal into a moment moves it.** It sets that journal's `moment_id`. If the journal belonged to another moment, it leaves that one. This is an ordinary `prepareJournal` replace with a new `momentId`, the same rule the diary side already uses.
 
-  ```
-  journal_moments (id, journal_id, moment_id, created_at, updated_at, deleted_at)
-    UNIQUE (journal_id, moment_id) WHERE deleted_at IS NULL
-  ```
+### A blank moment
 
-  It follows ADR 0007 like every other row: a client-made UUID, timestamps, and soft delete. Unlinking soft-deletes the row, and linking the same pair again brings that row back instead of adding a second one, so the partial unique index never trips. It is a plain join between two content tables, not a hub: the framework's "no hub table" rule still holds.
+- `/journal/life/moments/new` opens a **blank moment canvas**, like a new diary page: the date (today, editable), a title line and a summary, with no form fields around them.
+- It is stored once the title has its first words, and autosaves after a short pause, when the page is left, and when the app goes to the background. Its address becomes `/journal/life/moments/:id` without leaving the page. A moment left without a title is never stored, since `prepareMoment` and the `title` CHECK require one.
+- The same canvas edits a stored moment, so there is no separate edit form. **Delete moment** sits at the foot of the page and asks for a second tap, as on the diary page. The cascade is unchanged: its journals are unlinked and stay, and its comments are deleted.
+- Life (`/journal/life`) lists moments newest first, with a **New moment** button.
 
-- **The link row is the only place a link lives.** Neither side stores a list of ids. A link row is created and removed on its own, so linking never rewrites a journal or a moment, and two links made at different times never conflict.
-- **Migration**: one SQL migration creates the table, copies every non-null `moment_id` into a link row (with the journal's `created_at`), and drops the column. In the app, a Dexie `version(3)` upgrade does the same on the device, and the backup format moves to version 2. A version-1 backup still restores: its `journals[].momentId` becomes link rows on the way in.
-- Comments, god notes and the future photos keep their own direct foreign keys. Only the journal–moment relation is many-to-many.
+### The journal memo on a moment
 
-### Rules (`libs/journal-core`)
+- The moment page has a **Stick a memo** bar, like the diary page, with **Journal** in it.
+- **Journal** opens a form route, `/journal/life/moments/:id/journal` (ADR 0022), in the journal memo's paper colour, with two parts:
+  - **Write a new one** goes to `/journal/new?moment=:id`: a blank diary page whose moment is set when its first words are stored. A page left empty stores nothing.
+  - **Pick a journal** lists live journals newest first, each with its date and an excerpt. A journal that belongs to another moment shows that moment's title, and picking it says that it moves from there. Journals already on this moment are listed first and can be taken off the page (`momentId` set to null).
+- Each journal on the moment is a **journal memo**: its date, the start of its body, and its own paper colour. Tapping it opens the diary page. Memos are stacked below the moment, oldest `written_at` first, with side and tilt from the hash of the journal id, as on the diary page. This is the framework's reversed presentation.
+- Excerpts are drawn at render time and never stored (ADR 0030).
 
-- `prepareJournal` and `JournalInput` lose `momentId`.
-- New `linkJournalMoment(journalId, momentId, data, time)` and `unlinkJournalMoment(...)` return `JournalChanges` (a new `journalMoments` table in it). Both sides must be live. Linking an existing live pair changes nothing.
-- **Creating with a link**: `prepareMoment` and `prepareJournal` stay single-row rules. The services save the new row and its link in one `JournalChanges`, so a moment created from a diary page, or a journal started from a moment, is linked from the moment it's stored.
-- **Deleting**: deleting a journal also soft-deletes its links (plus its comments and god notes, as now). Deleting a moment soft-deletes its links and its comments. The journals stay.
-- **Selectors**: `diaryPage` returns `moments: MomentRow[]`, and `momentPage` reads journals through the links. New `linkedMoments(journalId)` and `linkedJournals(momentId)` serve the pickers.
+### Rules and selectors (`libs/journal-core`)
 
-### Screens and routes
-
-| Route                                | What it is                                                                                                                                    |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/journal/life`                      | The Life timeline: moments newest first, each with a count of its journals, and a **New moment** button.                                      |
-| `/journal/life/moments/new`          | Form route: date, title, summary. Saves and opens the moment.                                                                                 |
-| `/journal/life/moments/:id`          | The moment as canvas. Actions: **Write about it**, **Link journals**, **Edit**.                                                               |
-| `/journal/life/moments/:id/edit`     | Form route: edit or delete the moment.                                                                                                        |
-| `/journal/life/moments/:id/journals` | Form route: the linked journals (each can be taken off), then the journal list (date + excerpt) to pick more.                                 |
-| `/journal/new?moment=:id`            | A new diary page that links to that moment when its first words are stored. An empty page still stores nothing, link included.                |
-| `/journal/:id/moment`                | Becomes **Moments on this page**: the linked moments (each can be taken off), pick more, or create a new one, which is linked as it is saved. |
-
-- **Each linked moment is its own memo** on the diary page. The moment memos come first, ordered by their link's `created_at`, so linking another one adds it at the end of that group and doesn't move the rest. Comments and god notes follow by `written_at`, as now. Side and tilt still come from the hash of the memo id. For a moment memo that id is the moment's id, so a moment looks the same on every page it's stuck to.
-- The moment page keeps showing its journals as a list in this phase ("Written about it", oldest first). Laying them out as memos around the moment (the framework's reversed presentation) is a later step.
-- Linking is a toggle in a picker, not a form with Save: each tap saves one link, like the current moment picker.
+- No new rules. `prepareJournal` already accepts a `momentId` change, and `prepareMoment` already checks a moment.
+- `momentPage` returns its journals as memos (`MomentMemo`, kind `journal`), in the same shape as `diaryPage`'s memos. A new `journalChoices(momentId, data)` gives the picker its order and each journal's current moment.
 
 ## Consequences
 
-- A night about two unrelated things can stay one entry. The framework's "one journal → at most one moment" trade-off is gone.
-- One more table for the row store and the .NET port: a migration, a row DTO and a table mapper, registered in `StoreService`, with integration tests (round trip, revive on relink, partial unique index). `pnpm db:codegen` and `pnpm openapi` regenerate the contract.
-- The device and backup migrations are the first ones that rewrite data rather than add tables. They get tests from a version-2 database and a version-1 backup.
-- The pickers list every live journal or moment. Search or a date filter can wait until there are enough of them to need one.
-- Journal bodies still appear only as excerpts drawn at render time, never stored on the link.
+- No migration, no new table, nothing new for the row store or the .NET port.
+- The moment page and the diary page share their autosave, memo layout and stick bar, and both are tested the same way.
+- A night about two unrelated things is still two journals; that trade-off stays from the framework.
+- Moving a journal is one tap. The picker names the moment it leaves, so a mis-tap is easy to see and undo.
+- Comments on moments are in the schema but have no memo yet. When they get one, it joins the moment's stick bar.
