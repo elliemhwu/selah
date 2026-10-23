@@ -1,6 +1,6 @@
 # Selah Journal — Module Framework
 
-_Snapshot: 2026-10-21 · Status: first phase built (Dear Diary, journal list, Life placeholder)_
+_Snapshot: 2026-10-23 · Status: first phase built (Dear Diary, journal list, Life placeholder); moment pages designed ([ADR 0032](decisions/0032-moment-pages.md), proposed)_
 
 ## Purpose
 
@@ -26,6 +26,8 @@ A place to organize thoughts and feelings over time and to practice answering de
 - Main canvas: what actually happened. A delightful record of daily life, life events and precious memories.
 - Gathers people, places and so on. Approach not decided yet (AI-assisted extraction is a candidate, see Open questions).
 - Reversed presentation: the moment is the canvas; journals, photos and comments become memos.
+- A moment can start blank, like a diary page. Its journal memo writes a new journal for it or brings in an existing one, which moves that journal from any other moment ([ADR 0032](decisions/0032-moment-pages.md)).
+- Routes: `/journal/life` (moments, newest first, and **New moment**), `/journal/life/moments/new` and `/journal/life/moments/:id` (the canvas, autosaved once the title has words), `/journal/life/moments/:id/journal` (the journal memo form), and `/journal/new?moment=:id` (a new page for that moment).
 
 ## Data model
 
@@ -104,7 +106,7 @@ Journal content is the most sensitive data in Selah.
 
 ## Open questions
 
-1. **Life entry flow:** is Life mainly written into directly on good days, or built from journals and imports (more of a gallery/timeline)? Decides what to build first.
+1. ~~**Life entry flow:**~~ Both: a moment can start blank or from a journal, and each side links the other through a memo ([ADR 0032](decisions/0032-moment-pages.md)). Imports come later.
 2. **People and places:** how to model them (`people` with aliases for 媽 / Mom / nicknames; fuzzy places), and how much AI extraction does (suggest-and-confirm is the candidate).
 3. **"What I actually felt"** appears as a memo in the mockup but isn't in the schema yet: own table, or part of a comment?
 4. **Multiple writing bursts per page:** is one journal per sitting enough, or should a later burst attach to the same page?

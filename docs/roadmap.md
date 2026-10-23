@@ -2,7 +2,7 @@
 
 The single source of truth for **where development stands**. Update it in the same branch as the work.
 
-_Last updated: 2026-10-22_
+_Last updated: 2026-10-23_
 
 ## Current state
 
@@ -39,7 +39,7 @@ _Last updated: 2026-10-22_
 
 - **Stage C (Journal module):** started 2026-10-21. The design is in [selah-journal-framework.md](selah-journal-framework.md), and the structure in [ADR 0030](decisions/0030-journal-module.md): the journal tables are rows in the store, the rules are in `libs/journal-core`, and each module has its own route (Finance at `/finance`, Journal at `/journal`, a home page at `/`). The first phase is built, in four stacked PRs: the docs; Finance moved to `/finance` (old links redirect); the `journal` schema, `journal-core` and the store tables, with integration tests; and the journal list, the Dear Diary page (lined page with autosave, memos placed from their id, the "Stick a memo" bar), the memo forms and a Life placeholder. Photos, people and places, import, the module lock and encryption come later.
 
-**Next step:** merge `develop` into `main` and create the release, then try it on a phone and a laptop for several days (write a few nights, stick memos, link a moment; enter a few days of spending). After that, choose the next Journal phase: the Life view (framework open question 1) or photos and import.
+**Next step:** merge `develop` into `main` and create the release, then try it on a phone and a laptop for several days (write a few nights, stick memos, link a moment; enter a few days of spending). The next Journal phase is designed ([ADR 0032](decisions/0032-moment-pages.md), proposed): a moment starts blank in Life like a diary page, and its journal memo writes a new journal for it or moves an existing one to it. The schema doesn't change. Photos and import come after.
 
 ## Phases (Finance MVP)
 
