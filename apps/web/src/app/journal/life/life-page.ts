@@ -5,8 +5,8 @@ import { JournalApi } from '../data/journal-api';
 import { JournalHeader } from '../journal-header';
 
 /**
- * Life (docs/selah-journal-framework.md): what actually happened, with the
- * moment as the canvas. A placeholder for now: it lists the moments.
+ * Life (docs/selah-journal-framework.md, ADR 0032): what actually happened.
+ * Lists the moments, newest first, and starts a new one.
  */
 @Component({
   selector: 'selah-life-page',

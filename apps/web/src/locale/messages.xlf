@@ -140,6 +140,10 @@
           <context context-type="linenumber">3,4</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/memo-form-page.html</context>
           <context context-type="linenumber">3,4</context>
         </context-group>
@@ -261,11 +265,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
-          <context context-type="linenumber">5,6</context>
+          <context context-type="linenumber">22,23</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/list/journal-list-page.html</context>
           <context context-type="linenumber">7,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">10,11</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/memo-form-page.html</context>
@@ -2738,11 +2746,19 @@
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.html</context>
           <context context-type="linenumber">6,8</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="journal.saved" datatype="html">
         <source>· Saved</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.html</context>
+          <context context-type="linenumber">9,11</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
           <context context-type="linenumber">9,11</context>
         </context-group>
       </trans-unit>
@@ -2751,6 +2767,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.html</context>
           <context context-type="linenumber">12,15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.notFound" datatype="html">
@@ -2790,6 +2810,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.html</context>
           <context context-type="linenumber">40</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.repliedBy" datatype="html">
@@ -2837,6 +2861,14 @@
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.html</context>
           <context context-type="linenumber">79,80</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">81,82</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">82,83</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="journal.addComment" datatype="html">
         <source>Comment</source>
@@ -2863,7 +2895,7 @@
         <source>Entry deleted.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/diary/diary-page.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.back" datatype="html">
@@ -2892,7 +2924,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.life" datatype="html">
@@ -2921,10 +2957,29 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">2,3</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.title" datatype="html">
+        <source>Journal</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
           <context context-type="linenumber">4,5</context>
         </context-group>
       </trans-unit>
@@ -2932,11 +2987,11 @@
         <source>Comment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">46</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">52</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/memo-form-page.html</context>
@@ -2947,43 +3002,142 @@
         <source>God note</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/journal.routes.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">64</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/memo-form-page.html</context>
           <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="life.placeholder" datatype="html">
-        <source>Life will gather what happened: moments, people and places. For now, here are the moments stuck on your pages.</source>
+      <trans-unit id="life.newMoment" datatype="html">
+        <source>New moment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/life/life-page.html</context>
           <context context-type="linenumber">4,6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="life.empty" datatype="html">
-        <source>No moments yet. Stick one on a journal entry.</source>
+        <source>No moments yet. Start one here, or stick one on a journal entry.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/life/life-page.html</context>
           <context context-type="linenumber">9,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.needsTitle" datatype="html">
+        <source>· Give it a title to keep it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">15,18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="life.notFound" datatype="html">
         <source>This moment isn&apos;t in Life.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
-          <context context-type="linenumber">7,8</context>
+          <context context-type="linenumber">25,26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="life.entries" datatype="html">
-        <source>Written about it</source>
+      <trans-unit id="life.toList" datatype="html">
+        <source>All moments</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
-          <context context-type="linenumber">19,20</context>
+          <context context-type="linenumber">26,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.date" datatype="html">
+        <source>Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.name" datatype="html">
+        <source>What happened</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">32,34</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
+          <context context-type="linenumber">53,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.summary" datatype="html">
+        <source>In a few words (optional)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">42,44</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">50,53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journal.blankEntry" datatype="html">
+        <source>An empty page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">62,64</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/list/journal-list-page.html</context>
+          <context context-type="linenumber">22,24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">28,30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">50,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.confirmDelete" datatype="html">
+        <source>Tap again to delete this moment; its entries stay</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.delete" datatype="html">
+        <source>Delete moment</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">75,77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.addJournal" datatype="html">
+        <source>Journal</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.html</context>
+          <context context-type="linenumber">84,88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="moment.deleted" datatype="html">
+        <source>Moment deleted. Its entries stay in the journal.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/life/moment-page.ts</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.newEntry" datatype="html">
@@ -3014,11 +3168,67 @@
           <context context-type="linenumber">13,14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="journal.blankEntry" datatype="html">
-        <source>An empty page</source>
+      <trans-unit id="journalMemo.write" datatype="html">
+        <source>Write a new entry</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/journal/list/journal-list-page.html</context>
-          <context context-type="linenumber">22,24</context>
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">15,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.current" datatype="html">
+        <source>On this moment</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">19,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.unlink" datatype="html">
+        <source>Take it off this moment</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.pick" datatype="html">
+        <source>Pick an entry</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.movesFrom" datatype="html">
+        <source>Moves here from “<x id="INTERPOLATION" equiv-text="{{ from.title }}"/>”</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.none" datatype="html">
+        <source>No other entries yet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.html</context>
+          <context context-type="linenumber">61,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.moved" datatype="html">
+        <source>Entry moved here from “<x id="title" equiv-text="choice.moment.title"/>”.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.linked" datatype="html">
+        <source>Entry stuck on the moment.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="journalMemo.unlinked" datatype="html">
+        <source>Entry taken off the moment.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/journal/memos/journal-memo-form-page.ts</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="memo.stick" datatype="html">
@@ -3124,27 +3334,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
           <context context-type="linenumber">43,44</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="moment.date" datatype="html">
-        <source>Date</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
-          <context context-type="linenumber">46,47</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="moment.name" datatype="html">
-        <source>What happened</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
-          <context context-type="linenumber">53,54</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="moment.summary" datatype="html">
-        <source>In a few words (optional)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
-          <context context-type="linenumber">59,60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="moment.create" datatype="html">

@@ -1,12 +1,12 @@
 <selah-journal-header view="life" back="/" />
 
 <div class="page">
-  <p class="muted intro" i18n="@@life.placeholder">Life will gather what happened: moments, people and places. For now, here are the moments stuck on your pages.</p>
+  <a class="btn btn-primary new-moment" routerLink="/journal/life/moments/new" i18n="@@life.newMoment">New moment</a>
 
   @if (moments.isLoading()) {
     <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
   } @else if (moments.value().length === 0) {
-    <p class="muted" i18n="@@life.empty">No moments yet. Stick one on a journal entry.</p>
+    <p class="muted intro" i18n="@@life.empty">No moments yet. Start one here, or stick one on a journal entry.</p>
   } @else {
     <ul class="moments">
       @for (moment of moments.value(); track moment.id) {

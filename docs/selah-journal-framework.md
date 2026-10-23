@@ -1,6 +1,6 @@
 # Selah Journal — Module Framework
 
-_Snapshot: 2026-10-23 · Status: first phase built (Dear Diary, journal list, Life placeholder); moment pages designed ([ADR 0032](decisions/0032-moment-pages.md), proposed)_
+_Snapshot: 2026-10-23 · Status: first phase built (Dear Diary, journal list, Life placeholder); moment pages with journal memos built ([ADR 0032](decisions/0032-moment-pages.md))_
 
 ## Purpose
 

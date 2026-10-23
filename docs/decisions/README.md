@@ -41,7 +41,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0029](0029-generic-row-store-and-two-builds.md)     | One app, two storage builds; the API becomes a generic row store                 | Accepted                                                              |
 | [0030](0030-journal-module.md)                       | The Journal module: rows in the store, rules in journal-core, a route per module | Accepted                                                              |
 | [0031](0031-publish-on-release.md)                   | Publish the app when a release is created, not on every merge into main          | Accepted                                                              |
-| [0032](0032-moment-pages.md)                         | A moment is a page of its own, and journals stick to it as memos                 | Proposed                                                              |
+| [0032](0032-moment-pages.md)                         | A moment is a page of its own, and journals stick to it as memos                 | Accepted                                                              |
 
 ## Template
 
