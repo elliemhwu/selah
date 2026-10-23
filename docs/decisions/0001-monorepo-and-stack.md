@@ -4,11 +4,9 @@
 - Date: 2026-10-05
 
 ## Context
-
 Selah is a personal PWA that will grow module by module (Finance first). The owner wants one repo for the frontend and shared code. Long term, the owner wants the backend in .NET.
 
 ## Decision
-
 - An Nx monorepo named `selah`, containing:
   - `apps/web`: Angular PWA
   - `apps/api`: NestJS
@@ -19,7 +17,6 @@ Selah is a personal PWA that will grow module by module (Finance first). The own
 - `apps/api` will later move to a **separate .NET Core repo**. The Angular monorepo stays as `selah`.
 
 ## Consequences
-
 - The API must be easy to port:
   - The OpenAPI contract is the boundary ([0002](0002-openapi-from-day-one.md)).
   - The schema is owned by plain SQL ([0008](0008-migrations-and-data-access.md)).
