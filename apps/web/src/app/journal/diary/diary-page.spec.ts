@@ -10,7 +10,7 @@ import { memoPlacement } from './memo-layout';
 describe('DiaryPage', () => {
   let replaceState: ReturnType<typeof vi.fn>;
 
-  async function render(id?: string, seed: Partial<DeviceSnapshot> = {}) {
+  async function render(id?: string, seed: Partial<DeviceSnapshot> = {}, query: Record<string, string> = {}) {
     replaceState = vi.fn();
     const device = deviceData(seed);
     TestBed.configureTestingModule({
@@ -18,7 +18,7 @@ describe('DiaryPage', () => {
       providers: [
         provideRouter([]),
         ...device.providers,
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}) } } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}), queryParamMap: convertToParamMap(query) } } },
         { provide: Location, useValue: { replaceState, back: vi.fn(), getState: () => null } },
         { provide: Toast, useValue: { show: vi.fn() } },
       ],
@@ -71,6 +71,21 @@ describe('DiaryPage', () => {
     type('First words, then more');
     await leaveSheet();
     expect(storage.snapshot().journals).toEqual([{ ...first, body: 'First words, then more', updatedAt: expect.any(String) }]);
+  });
+
+  it('starts a page for a moment, linked once it has words, with back going to the moment', async () => {
+    const { el, type, leaveSheet, storage } = await render(undefined, { moments: [storedMoment('m1')] }, { moment: 'm1' });
+    expect(el.querySelector('.back')?.getAttribute('href')).toBe('/journal/life/moments/m1');
+    type('About that day.');
+    await leaveSheet();
+    expect(storage.snapshot().journals).toEqual([expect.objectContaining({ body: 'About that day.', momentId: 'm1' })]);
+  });
+
+  it('starts a plain page when the moment it was started from is gone', async () => {
+    const { type, leaveSheet, storage } = await render(undefined, { moments: [storedMoment('m1', { deletedAt: '2026-10-22T00:00:00.000Z' })] }, { moment: 'm1' });
+    type('Still here.');
+    await leaveSheet();
+    expect(storage.snapshot().journals).toEqual([expect.objectContaining({ momentId: null })]);
   });
 
   it('shows an entry with its memos: the moment first, then replies by when they were written', async () => {

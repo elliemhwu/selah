@@ -1,5 +1,5 @@
 import { NotFoundError } from '@selah/shared-utils';
-import { diaryPage, journalList, momentList, momentPage } from './pages';
+import { diaryPage, journalChoices, journalList, momentList, momentPage } from './pages';
 import { comment, data, godNote, journal, moment } from './testing';
 
 const DELETED = { deletedAt: '2026-10-02T00:00:00.000Z' };
@@ -66,5 +66,40 @@ describe('lists', () => {
     const page = momentPage('m1', rows);
     expect(page.journals.map((j) => j.id)).toEqual(['j1']);
     expect(page.comments.map((c) => c.id)).toEqual(['c1']);
+    expect(page.memos).toEqual([{ kind: 'journal', id: 'j1', journal: page.journals[0] }]);
+  });
+
+  it("orders a moment's journal memos oldest first, leaving out deleted ones", () => {
+    const rows = data({
+      moments: [moment('m1')],
+      journals: [
+        journal('late', { momentId: 'm1', writtenAt: '2026-10-03T00:00:00.000Z' }),
+        journal('early', { momentId: 'm1', writtenAt: '2026-10-01T00:00:00.000Z' }),
+        journal('gone', { momentId: 'm1', ...DELETED }),
+      ],
+    });
+    expect(momentPage('m1', rows).memos.map((m) => m.id)).toEqual(['early', 'late']);
+  });
+});
+
+describe('journalChoices', () => {
+  it("puts the moment's own journals first, and names the moment each other one would move from", () => {
+    const rows = data({
+      moments: [moment('m1'), moment('m2', { title: 'Moving day' }), moment('m3', DELETED)],
+      journals: [
+        journal('mine', { momentId: 'm1', writtenAt: '2026-10-01T00:00:00.000Z' }),
+        journal('theirs', { momentId: 'm2', writtenAt: '2026-10-02T00:00:00.000Z' }),
+        journal('free', { writtenAt: '2026-10-03T00:00:00.000Z' }),
+        journal('orphan', { momentId: 'm3', writtenAt: '2026-10-04T00:00:00.000Z' }),
+        journal('gone', DELETED),
+      ],
+    });
+    const choices = journalChoices('m1', rows);
+    expect(choices.linked.map((c) => c.journal.id)).toEqual(['mine']);
+    expect(choices.others.map((c) => [c.journal.id, c.moment?.title ?? null])).toEqual([
+      ['orphan', null],
+      ['free', null],
+      ['theirs', 'Moving day'],
+    ]);
   });
 });

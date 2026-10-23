@@ -3,8 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import type { DeviceSnapshot } from '../../data/device-storage';
 import { deviceData, flushSaves, settle, storedComment, storedJournal, storedMoment } from '../../data/testing';
+import { Router } from '@angular/router';
 import { FormNavigation } from '../../ui/form-navigation';
 import { Toast } from '../../ui/toast';
+import { JournalMemoFormPage } from './journal-memo-form-page';
 import { MemoFormPage } from './memo-form-page';
 import { MomentFormPage } from './moment-form-page';
 
@@ -109,5 +111,47 @@ describe('MomentFormPage', () => {
     await flushSaves();
     expect(storage.snapshot().journals[0].momentId).toBeNull();
     expect(storage.snapshot().moments[0].deletedAt).toBeNull();
+  });
+});
+
+describe('JournalMemoFormPage', () => {
+  const seed = {
+    moments: [storedMoment('m1', { title: 'Moving day' }), storedMoment('m2', { title: 'First snow' })],
+    journals: [
+      storedJournal('mine', { momentId: 'm1', body: 'Boxes.' }),
+      storedJournal('theirs', { momentId: 'm2', body: 'So cold.' }),
+      storedJournal('free', { body: 'Nothing much.' }),
+    ],
+  };
+  const button = (el: HTMLElement, text: string) => [...el.querySelectorAll<HTMLButtonElement>('button')].find((b) => b.textContent?.includes(text))!;
+
+  it("lists the moment's own entries first, and says which ones would move", async () => {
+    const { el } = await render(JournalMemoFormPage, { id: 'm1' }, {}, seed);
+    expect(el.querySelector('.journal-paper')?.textContent).toContain('Boxes.');
+    const choices = [...el.querySelectorAll<HTMLButtonElement>('.choice')];
+    expect(choices.map((c) => c.querySelector('.excerpt')?.textContent?.trim()).sort()).toEqual(['Nothing much.', 'So cold.']);
+    expect(button(el, 'So cold.').querySelector('.moves')?.textContent).toBe('Moves here from “First snow”');
+  });
+
+  it('moves an entry from its old moment to this one', async () => {
+    const { el, storage, leave } = await render(JournalMemoFormPage, { id: 'm1' }, {}, seed);
+    button(el, 'So cold.').click();
+    await flushSaves();
+    expect(storage.snapshot().journals.find((j) => j.id === 'theirs')?.momentId).toBe('m1');
+    expect(leave).toHaveBeenCalledWith('/journal/life/moments/m1', 'Entry moved here from “First snow”.');
+  });
+
+  it('takes an entry off the moment', async () => {
+    const { el, storage } = await render(JournalMemoFormPage, { id: 'm1' }, {}, seed);
+    button(el, 'Take it off').click();
+    await flushSaves();
+    expect(storage.snapshot().journals.find((j) => j.id === 'mine')).toMatchObject({ momentId: null, deletedAt: null });
+  });
+
+  it('writes a new entry for the moment', async () => {
+    const { el } = await render(JournalMemoFormPage, { id: 'm1' }, {}, seed);
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    button(el, 'Write a new entry').click();
+    expect(navigate).toHaveBeenCalledWith(['/journal/new'], { queryParams: { moment: 'm1' }, replaceUrl: true });
   });
 });

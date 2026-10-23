@@ -41,21 +41,51 @@ export function momentList(data: JournalData): MomentRow[] {
   return data.moments.filter(isLive).sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
 }
 
+/** A memo stuck on a moment, the Life view's canvas (ADR 0032). */
+export type MomentMemo = { kind: 'journal'; id: string; journal: JournalRow };
+
 export interface MomentPage {
   moment: MomentRow;
   /** Its journals, oldest first. */
   journals: JournalRow[];
   comments: CommentRow[];
+  /** Its journals as memos, in the same order. */
+  memos: MomentMemo[];
 }
 
 /** One moment with what links to it; NotFoundError for an unknown or deleted one. */
 export function momentPage(id: string, data: JournalData): MomentPage {
   const moment = data.moments.find((m) => m.id === id && isLive(m));
   if (!moment) throw new NotFoundError(`Moment ${id} not found.`);
+  const journals = data.journals.filter((j) => j.momentId === id && isLive(j)).sort((a, b) => compareTimeline(a.writtenAt, a.id, b.writtenAt, b.id));
   return {
     moment,
-    journals: data.journals.filter((j) => j.momentId === id && isLive(j)).sort((a, b) => compareTimeline(a.writtenAt, a.id, b.writtenAt, b.id)),
+    journals,
     comments: data.comments.filter((c) => c.momentId === id && isLive(c)).sort((a, b) => compareTimeline(a.writtenAt, a.id, b.writtenAt, b.id)),
+    memos: journals.map((journal) => ({ kind: 'journal', id: journal.id, journal })),
+  };
+}
+
+export interface JournalChoice {
+  journal: JournalRow;
+  /** The live moment it belongs to now, if any; picking it for another moment moves it from this one. */
+  moment: MomentRow | null;
+}
+
+export interface JournalChoices {
+  /** The moment's own journals, newest first. */
+  linked: JournalChoice[];
+  /** Every other live journal, newest first. */
+  others: JournalChoice[];
+}
+
+/** The journals to pick from for a moment's journal memo (ADR 0032). */
+export function journalChoices(momentId: string, data: JournalData): JournalChoices {
+  const moments = new Map(data.moments.filter(isLive).map((m) => [m.id, m]));
+  const choices = journalList(data).map((journal) => ({ journal, moment: (journal.momentId && moments.get(journal.momentId)) || null }));
+  return {
+    linked: choices.filter((c) => c.moment?.id === momentId),
+    others: choices.filter((c) => c.moment?.id !== momentId),
   };
 }
 

@@ -12,6 +12,11 @@
   padding: 8px var(--gutter) 32px;
 }
 
+.new-moment {
+  min-height: 52px;
+  font-size: 16px;
+}
+
 .intro {
   margin: 0;
   font-style: italic;
@@ -37,29 +42,4 @@
 .moment-name {
   font-family: var(--font-title);
   font-size: 17px;
-}
-
-.moment-canvas {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 18px 18px 20px;
-  background: var(--memo-moment);
-  box-shadow: 0 2px 6px var(--memo-shadow);
-
-  h1 {
-    font-size: 24px;
-  }
-}
-
-.summary {
-  margin: 0;
-  font-family: var(--font-title);
-  white-space: pre-wrap;
-}
-
-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }

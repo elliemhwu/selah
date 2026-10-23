@@ -44,6 +44,17 @@ describe('Journal pages', () => {
     expect(life.el.querySelector('.views a.active')?.textContent?.trim()).toBe('Life');
   });
 
+  it('starts a new moment from Life', async () => {
+    const life = await open('/journal/life');
+    expect(life.el.querySelector('.new-moment')?.getAttribute('href')).toBe('/journal/life/moments/new');
+    TestBed.resetTestingModule();
+    const blank = await open('/journal/life/moments/new');
+    expect(blank.el.querySelector('#moment-name')).not.toBeNull();
+    TestBed.resetTestingModule();
+    const form = await open('/journal/life/moments/m1/journal', { moments: [storedMoment('m1')] });
+    expect(form.el.textContent).toContain('Write a new entry');
+  });
+
   it('is an entry on the Selah home page', async () => {
     const { el } = await open('/');
     expect([...el.querySelectorAll('.module')].map((m) => m.getAttribute('href'))).toEqual(['/finance', '/journal']);

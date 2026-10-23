@@ -1,0 +1,64 @@
+.header-spacer {
+  width: 60px;
+}
+
+.form-body {
+  gap: 28px;
+}
+
+.write {
+  width: 100%;
+  min-height: 52px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Each entry is a scrap of its diary page, margin rule and all.
+.journal-paper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background:
+    linear-gradient(to right, transparent 8px, var(--page-margin) 8px 9px, transparent 9px),
+    var(--page-lined);
+  box-shadow: 0 1px 3px var(--memo-shadow);
+}
+
+.choice {
+  width: 100%;
+  min-height: var(--touch);
+  border: 0;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.excerpt {
+  font-family: var(--font-title);
+  overflow-wrap: anywhere;
+}
+
+.moves {
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.take-off {
+  align-self: flex-start;
+  margin-top: 6px;
+}

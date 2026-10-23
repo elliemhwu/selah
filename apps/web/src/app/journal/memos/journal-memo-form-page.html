@@ -1,0 +1,65 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 i18n="@@journalMemo.title">Journal</h1>
+    <span class="header-spacer"></span>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@life.notFound">This moment isn't in Life.</p>
+} @else {
+  <div class="form-body">
+    <button type="button" class="btn btn-primary write" (click)="write()" i18n="@@journalMemo.write">Write a new entry</button>
+
+    @if (linked().length) {
+      <section aria-labelledby="linked-heading">
+        <h2 id="linked-heading" class="section-title" i18n="@@journalMemo.current">On this moment</h2>
+        <ul class="choices">
+          @for (view of linked(); track view.choice.journal.id) {
+            <li class="journal-paper">
+              <span class="small muted">{{ view.choice.journal.writtenAt | date: 'EEE d MMM y · HH:mm' }}</span>
+              <span class="excerpt">
+                @if (view.excerpt) {
+                  {{ view.excerpt }}
+                } @else {
+                  <span class="muted" i18n="@@journal.blankEntry">An empty page</span>
+                }
+              </span>
+              <button type="button" class="btn take-off" [disabled]="saving()" (click)="takeOff(view.choice)" i18n="@@journalMemo.unlink">Take it off this moment</button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section aria-labelledby="pick-heading">
+      <h2 id="pick-heading" class="section-title" i18n="@@journalMemo.pick">Pick an entry</h2>
+      @if (others().length) {
+        <ul class="choices">
+          @for (view of others(); track view.choice.journal.id) {
+            <li>
+              <button type="button" class="choice journal-paper" [disabled]="saving()" (click)="pick(view.choice)">
+                <span class="small muted">{{ view.choice.journal.writtenAt | date: 'EEE d MMM y · HH:mm' }}</span>
+                <span class="excerpt">
+                  @if (view.excerpt) {
+                    {{ view.excerpt }}
+                  } @else {
+                    <span class="muted" i18n="@@journal.blankEntry">An empty page</span>
+                  }
+                </span>
+                @if (view.choice.moment; as from) {
+                  <span class="moves small" i18n="@@journalMemo.movesFrom">Moves here from “{{ from.title }}”</span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted small" i18n="@@journalMemo.none">No other entries yet.</p>
+      }
+    </section>
+  </div>
+}

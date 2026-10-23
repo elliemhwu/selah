@@ -1,6 +1,6 @@
 # 0032. A moment is a page of its own, and journals stick to it as memos
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-23
 - Builds on: [0030](0030-journal-module.md) (the Journal module), [0022](0022-forms-are-routes.md) (forms are routes)
 - Design: [docs/selah-journal-framework.md](../selah-journal-framework.md)

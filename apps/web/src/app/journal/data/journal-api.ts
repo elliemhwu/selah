@@ -5,6 +5,7 @@ import {
   deleteMoment,
   diaryPage,
   type GodNoteInput,
+  journalChoices,
   type JournalChanges,
   type JournalData,
   type JournalInput,
@@ -57,6 +58,19 @@ export class JournalApi {
     return this.data().journals.some((j) => j.id === id && !j.deletedAt);
   }
 
+  /** `id` if it is a live moment, else null. */
+  liveMoment(id: string | null): string | null {
+    return id && this.data().moments.some((m) => m.id === id && !m.deletedAt) ? id : null;
+  }
+
+  /** The journals to pick from for a moment's journal memo; idle while `momentId` is undefined. */
+  journalChoices(momentId: () => string | undefined) {
+    return deviceResource(this.store, () => {
+      const value = momentId();
+      return value ? journalChoices(value, this.data()) : IDLE;
+    });
+  }
+
   /** Live moments, newest first. */
   moments() {
     return deviceResource(this.store, () => momentList(this.data()), { defaultValue: [] as StoredMoment[] });
@@ -77,7 +91,7 @@ export class JournalApi {
     return journal;
   }
 
-  /** Links a journal to a moment, or unlinks it with null. */
+  /** Links a journal to a moment, moving it from any other, or unlinks it with null. */
   async linkMoment(journalId: string, momentId: string | null): Promise<void> {
     await this.saveJournal(journalId, { ...this.existingJournal(journalId), momentId });
   }
@@ -91,8 +105,11 @@ export class JournalApi {
     await this.store.save({ moments: [moment], journals: [journal] });
   }
 
-  async saveMoment(id: string, input: MomentInput): Promise<void> {
-    await this.store.save({ moments: [this.momentRow(id, input, this.data())] });
+  /** Creates or replaces a moment. */
+  async saveMoment(id: string, input: MomentInput): Promise<StoredMoment> {
+    const moment = this.momentRow(id, input, this.data());
+    await this.store.save({ moments: [moment] });
+    return moment;
   }
 
   async saveComment(id: string, input: CommentInput): Promise<void> {

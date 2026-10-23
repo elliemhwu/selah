@@ -1,4 +1,4 @@
-<selah-journal-header view="diary">
+<selah-journal-header view="diary" [back]="back">
   <time [attr.datetime]="writtenAt()">{{ writtenAt() | date: 'EEE d MMM y · HH:mm' }}</time>
   <span class="save-status" role="status">
     @switch (status()) {
