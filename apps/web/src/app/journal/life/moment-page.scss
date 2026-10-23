@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  // Room for the memo bar.
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.save-status {
+  margin-left: 4px;
+}
+
+.missing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 32px var(--gutter);
+}
+
+// The moment is the canvas: a sheet of its own paper colour, written on directly.
+.moment-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 12px 0;
+  padding: 16px 18px 20px;
+  background: var(--memo-moment);
+  box-shadow: 0 1px 3px var(--memo-shadow);
+
+  input,
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: var(--ink-muted);
+      font-style: italic;
+    }
+  }
+}
+
+.canvas-date {
+  min-height: var(--touch);
+  color: var(--ink-muted);
+  font: 14px var(--font-text);
+}
+
+.canvas-title {
+  font: 24px / 1.3 var(--font-title);
+}
+
+.canvas-summary {
+  min-height: 30dvh;
+  font: 18px / 1.6 var(--font-title);
+  resize: none;
+}

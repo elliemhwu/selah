@@ -21,9 +21,20 @@ export const journalRoutes: Route[] = [
     loadComponent: () => import('./life/life-page').then((m) => m.LifePage),
   },
   {
+    path: 'life/moments/new',
+    title: $localize`:@@moment.title:Moment`,
+    loadComponent: () => import('./life/moment-page').then((m) => m.MomentPage),
+  },
+  {
     path: 'life/moments/:id',
     title: $localize`:@@moment.title:Moment`,
     loadComponent: () => import('./life/moment-page').then((m) => m.MomentPage),
+  },
+  {
+    path: 'life/moments/:id/journal',
+    title: $localize`:@@journalMemo.title:Journal`,
+    data: form,
+    loadComponent: () => import('./memos/journal-memo-form-page').then((m) => m.JournalMemoFormPage),
   },
   {
     path: ':id',

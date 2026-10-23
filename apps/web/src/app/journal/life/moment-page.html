@@ -1,33 +1,87 @@
-<selah-journal-header view="life" back="/journal/life" />
-
-<div class="page">
-  @if (page.isLoading()) {
-    <p class="muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
-  } @else if (notFound()) {
-    <p class="muted" i18n="@@life.notFound">This moment isn't in Life.</p>
-  } @else if (view(); as view) {
-    <article class="moment-canvas">
-      <span class="small muted">{{ view.moment.date | date: 'EEEE d MMMM y' }}</span>
-      <h1>{{ view.moment.title }}</h1>
-      @if (view.moment.summary) {
-        <p class="summary">{{ view.moment.summary }}</p>
+<selah-journal-header view="life" back="/journal/life">
+  <span i18n="@@moment.title">Moment</span>
+  <span class="save-status" role="status">
+    @switch (status()) {
+      @case ('saving') {
+        <ng-container i18n="@@journal.saving">· Saving…</ng-container>
       }
-    </article>
-
-    @if (view.journals.length) {
-      <section aria-labelledby="moment-journals">
-        <h2 id="moment-journals" class="section-title" i18n="@@life.entries">Written about it</h2>
-        <ul class="moments">
-          @for (journal of view.journals; track journal.id) {
-            <li>
-              <a class="moment" [routerLink]="['/journal', journal.id]">
-                <span class="small muted">{{ journal.writtenAt | date: 'd MMM y · HH:mm' }}</span>
-                <span>{{ excerptOf(journal.body) }}</span>
-              </a>
-            </li>
-          }
-        </ul>
-      </section>
+      @case ('saved') {
+        <ng-container i18n="@@journal.saved">· Saved</ng-container>
+      }
+      @case ('failed') {
+        <ng-container i18n="@@journal.notSaved">· Not saved yet</ng-container>
+      }
+      @case ('untitled') {
+        <ng-container i18n="@@moment.needsTitle">· Give it a title to keep it</ng-container>
+      }
     }
+  </span>
+</selah-journal-header>
+
+@if (loading()) {
+  <p class="missing muted small" role="status" i18n="@@home.loading">Turning the pages…</p>
+} @else if (notFound()) {
+  <div class="missing">
+    <p class="muted" i18n="@@life.notFound">This moment isn't in Life.</p>
+    <a class="btn" routerLink="/journal/life" i18n="@@life.toList">All moments</a>
+  </div>
+} @else {
+  <form class="moment-canvas" [formGroup]="form" (focusout)="flush()" (ngSubmit)="flush()">
+    <label class="cdk-visually-hidden" for="moment-date" i18n="@@moment.date">Date</label>
+    <input id="moment-date" class="canvas-date" type="date" formControlName="date" />
+    <label class="cdk-visually-hidden" for="moment-name" i18n="@@moment.name">What happened</label>
+    <input
+      id="moment-name"
+      class="canvas-title"
+      formControlName="title"
+      autocomplete="off"
+      [attr.maxlength]="maxTitle"
+      i18n-placeholder="@@moment.name"
+      placeholder="What happened"
+    />
+    <label class="cdk-visually-hidden" for="moment-summary" i18n="@@moment.summary">In a few words (optional)</label>
+    <textarea
+      id="moment-summary"
+      class="canvas-summary"
+      rows="3"
+      formControlName="summary"
+      [attr.maxlength]="maxSummary"
+      i18n-placeholder="@@moment.summary"
+      placeholder="In a few words (optional)"
+    ></textarea>
+  </form>
+
+  <section class="memos" i18n-aria-label="@@journal.memos" aria-label="Memos">
+    @for (view of memos(); track view.memo.id) {
+      <a class="memo memo-journal" [class.right]="view.side === 'right'" [style]="view.style" [routerLink]="['/journal', view.memo.id]">
+        <span class="memo-label"><ng-container i18n="@@journal.diary">Dear Diary</ng-container> · {{ view.memo.journal.writtenAt | date: 'd MMM y' }}</span>
+        <span class="memo-text">
+          @if (view.excerpt) {
+            {{ view.excerpt }}
+          } @else {
+            <span class="muted" i18n="@@journal.blankEntry">An empty page</span>
+          }
+        </span>
+      </a>
+    }
+  </section>
+
+  @if (saved()) {
+    <div class="danger">
+      <button type="button" class="btn btn-quiet" (click)="remove()">
+        @if (confirmingDelete()) {
+          <ng-container i18n="@@moment.confirmDelete">Tap again to delete this moment; its entries stay</ng-container>
+        } @else {
+          <ng-container i18n="@@moment.delete">Delete moment</ng-container>
+        }
+      </button>
+    </div>
   }
-</div>
+
+  <nav class="stick-bar" i18n-aria-label="@@journal.stick" aria-label="Stick a memo">
+    <span class="stick-title small muted" i18n="@@journal.stick">Stick a memo</span>
+    <div class="stick-buttons" style="--stick-count: 1">
+      <button type="button" class="stick stick-journal" [disabled]="!saved()" (click)="stickJournal()" i18n="@@moment.addJournal">Journal</button>
+    </div>
+  </nav>
+}

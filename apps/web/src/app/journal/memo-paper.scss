@@ -1,0 +1,121 @@
+// The memos stuck on a Journal page and the "Stick a memo" bar, shared by
+// the Dear Diary page and the moment page (ADR 0030, 0032).
+
+.memos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px var(--gutter) 8px;
+}
+
+.memo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-start;
+  box-sizing: border-box;
+  width: min(84%, 420px);
+  min-height: var(--touch);
+  padding: 14px 16px 16px;
+  box-shadow: 0 2px 6px var(--memo-shadow);
+  color: var(--ink);
+  text-decoration: none;
+
+  &.right {
+    align-self: flex-end;
+  }
+}
+
+.memo-comment {
+  background: var(--memo-comment);
+}
+
+.memo-god-note {
+  background: var(--memo-god-note);
+}
+
+.memo-moment {
+  background: var(--memo-moment);
+}
+
+// A journal on a moment is a scrap of its diary page, margin rule and all.
+.memo-journal {
+  background:
+    linear-gradient(to right, transparent 8px, var(--page-margin) 8px 9px, transparent 9px),
+    var(--page-lined);
+}
+
+.memo-label {
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+
+.memo-title {
+  font-family: var(--font-title);
+  font-size: 17px;
+}
+
+.memo-text {
+  font-family: var(--font-title);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.stick-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px var(--gutter) max(10px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--rule-strong);
+  background: var(--paper);
+}
+
+.stick-title {
+  text-align: center;
+}
+
+.stick-buttons {
+  display: grid;
+  grid-template-columns: repeat(var(--stick-count, 3), minmax(0, 1fr));
+  gap: 10px;
+  max-width: 592px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.stick {
+  min-height: var(--touch);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px var(--memo-shadow);
+  color: var(--ink);
+  font: 600 14px var(--font-text);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.stick-comment {
+  background: var(--memo-comment);
+}
+
+.stick-god-note {
+  background: var(--memo-god-note);
+}
+
+.stick-moment {
+  background: var(--memo-moment);
+}
+
+.stick-journal {
+  background: var(--page-lined);
+}
