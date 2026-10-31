@@ -130,8 +130,9 @@ describe('SettingsPage', () => {
       const backup = { ...EMPTY_SNAPSHOT, accounts: [storedAccount('cash')], records: [storedRecord('r1'), storedRecord('r2')] };
       await pick(fixture, el, toBackupJson(backup, '2026-10-01T09:30:00Z'));
       const confirm = el.querySelector('.restore-confirm')?.textContent?.replace(/\s+/g, ' ');
-      expect(confirm).toContain('Restore selah-backup-2026-10-01.json');
-      expect(confirm).toContain('with 2 entries and 1 accounts? This replaces everything on this device.');
+      expect(confirm).toContain('selah-backup-2026-10-01.json, from 1 Oct 2026');
+      expect(confirm).toContain('with 2 entries and 1 accounts.');
+      expect(confirm).toContain('Merge adds 3 rows');
       expect(storage.snapshot().accounts.map((a) => a.id)).toEqual(['old']);
 
       button(el, 'Replace my data').click();
@@ -139,6 +140,18 @@ describe('SettingsPage', () => {
       expect(storage.snapshot()).toEqual(backup);
       expect(TestBed.inject(AppSettings).value().weekStartDay).toBe(1); // the backup had no settings
       expect(toast.show).toHaveBeenCalledWith('Backup restored.');
+    });
+
+    it('merges a backup into this device, keeping what only this device has', async () => {
+      const storage = new MemoryStorage({ settings, accounts: [storedAccount('old')] });
+      const { fixture, el } = await render({}, storage);
+      const backup = { ...EMPTY_SNAPSHOT, accounts: [storedAccount('cash')], records: [storedRecord('r1')] };
+      await pick(fixture, el, toBackupJson(backup, '2026-10-01T09:30:00Z'));
+      button(el, 'Merge').click();
+      await flushSaves();
+      expect(storage.snapshot().accounts.map((a) => a.id).sort()).toEqual(['cash', 'old']);
+      expect(storage.snapshot().records.map((r) => r.id)).toEqual(['r1']);
+      expect(toast.show).toHaveBeenCalledWith('Backup merged.');
     });
 
     it("refuses a file that isn't a backup, changing nothing", async () => {

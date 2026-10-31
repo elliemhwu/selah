@@ -4,7 +4,7 @@ Context for AI assistants (and humans) working in this repo. Keep it short and c
 
 ## Project
 
-**Selah** is a personal life management PWA with a single user. It is built module by module: **Finance** is the first, **Journal** the second ([design](docs/selah-journal-framework.md)).
+**Selah** is a personal life management PWA with a single user. It is built module by module: **Finance** is the first, **Journal** the second ([design](docs/selah-journal-framework.md)), and **Planner** the third ([design](docs/selah-planner-framework.md), [v1 spec](docs/planner/v1-spec.md)).
 
 - Current status and next steps: [docs/roadmap.md](docs/roadmap.md). **Read this first** and update it when a phase moves.
 - Finance requirements: [docs/finance/requirements.md](docs/finance/requirements.md)
@@ -20,6 +20,7 @@ Nx monorepo:
 - `libs/shared-utils`: finance math as **pure functions**
 - `libs/finance-core`: finance rules and reports as **pure functions**, run by the app in both builds
 - `libs/journal-core`: journal rules and page selectors as **pure functions** ([ADR 0030](docs/decisions/0030-journal-module.md))
+- `libs/planner-core`: planner rules and the Today and week views as **pure functions** ([ADR 0033](docs/decisions/0033-planner-module.md))
 - `libs/api-client`: HTTP client for the API
 - PostgreSQL, one **schema per module** (`finance`, `core`, …)
 
@@ -41,7 +42,7 @@ Nx monorepo:
 - **Finance rules and reports only in `libs/finance-core`** ([ADR 0025](docs/decisions/0025-offline-first.md), [0026](docs/decisions/0026-finance-core-and-device-store.md)): record, account, category, plan and transfer rules; envelopes, checklist, review, movements.
   - The app runs them before every save, in both builds; the API stores what it is sent.
   - Change a rule in `finance-core`, never in the API or a web component.
-- **Modules stay apart** ([ADR 0030](docs/decisions/0030-journal-module.md)): each module has its own route (`/finance`, `/journal`), its own `<module>-core` lib and its own Postgres schema. `module:*` tags and an in-app import rule stop `finance` and `journal` importing each other; shared code goes in `shared-*` or the app's `core/`, `data/`, `ui/`. Journal bodies are never logged or copied.
+- **Modules stay apart** ([ADR 0030](docs/decisions/0030-journal-module.md)): each module has its own route (`/finance`, `/journal`), its own `<module>-core` lib and its own Postgres schema. `module:*` tags and an in-app import rule stop `finance`, `journal` and `planner` importing each other; shared code goes in `shared-*` or the app's `core/`, `data/`, `ui/`. Journal bodies are never logged or copied.
 - **Money is never a JS `number` in transit** ([ADR 0006](docs/decisions/0006-money-representation.md)): `NUMERIC` in the DB, decimal strings over the API, integer cents in calculations. TWD/JPY are whole units; round half away from zero.
 - **Data is ready for offline sync** ([ADR 0007](docs/decisions/0007-offline-ready-data-conventions.md)):
   - UUID primary keys that the client can generate

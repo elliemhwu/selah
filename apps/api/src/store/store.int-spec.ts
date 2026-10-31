@@ -3,6 +3,16 @@ import { createTestApp, newId, resetDatabase, type TestApp } from '../testing/te
 const BASE = '/api/v1/store';
 
 const NO_JOURNAL_ROWS = { moments: [], journals: [], comments: [], godNotes: [] };
+const NO_PLANNER_ROWS = {
+  areas: [],
+  projectGroups: [],
+  projects: [],
+  tasks: [],
+  taskRecords: [],
+  sessions: [],
+  sessionItems: [],
+  changeLog: [],
+};
 
 // Rows as the app stores them (ADR 0029). Timestamps are the client's own.
 const T1 = '2026-10-01T08:00:00.000Z';
@@ -178,8 +188,9 @@ function fullSnapshot() {
         deletedAt: null,
       },
     ],
-    // The journal tables have their own tests (journal-store.int-spec.ts).
+    // The journal and planner tables have their own tests (journal-store.int-spec.ts, planner-store.int-spec.ts).
     ...NO_JOURNAL_ROWS,
+    ...NO_PLANNER_ROWS,
     settings: settings({ weekStartDay: 7, defaultCurrency: 'JPY', updatedAt: T2 }),
   };
 }
@@ -223,6 +234,7 @@ describe('store API', () => {
       journals: [],
       comments: [],
       godNotes: [],
+      ...NO_PLANNER_ROWS,
       settings: null,
     });
   });
@@ -349,6 +361,7 @@ describe('store API', () => {
       records,
       budgetTransfers: [],
       ...NO_JOURNAL_ROWS,
+      ...NO_PLANNER_ROWS,
       settings: null,
     }).expect(204);
     expect((await load()).records).toHaveLength(3000);

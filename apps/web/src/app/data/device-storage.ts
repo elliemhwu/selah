@@ -16,6 +16,14 @@ export type StoredMoment = ApiSchemas['MomentRowDto'];
 export type StoredJournal = ApiSchemas['JournalRowDto'];
 export type StoredComment = ApiSchemas['CommentRowDto'];
 export type StoredGodNote = ApiSchemas['GodNoteRowDto'];
+export type StoredArea = ApiSchemas['AreaRowDto'];
+export type StoredProjectGroup = ApiSchemas['ProjectGroupRowDto'];
+export type StoredProject = ApiSchemas['ProjectRowDto'];
+export type StoredTask = ApiSchemas['TaskRowDto'];
+export type StoredTaskRecord = ApiSchemas['TaskRecordRowDto'];
+export type StoredSession = ApiSchemas['SessionRowDto'];
+export type StoredSessionItem = ApiSchemas['SessionItemRowDto'];
+export type StoredChangeLog = ApiSchemas['ChangeLogRowDto'];
 
 /** Everything on the device, deleted rows included. */
 export interface DeviceSnapshot {
@@ -29,6 +37,15 @@ export interface DeviceSnapshot {
   journals: StoredJournal[];
   comments: StoredComment[];
   godNotes: StoredGodNote[];
+  // Planner (ADR 0033)
+  areas: StoredArea[];
+  projectGroups: StoredProjectGroup[];
+  projects: StoredProject[];
+  tasks: StoredTask[];
+  taskRecords: StoredTaskRecord[];
+  sessions: StoredSession[];
+  sessionItems: StoredSessionItem[];
+  changeLog: StoredChangeLog[];
   /** Null until the settings are first saved. */
   settings: StoredSettings | null;
 }
@@ -46,6 +63,14 @@ export const EMPTY_SNAPSHOT: DeviceSnapshot = {
   journals: [],
   comments: [],
   godNotes: [],
+  areas: [],
+  projectGroups: [],
+  projects: [],
+  tasks: [],
+  taskRecords: [],
+  sessions: [],
+  sessionItems: [],
+  changeLog: [],
   settings: null,
 };
 
@@ -59,6 +84,14 @@ const TABLES = [
   'journals',
   'comments',
   'godNotes',
+  'areas',
+  'projectGroups',
+  'projects',
+  'tasks',
+  'taskRecords',
+  'sessions',
+  'sessionItems',
+  'changeLog',
 ] as const;
 
 /** Where the device keeps its data: IndexedDB in the app, memory in tests. */
@@ -112,31 +145,12 @@ export class DexieStorage implements DeviceStorage {
   }
 
   private async read(): Promise<DeviceSnapshot> {
-    const [accounts, categories, records, planVersions, budgetTransfers, moments, journals, comments, godNotes, settings] =
-      await Promise.all([
-        this.db.accounts.toArray(),
-        this.db.categories.toArray(),
-        this.db.records.toArray(),
-        this.db.planVersions.toArray(),
-        this.db.budgetTransfers.toArray(),
-        this.db.moments.toArray(),
-        this.db.journals.toArray(),
-        this.db.comments.toArray(),
-        this.db.godNotes.toArray(),
-        this.db.settings.get('settings'),
-      ]);
-    return {
-      accounts,
-      categories,
-      records,
-      planVersions,
-      budgetTransfers,
-      moments,
-      journals,
-      comments,
-      godNotes,
-      settings: settings ?? null,
-    };
+    const [rows, settings] = await Promise.all([
+      Promise.all(TABLES.map((table) => (this.db[table] as Table<unknown, string>).toArray())),
+      this.db.settings.get('settings'),
+    ]);
+    const tables = Object.fromEntries(TABLES.map((table, i) => [table, rows[i]]));
+    return { ...tables, settings: settings ?? null } as DeviceSnapshot;
   }
 }
 
@@ -151,6 +165,14 @@ class SelahDb extends Dexie {
   journals!: Table<StoredJournal, string>;
   comments!: Table<StoredComment, string>;
   godNotes!: Table<StoredGodNote, string>;
+  areas!: Table<StoredArea, string>;
+  projectGroups!: Table<StoredProjectGroup, string>;
+  projects!: Table<StoredProject, string>;
+  tasks!: Table<StoredTask, string>;
+  taskRecords!: Table<StoredTaskRecord, string>;
+  sessions!: Table<StoredSession, string>;
+  sessionItems!: Table<StoredSessionItem, string>;
+  changeLog!: Table<StoredChangeLog, string>;
 
   constructor(options?: DexieOptions) {
     super('selah', options);
@@ -169,6 +191,17 @@ class SelahDb extends Dexie {
       journals: 'id',
       comments: 'id',
       godNotes: 'id',
+    });
+    // The Planner module's tables (ADR 0033).
+    this.version(3).stores({
+      areas: 'id',
+      projectGroups: 'id',
+      projects: 'id',
+      tasks: 'id',
+      taskRecords: 'id',
+      sessions: 'id',
+      sessionItems: 'id',
+      changeLog: 'id',
     });
   }
 }

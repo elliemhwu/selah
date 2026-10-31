@@ -1,0 +1,128 @@
+<selah-planner-header i18n-title="@@planner.today" title="Today" [today]="today">
+  <a class="link-btn" routerLink="/planner/week" i18n="@@planner.week">Plan the week</a>
+</selah-planner-header>
+
+<div class="columns">
+<div class="page">
+  @if (view.isLoading()) {
+    <p class="muted small" role="status" i18n="@@planner.loading">Opening the planner…</p>
+  } @else if (view.error()) {
+    <p class="muted" i18n="@@planner.failed">Couldn't open the planner.</p>
+  } @else if (ready(); as v) {
+    @if (v.inboxCount) {
+      <a class="inbox-link" routerLink="/planner/inbox">
+        <span i18n="@@today.inbox"><span class="count">{{ v.inboxCount }}</span> unsorted in Inbox</span>
+        <selah-icon name="next" [size]="16" />
+      </a>
+    }
+
+    <section aria-labelledby="today-heading">
+      <div class="section-head">
+        <h2 id="today-heading" class="section-title" i18n="@@planner.today">Today</h2>
+        <span class="count">{{ v.openToday }}</span>
+      </div>
+      @for (task of v.today; track task.task.id) {
+        <selah-task-row [view]="task" [today]="today" />
+      } @empty {
+        <p class="muted empty" i18n="@@today.empty">Nothing planned for today.</p>
+      }
+    </section>
+
+    @if (v.openToday === 0 && v.queues.length) {
+      <section aria-labelledby="queues-heading">
+        <h2 id="queues-heading" class="section-title" i18n="@@today.queues">Up next in your queues</h2>
+        <ul class="list queues">
+          @for (queue of v.queues; track queue.project.id) {
+            <li>
+              <a class="queue" [routerLink]="['/planner/projects', queue.project.id]">
+                <span class="small muted">{{ queue.project.name }} · {{ queue.done }}/{{ queue.total }}</span>
+                <span>{{ queue.next.task.title }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    @if (v.overdue.length) {
+      <section aria-labelledby="overdue-heading">
+        <div class="section-head">
+          <h2 id="overdue-heading" class="section-title" i18n="@@today.overdue">Overdue</h2>
+          <span class="count">{{ v.overdue.length }}</span>
+        </div>
+        @for (task of v.overdue; track task.task.id) {
+          <selah-task-row [view]="task" [today]="today" [showPlan]="true">
+            <a class="link-btn" [routerLink]="['/planner/tasks', task.task.id, 'plan']" i18n="@@task.planAction">Plan…</a>
+          </selah-task-row>
+        }
+      </section>
+    }
+
+    @if (v.slipped.length) {
+      <section aria-labelledby="slipped-heading">
+        <div class="section-head">
+          <h2 id="slipped-heading" class="section-title" i18n="@@today.slipped">Slipped</h2>
+          <span class="count">{{ v.slipped.length }}</span>
+        </div>
+        @for (task of v.slipped; track task.task.id) {
+          <selah-task-row class="slipped" [view]="task" [today]="today" [showPlan]="true" [checkable]="false">
+            <button type="button" class="link-btn" [disabled]="busy()" (click)="planToday(task)" i18n="@@plan.today">Today</button>
+            <a class="link-btn" [routerLink]="['/planner/tasks', task.task.id, 'plan']" i18n="@@task.planAction">Plan…</a>
+            <button type="button" class="link-btn" [disabled]="busy()" (click)="letGo(task)" i18n="@@task.letGo">Let go</button>
+          </selah-task-row>
+        }
+      </section>
+    }
+
+    @if (v.dueSoon.length) {
+      <section aria-labelledby="due-heading">
+        <h2 id="due-heading" class="section-title" i18n="@@today.dueSoon">Due soon</h2>
+        @for (task of v.dueSoon; track task.task.id) {
+          <selah-task-row [view]="task" [today]="today">
+            <a class="link-btn" [routerLink]="['/planner/tasks', task.task.id, 'plan']" i18n="@@task.planAction">Plan…</a>
+          </selah-task-row>
+        }
+      </section>
+    }
+
+    @if (v.pool.length) {
+      <section>
+        <button type="button" class="pool-toggle" [attr.aria-expanded]="poolOpen()" aria-controls="pool" (click)="togglePool()">
+          <span class="section-title" i18n="@@today.pool">This week &amp; month</span>
+          <span class="count">{{ v.pool.length }}</span>
+        </button>
+        @if (poolOpen()) {
+          <div id="pool">
+            @for (task of v.pool; track task.task.id) {
+              <selah-task-row [view]="task" [today]="today" [showPlan]="true">
+                <button type="button" class="link-btn" [disabled]="busy()" (click)="planToday(task)" i18n="@@plan.today">Today</button>
+              </selah-task-row>
+            }
+          </div>
+        }
+      </section>
+    }
+  }
+</div>
+
+<aside class="upcoming" aria-labelledby="upcoming-heading">
+  <h2 id="upcoming-heading" class="section-title" i18n="@@today.upcoming">Coming up</h2>
+  @for (day of upcoming.value(); track day.date) {
+    <div class="day">
+      <span class="day-name small">{{ day.date | date: 'EEE d' }}</span>
+      <div class="day-tasks">
+        @for (task of day.tasks; track task.task.id) {
+          <selah-task-row [view]="task" [today]="today" />
+        } @empty {
+          <span class="muted small free">·</span>
+        }
+      </div>
+    </div>
+  }
+</aside>
+</div>
+
+<div class="actions">
+  <a class="btn" routerLink="/planner/study/new"><selah-icon name="study" [size]="18" /><span i18n="@@study.title">Study now</span></a>
+  <a class="btn btn-primary new-task" routerLink="/planner/tasks/new"><selah-icon name="add" [size]="16" /><span i18n="@@task.newTitle">New task</span></a>
+</div>

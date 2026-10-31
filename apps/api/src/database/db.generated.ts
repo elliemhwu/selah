@@ -64,6 +64,7 @@ export interface FinanceBudgetItemVersions {
   deletedAt: Timestamp | null;
   id: Generated<string>;
   name: string;
+  onChecklist: Generated<boolean>;
   onReset: string | null;
   parentItemId: string | null;
   percent: Numeric | null;
@@ -182,6 +183,102 @@ export interface JournalMoments {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface PlannerAreas {
+  archivedAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  name: string;
+  position: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerChangeLog {
+  changedAt: Timestamp;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  entity: string;
+  entityId: string;
+  field: string;
+  id: Generated<string>;
+  newValue: string | null;
+  oldValue: string | null;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerProjectGroups {
+  archivedAt: Timestamp | null;
+  areaId: string;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  name: string;
+  parentGroupId: string | null;
+  position: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerProjects {
+  archivedAt: Timestamp | null;
+  areaId: string;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  groupId: string | null;
+  id: Generated<string>;
+  mode: Generated<string>;
+  name: string;
+  position: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerSessionItems {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  position: number;
+  projectId: string | null;
+  sessionId: string;
+  taskId: string | null;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerSessions {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  endedAt: Timestamp | null;
+  id: Generated<string>;
+  startedAt: Timestamp;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerTaskRecords {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  kind: string;
+  occurredAt: Timestamp | null;
+  occurredOn: string;
+  sessionId: string | null;
+  taskId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface PlannerTasks {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  dueDate: string | null;
+  id: Generated<string>;
+  later: Generated<boolean>;
+  notes: string | null;
+  planGrain: string | null;
+  planStart: string | null;
+  position: number;
+  prioritizedOn: string | null;
+  projectId: string | null;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface DB {
   "core.settings": CoreSettings;
   "finance.accounts": FinanceAccounts;
@@ -197,4 +294,12 @@ export interface DB {
   "journal.godNotes": JournalGodNotes;
   "journal.journals": JournalJournals;
   "journal.moments": JournalMoments;
+  "planner.areas": PlannerAreas;
+  "planner.changeLog": PlannerChangeLog;
+  "planner.projectGroups": PlannerProjectGroups;
+  "planner.projects": PlannerProjects;
+  "planner.sessionItems": PlannerSessionItems;
+  "planner.sessions": PlannerSessions;
+  "planner.taskRecords": PlannerTaskRecords;
+  "planner.tasks": PlannerTasks;
 }

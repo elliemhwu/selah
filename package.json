@@ -11,7 +11,7 @@
     "db:new": "dbmate new",
     "db:status": "dbmate status",
     "db:test:prepare": "dbmate -e TEST_DATABASE_URL up",
-    "db:codegen": "kysely-codegen --dialect postgres --camel-case --date-parser string --numeric-parser string --include-pattern \"{core,finance,journal}.*\" --out-file apps/api/src/database/db.generated.ts",
+    "db:codegen": "kysely-codegen --dialect postgres --camel-case --date-parser string --numeric-parser string --include-pattern \"{core,finance,journal,planner}.*\" --out-file apps/api/src/database/db.generated.ts",
     "openapi": "nx run api:openapi && pnpm api-client:gen",
     "api-client:gen": "openapi-typescript apps/api/openapi.json -o libs/api-client/src/lib/schema.generated.ts",
     "icons": "node scripts/icons.mjs"

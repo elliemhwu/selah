@@ -59,13 +59,24 @@
 
     @if (pending(); as chosen) {
       <div class="restore-confirm" role="alert">
-        <p i18n="@@backup.confirm">
-          Restore <strong>{{ chosen.fileName }}</strong>, from {{ chosen.summary.exportedAt | date: 'd MMM y, HH:mm' }}, with
-          {{ chosen.summary.records }} entries and {{ chosen.summary.accounts }} accounts? This replaces everything on this device.
+        <p i18n="@@backup.chosen">
+          <strong>{{ chosen.fileName }}</strong>, from {{ chosen.summary.exportedAt | date: 'd MMM y, HH:mm' }}, with {{ chosen.summary.records }} entries and
+          {{ chosen.summary.accounts }} accounts.
+        </p>
+        <p class="small">
+          @if (chosen.merge.added + chosen.merge.updated) {
+            <ng-container i18n="@@backup.mergeSummary"
+              >Merge adds {{ chosen.merge.added }} rows this device doesn't have and takes {{ chosen.merge.updated }} newer ones; nothing is removed.</ng-container
+            >
+          } @else {
+            <ng-container i18n="@@backup.mergeNothing">This device already has everything in this backup.</ng-container>
+          }
+          <ng-container i18n="@@backup.replaceWarning">Replace swaps everything on this device for the backup.</ng-container>
         </p>
         <div class="backup-actions">
           <button type="button" class="btn btn-quiet" (click)="pending.set(null)" i18n="@@action.cancel">Cancel</button>
-          <button type="button" class="btn btn-primary" [disabled]="restoring()" (click)="restore()" i18n="@@backup.replace">Replace my data</button>
+          <button type="button" class="btn" [disabled]="restoring()" (click)="restore()" i18n="@@backup.replace">Replace my data</button>
+          <button type="button" class="btn btn-primary" [disabled]="restoring() || !(chosen.merge.added + chosen.merge.updated)" (click)="merge()" i18n="@@backup.merge">Merge</button>
         </div>
       </div>
     } @else {
@@ -73,7 +84,7 @@
         <button type="button" class="btn" (click)="download()" i18n="@@backup.download">Download a backup</button>
         <label class="btn restore-label">
           <input type="file" accept="application/json,.json" class="cdk-visually-hidden" (change)="choose($any($event.target))" />
-          <span i18n="@@backup.restore">Restore a backup…</span>
+          <span i18n="@@backup.mergeOrRestore">Merge or restore a backup…</span>
         </label>
       </div>
     }

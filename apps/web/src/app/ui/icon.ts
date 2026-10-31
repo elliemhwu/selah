@@ -13,6 +13,11 @@ const PATHS = {
   settings: 'M4 6h8M16 6h2M4 16h2M10 16h8M14 4v4M8 14v4',
   back: 'M13 5l-6 6 6 6',
   journal: 'M6 3h9a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2zM6 17a2 2 0 0 1 2-2h9M9 7h5',
+  calendar: 'M3 4h16v15H3zM3 8.5h16M7.5 2v4M14.5 2v4',
+  list: 'M3 5h16M3 11h16M3 17h10',
+  inbox: 'M3 12.5h5l1.5 2.5h3l1.5-2.5h5M5 4h12l2 8.5V18H3v-5.5z',
+  study: 'M3.5 5H9a2 2 0 0 1 2 2v11a2 2 0 0 0-2-2H3.5zM18.5 5H13a2 2 0 0 0-2 2v11a2 2 0 0 1 2-2h5.5z',
+  next: 'M9 5l6 6-6 6',
 } as const;
 
 export type IconName = keyof typeof PATHS;

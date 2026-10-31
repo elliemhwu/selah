@@ -34,5 +34,11 @@ export class SelahHomePage {
       name: $localize`:@@selahHome.journal:Journal`,
       description: $localize`:@@selahHome.journalHint:Dear Diary, and what really happened`,
     },
+    {
+      path: '/planner',
+      icon: 'calendar',
+      name: $localize`:@@selahHome.planner:Planner`,
+      description: $localize`:@@selahHome.plannerHint:Today, projects and the week ahead`,
+    },
   ];
 }

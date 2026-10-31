@@ -30,6 +30,10 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./journal/journal.routes').then((m) => m.journalRoutes),
   },
   {
+    path: 'planner',
+    loadChildren: () => import('./planner/planner.routes').then((m) => m.plannerRoutes),
+  },
+  {
     path: 'settings',
     title: $localize`:@@settings.title:Settings`,
     loadComponent: () => import('./settings/settings-page').then((m) => m.SettingsPage),

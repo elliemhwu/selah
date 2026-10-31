@@ -32,7 +32,7 @@ export async function createTestApp(): Promise<TestApp> {
 export async function resetDatabase(db: Database): Promise<void> {
   const tables = await sql<{ name: string }>`
     select format('%I.%I', schemaname, tablename) as name
-    from pg_tables where schemaname in ('core', 'finance', 'journal')
+    from pg_tables where schemaname in ('core', 'finance', 'journal', 'planner')
   `.execute(db);
   if (tables.rows.length === 0) return;
   await sql.raw(`truncate ${tables.rows.map((t) => t.name).join(', ')} cascade`).execute(db);
