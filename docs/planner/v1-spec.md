@@ -52,14 +52,14 @@ Every table follows [ADR 0007](../decisions/0007-offline-ready-data-conventions.
 
 | Table            | Columns                                                                                                                                                                              |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `areas`          | `name`, `position NUMERIC`, `archived_at`                                                                                                                                            |
+| `areas`          | `name`, `position DOUBLE PRECISION`, `archived_at`                                                                                                                                   |
 | `project_groups` | `area_id`, `parent_group_id` (nullable), `name`, `position`, `archived_at`                                                                                                           |
 | `projects`       | `area_id`, `group_id` (nullable), `name`, `mode` (`list` \| `queue`), `position`, `archived_at`                                                                                      |
 | `tasks`          | `project_id` (nullable = Inbox), `title`, `notes`, `position`, `due_date DATE`, `plan_start DATE`, `plan_grain` (`day` \| `week` \| `month`), `later BOOLEAN`, `prioritized_on DATE` |
-| `records`        | `task_id`, `kind` (`worked_on` \| `done` \| `let_go`), `occurred_on DATE`, `occurred_at TIMESTAMPTZ` (nullable: "done yesterday" has no time), `session_id` (nullable)               |
+| `task_records`   | `task_id`, `kind` (`worked_on` \| `done` \| `let_go`), `occurred_on DATE`, `occurred_at TIMESTAMPTZ` (nullable: "done yesterday" has no time), `session_id` (nullable)               |
 | `sessions`       | `started_at`, `ended_at` (nullable)                                                                                                                                                  |
 | `session_items`  | `session_id`, `project_id` (a queue: "its next item") or `task_id` (exactly one), `position`                                                                                         |
-| `changes`        | `entity` (`task` \| `record`), `entity_id`, `field`, `old_value JSONB`, `new_value JSONB`, `changed_at`                                                                              |
+| `change_log`     | `entity` (`task` \| `task_record`), `entity_id`, `field`, `old_value TEXT`, `new_value TEXT` ('2026-11-04/day', 'later', a date), `changed_at`                                       |
 
 **Constraints**
 
@@ -72,7 +72,7 @@ Every table follows [ADR 0007](../decisions/0007-offline-ready-data-conventions.
 - A queue task never has a plan; moving a task into a queue clears its plan.
 - Setting a plan clears `later`, and setting `later` clears the plan.
 - A task has at most one live `done` or `let_go` record; recording one soft-deletes the other.
-- Every change to a task's plan, `later`, due date, or to a record's day or deletion adds a `changes` row in the same save.
+- Every change to a task's plan, `later`, due date, or to a record's day or deletion adds a `change_log` row in the same save.
 - `position` is a number: inserting between two rows takes their midpoint, so reordering saves one row.
 
 ## 5. Calculated views (`planner-core`)
@@ -113,8 +113,8 @@ A session left open closes at the time of its last record when the next one star
 
 ## 7. Data flow
 
-- The planner tables are rows in the store ([ADR 0029](../decisions/0029-generic-row-store-and-two-builds.md)): a row DTO and table mapper each in `apps/api/src/planner/rows/`, registered in `StoreService` in save order (areas → project_groups → projects → tasks → sessions → session_items → records → changes).
-- Screens call `apps/web/src/app/planner/data/planner-api.ts`, which reads the `DeviceStore`, runs the `planner-core` rule for the change, and saves the rows it returns (the task, its records and its `changes` rows) in one save.
+- The planner tables are rows in the store ([ADR 0029](../decisions/0029-generic-row-store-and-two-builds.md)): a row DTO and table mapper each in `apps/api/src/planner/rows/`, registered in `StoreService` in save order (areas → project_groups → projects → tasks → sessions → session_items → task_records → change_log). Store keys are camelCase and global across modules, so Finance's `records` stays theirs: `taskRecords`, `changeLog`.
+- Screens call `apps/web/src/app/planner/data/planner-api.ts`, which reads the `DeviceStore`, runs the `planner-core` rule for the change, and saves the rows it returns (the task, its records and its `change_log` rows) in one save.
 - `planner-core` exports the row types, the rules (`prepareTask`, `planTask`, `recordDone`, `recordWorkedOn`, `letGo`, …) and the views (`todayView`, `weekView`, `queueNext`), all taking `today: LocalDate` as an argument so tests never depend on the clock.
 
 ## 8. Acceptance scenarios
@@ -146,8 +146,8 @@ A session left open closes at the time of its last record when the next one star
 ## 10. Out of scope (designed for, not built)
 
 - **Agenda → weekly events, planned time blocks, appointments** (v2): sessions gain a planned start and end, a firmness and an agenda link; firm blocks record themselves.
-- **Routines and habits**: `records.task_id` becomes nullable next to a `habit_id`, with a one-of check.
-- **Insights** from `changes` and records.
+- **Routines and habits**: `task_records.task_id` becomes nullable next to a `habit_id`, with a one-of check.
+- **Insights** from `change_log` and task records.
 - **Pace-based "at risk"** for queues with a due date.
 - **Availability and context filters.**
 - **Reading / Study module** (passes, per-chapter notes).

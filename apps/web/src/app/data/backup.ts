@@ -7,8 +7,21 @@ import { type DeviceSnapshot, EMPTY_SNAPSHOT } from './device-storage';
 const FORMAT = 'selah-backup';
 const VERSION = 1;
 const TABLES = ['accounts', 'categories', 'records', 'planVersions', 'budgetTransfers'] as const;
-/** Added with the Journal module (ADR 0030); backups from before it don't have them. */
-const LATER_TABLES = ['moments', 'journals', 'comments', 'godNotes'] as const;
+/** Added with the Journal (ADR 0030) and Planner (ADR 0033) modules; backups from before them don't have them. */
+const LATER_TABLES = [
+  'moments',
+  'journals',
+  'comments',
+  'godNotes',
+  'areas',
+  'projectGroups',
+  'projects',
+  'tasks',
+  'taskRecords',
+  'sessions',
+  'sessionItems',
+  'changeLog',
+] as const;
 
 export interface BackupFile {
   format: typeof FORMAT;

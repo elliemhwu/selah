@@ -12,6 +12,14 @@ import { CommentRowDto } from '../journal/rows/comments';
 import { GodNoteRowDto } from '../journal/rows/god-notes';
 import { JournalRowDto } from '../journal/rows/journals';
 import { MomentRowDto } from '../journal/rows/moments';
+import { AreaRowDto } from '../planner/rows/areas';
+import { ChangeLogRowDto } from '../planner/rows/change-log';
+import { ProjectGroupRowDto } from '../planner/rows/project-groups';
+import { ProjectRowDto } from '../planner/rows/projects';
+import { SessionItemRowDto } from '../planner/rows/session-items';
+import { SessionRowDto } from '../planner/rows/sessions';
+import { TaskRecordRowDto } from '../planner/rows/task-records';
+import { TaskRowDto } from '../planner/rows/tasks';
 
 // The whole store, and a set of row changes (ADR 0029). The shapes match the
 // app's DeviceSnapshot and DeviceChanges, so the API build stores exactly
@@ -58,6 +66,30 @@ export class StoreSnapshotDto {
   @Rows(() => GodNoteRowDto, true)
   godNotes!: GodNoteRowDto[];
 
+  @Rows(() => AreaRowDto, true)
+  areas!: AreaRowDto[];
+
+  @Rows(() => ProjectGroupRowDto, true)
+  projectGroups!: ProjectGroupRowDto[];
+
+  @Rows(() => ProjectRowDto, true)
+  projects!: ProjectRowDto[];
+
+  @Rows(() => TaskRowDto, true)
+  tasks!: TaskRowDto[];
+
+  @Rows(() => TaskRecordRowDto, true)
+  taskRecords!: TaskRecordRowDto[];
+
+  @Rows(() => SessionRowDto, true)
+  sessions!: SessionRowDto[];
+
+  @Rows(() => SessionItemRowDto, true)
+  sessionItems!: SessionItemRowDto[];
+
+  @Rows(() => ChangeLogRowDto, true)
+  changeLog!: ChangeLogRowDto[];
+
   @ApiProperty({ type: SettingsRowDto, nullable: true, description: 'Null until the settings are first saved.' })
   @IsOptional()
   @ValidateNested()
@@ -93,6 +125,30 @@ export class StoreChangesDto {
 
   @Rows(() => GodNoteRowDto, false)
   godNotes?: GodNoteRowDto[];
+
+  @Rows(() => AreaRowDto, false)
+  areas?: AreaRowDto[];
+
+  @Rows(() => ProjectGroupRowDto, false)
+  projectGroups?: ProjectGroupRowDto[];
+
+  @Rows(() => ProjectRowDto, false)
+  projects?: ProjectRowDto[];
+
+  @Rows(() => TaskRowDto, false)
+  tasks?: TaskRowDto[];
+
+  @Rows(() => TaskRecordRowDto, false)
+  taskRecords?: TaskRecordRowDto[];
+
+  @Rows(() => SessionRowDto, false)
+  sessions?: SessionRowDto[];
+
+  @Rows(() => SessionItemRowDto, false)
+  sessionItems?: SessionItemRowDto[];
+
+  @Rows(() => ChangeLogRowDto, false)
+  changeLog?: ChangeLogRowDto[];
 
   @ApiPropertyOptional({ type: SettingsRowDto })
   @IsOptional()

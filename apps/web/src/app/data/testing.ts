@@ -6,6 +6,7 @@ import {
   type DeviceSnapshot,
   MemoryStorage,
   type StoredAccount,
+  type StoredArea,
   type StoredBudgetTransfer,
   type StoredCategory,
   type StoredComment,
@@ -13,7 +14,10 @@ import {
   type StoredJournal,
   type StoredMoment,
   type StoredPlanVersion,
+  type StoredProject,
   type StoredRecord,
+  type StoredTask,
+  type StoredTaskRecord,
 } from './device-storage';
 import { DEVICE_STORAGE, DeviceStore } from './device-store';
 
@@ -152,6 +156,60 @@ export function storedGodNote(id: string, journalId: string, fields: Partial<Sto
     writtenAt: '2026-10-21T09:00:00.000Z',
     body: 'Come to me, and rest.',
     verseRef: null,
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+export function storedArea(id: string, fields: Partial<StoredArea> = {}): StoredArea {
+  return { id, name: '學習', position: 1, archivedAt: null, createdAt: CREATED, updatedAt: CREATED, deletedAt: null, ...fields };
+}
+
+export function storedProject(id: string, areaId: string, fields: Partial<StoredProject> = {}): StoredProject {
+  return {
+    id,
+    areaId,
+    groupId: null,
+    name: 'LeetCode',
+    mode: 'queue',
+    position: 1,
+    archivedAt: null,
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+export function storedTask(id: string, fields: Partial<StoredTask> = {}): StoredTask {
+  return {
+    id,
+    projectId: null,
+    title: 'Draft the weekly digest',
+    notes: null,
+    position: 1,
+    dueDate: null,
+    planStart: null,
+    planGrain: null,
+    later: false,
+    prioritizedOn: null,
+    createdAt: CREATED,
+    updatedAt: CREATED,
+    deletedAt: null,
+    ...fields,
+  };
+}
+
+export function storedTaskRecord(id: string, taskId: string, fields: Partial<StoredTaskRecord> = {}): StoredTaskRecord {
+  return {
+    id,
+    taskId,
+    kind: 'done',
+    occurredOn: '2026-11-03',
+    occurredAt: null,
+    sessionId: null,
     createdAt: CREATED,
     updatedAt: CREATED,
     deletedAt: null,

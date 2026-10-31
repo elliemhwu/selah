@@ -403,6 +403,253 @@ export interface components {
             /** @example Matthew 11:28 */
             verseRef: string | null;
         };
+        AreaRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** @example 學習 */
+            name: string;
+            /**
+             * Format: double
+             * @description Sort order; a moved row takes the midpoint of its neighbours.
+             */
+            position: number;
+            /** Format: date-time */
+            archivedAt: string | null;
+        };
+        ProjectGroupRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: uuid */
+            areaId: string;
+            /**
+             * Format: uuid
+             * @description The group it sits in, in the same area.
+             */
+            parentGroupId: string | null;
+            /** @example 華冠 */
+            name: string;
+            /** Format: double */
+            position: number;
+            /** Format: date-time */
+            archivedAt: string | null;
+        };
+        /** @enum {string} */
+        ProjectMode: "list" | "queue";
+        ProjectRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: uuid */
+            areaId: string;
+            /** Format: uuid */
+            groupId: string | null;
+            /** @example LeetCode */
+            name: string;
+            mode: components["schemas"]["ProjectMode"];
+            /** Format: double */
+            position: number;
+            /** Format: date-time */
+            archivedAt: string | null;
+        };
+        /** @enum {string} */
+        PlanGrain: "day" | "week" | "month";
+        TaskRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /**
+             * Format: uuid
+             * @description Null for the Inbox.
+             */
+            projectId: string | null;
+            /** @example Draft the weekly digest */
+            title: string;
+            notes: string | null;
+            /** Format: double */
+            position: number;
+            /**
+             * Format: date
+             * @example 2026-10-06
+             */
+            dueDate: string | null;
+            /**
+             * Format: date
+             * @description The plan's first day: the day, the week's first day, or the 1st.
+             * @example 2026-10-06
+             */
+            planStart: string | null;
+            planGrain: components["schemas"]["PlanGrain"] | null;
+            /** @description Unplanned on purpose. */
+            later: boolean;
+            /**
+             * Format: date
+             * @description Prioritized only on this day.
+             * @example 2026-10-06
+             */
+            prioritizedOn: string | null;
+        };
+        /** @enum {string} */
+        TaskRecordKind: "worked_on" | "done" | "let_go";
+        TaskRecordRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: uuid */
+            taskId: string;
+            kind: components["schemas"]["TaskRecordKind"];
+            /**
+             * Format: date
+             * @description The local day it happened.
+             * @example 2026-10-06
+             */
+            occurredOn: string;
+            /**
+             * Format: date-time
+             * @description Null when only the day is known.
+             */
+            occurredAt: string | null;
+            /** Format: uuid */
+            sessionId: string | null;
+        };
+        SessionRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: date-time */
+            startedAt: string;
+            /**
+             * Format: date-time
+             * @description Null while it runs.
+             */
+            endedAt: string | null;
+        };
+        SessionItemRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            /** Format: uuid */
+            sessionId: string;
+            /**
+             * Format: uuid
+             * @description Set for a queue. Exactly one of projectId and taskId is set.
+             */
+            projectId: string | null;
+            /**
+             * Format: uuid
+             * @description Set for one task.
+             */
+            taskId: string | null;
+            /** Format: double */
+            position: number;
+        };
+        /** @enum {string} */
+        ChangeEntity: "task" | "task_record";
+        ChangeLogRowDto: {
+            /**
+             * Format: uuid
+             * @description Client-generated (ADR 0007).
+             */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * Format: date-time
+             * @description Set when soft-deleted.
+             */
+            deletedAt: string | null;
+            entity: components["schemas"]["ChangeEntity"];
+            /** Format: uuid */
+            entityId: string;
+            /** @example plan */
+            field: string;
+            /** @example 2026-11-04/day */
+            oldValue: string | null;
+            /** @example later */
+            newValue: string | null;
+            /** Format: date-time */
+            changedAt: string;
+        };
         SettingsRowDto: {
             /** @enum {string} */
             id: "settings";
@@ -427,6 +674,14 @@ export interface components {
             journals: components["schemas"]["JournalRowDto"][];
             comments: components["schemas"]["CommentRowDto"][];
             godNotes: components["schemas"]["GodNoteRowDto"][];
+            areas: components["schemas"]["AreaRowDto"][];
+            projectGroups: components["schemas"]["ProjectGroupRowDto"][];
+            projects: components["schemas"]["ProjectRowDto"][];
+            tasks: components["schemas"]["TaskRowDto"][];
+            taskRecords: components["schemas"]["TaskRecordRowDto"][];
+            sessions: components["schemas"]["SessionRowDto"][];
+            sessionItems: components["schemas"]["SessionItemRowDto"][];
+            changeLog: components["schemas"]["ChangeLogRowDto"][];
             /** @description Null until the settings are first saved. */
             settings: components["schemas"]["SettingsRowDto"] | null;
         };
@@ -461,6 +716,14 @@ export interface components {
             journals?: components["schemas"]["JournalRowDto"][];
             comments?: components["schemas"]["CommentRowDto"][];
             godNotes?: components["schemas"]["GodNoteRowDto"][];
+            areas?: components["schemas"]["AreaRowDto"][];
+            projectGroups?: components["schemas"]["ProjectGroupRowDto"][];
+            projects?: components["schemas"]["ProjectRowDto"][];
+            tasks?: components["schemas"]["TaskRowDto"][];
+            taskRecords?: components["schemas"]["TaskRecordRowDto"][];
+            sessions?: components["schemas"]["SessionRowDto"][];
+            sessionItems?: components["schemas"]["SessionItemRowDto"][];
+            changeLog?: components["schemas"]["ChangeLogRowDto"][];
             settings?: components["schemas"]["SettingsRowDto"];
         };
     };

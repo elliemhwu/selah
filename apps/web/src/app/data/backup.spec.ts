@@ -1,6 +1,17 @@
 import { BackupError, backupFileName, parseBackup, toBackupJson } from './backup';
 import { EMPTY_SNAPSHOT } from './device-storage';
-import { storedAccount, storedComment, storedGodNote, storedJournal, storedMoment, storedRecord } from './testing';
+import {
+  storedAccount,
+  storedArea,
+  storedComment,
+  storedGodNote,
+  storedJournal,
+  storedMoment,
+  storedProject,
+  storedRecord,
+  storedTask,
+  storedTaskRecord,
+} from './testing';
 
 const snapshot = {
   ...EMPTY_SNAPSHOT,
@@ -10,6 +21,10 @@ const snapshot = {
   journals: [storedJournal('j1', { momentId: 'm1' })],
   comments: [storedComment('c1', { journalId: 'j1' })],
   godNotes: [storedGodNote('g1', 'j1')],
+  areas: [storedArea('a1')],
+  projects: [storedProject('p1', 'a1')],
+  tasks: [storedTask('t1', { projectId: 'p1', planStart: '2026-11-02', planGrain: 'week' })],
+  taskRecords: [storedTaskRecord('tr1', 't1')],
   settings: { id: 'settings' as const, weekStartDay: 7 as const, defaultCurrency: 'JPY' as const, updatedAt: 'x' },
 };
 
@@ -44,6 +59,16 @@ describe('backup files', () => {
     expect(parseBackup(json).snapshot).toMatchObject({ moments: [], journals: [], comments: [], godNotes: [] });
   });
 
+  it('restores a backup from before the Planner module with no planner rows (ADR 0033)', () => {
+    const json = JSON.stringify({
+      format: 'selah-backup',
+      version: 1,
+      exportedAt: 'x',
+      data: { accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], moments: [], settings: null },
+    });
+    expect(parseBackup(json).snapshot).toMatchObject({ areas: [], projects: [], tasks: [], taskRecords: [], changeLog: [] });
+  });
+
   it.each([
     ['text that is not JSON', 'hello'],
     ['another JSON file', JSON.stringify({ name: 'something' })],
@@ -55,6 +80,15 @@ describe('backup files', () => {
         version: 1,
         exportedAt: 'x',
         data: { accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], journals: [{}] },
+      }),
+    ],
+    [
+      'a backup with a broken planner table',
+      JSON.stringify({
+        format: 'selah-backup',
+        version: 1,
+        exportedAt: 'x',
+        data: { accounts: [], categories: [], records: [], planVersions: [], budgetTransfers: [], tasks: 'none' },
       }),
     ],
   ])('refuses %s', (_, text) => {

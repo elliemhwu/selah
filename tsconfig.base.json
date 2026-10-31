@@ -19,6 +19,7 @@
       "@selah/shared-utils": ["./libs/shared-utils/src/index.ts"],
       "@selah/finance-core": ["./libs/finance-core/src/index.ts"],
       "@selah/journal-core": ["./libs/journal-core/src/index.ts"],
+      "@selah/planner-core": ["./libs/planner-core/src/index.ts"],
       "@selah/api-client": ["./libs/api-client/src/index.ts"]
     }
   },
