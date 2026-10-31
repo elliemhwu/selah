@@ -1,12 +1,14 @@
 import { computed, inject, Injectable } from '@angular/core';
 import {
   archiveProject,
+  copyProject,
   deleteRecord,
   deleteTask,
   editRecordDay,
   endSession,
   inboxTasks,
   letGo,
+  moveTask,
   type PlanChoice,
   type PlannerChanges,
   type PlannerContext,
@@ -132,6 +134,16 @@ export class PlannerApi {
 
   archiveProject(id: string, archived: boolean) {
     return this.apply((data, ctx) => archiveProject(id, archived, data, ctx));
+  }
+
+  /** Starts a project over as a new one with fresh copies of its tasks. */
+  copyProject(newId: string, sourceId: string, name: string) {
+    return this.apply((data, ctx) => copyProject(newId, sourceId, name, data, ctx));
+  }
+
+  /** Moves a task to just after another in its list; null puts it first. */
+  moveTask(id: string, afterId: string | null) {
+    return this.apply((data, ctx) => moveTask(id, afterId, data, ctx));
   }
 
   saveTask(id: string, input: TaskInput) {

@@ -49,6 +49,12 @@ export const plannerRoutes: Route[] = [
         loadComponent: () => import('./projects/project-form-page').then((m) => m.ProjectFormPage),
       },
       {
+        path: 'projects/:id/copy',
+        title: $localize`:@@project.copyTitle:Copy project`,
+        data: form,
+        loadComponent: () => import('./projects/copy-project-page').then((m) => m.CopyProjectPage),
+      },
+      {
         path: 'areas/new',
         title: $localize`:@@area.newTitle:New area`,
         data: { ...form, kind: 'area' },

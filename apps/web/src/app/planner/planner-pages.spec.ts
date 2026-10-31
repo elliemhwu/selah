@@ -134,6 +134,21 @@ describe('Planner pages', () => {
     expect(el().querySelector('.queue-card a')?.getAttribute('href')).toBe('/planner/study/new?project=lc');
   });
 
+  it('copies a queue as a new project, every task open again', async () => {
+    const { harness, el, url } = await open('/planner/projects/lc/copy', {
+      ...study,
+      tasks: [storedTask('#12', { projectId: 'lc', title: 'Two Sum', position: 1 }), storedTask('#13', { projectId: 'lc', title: '3Sum', position: 2 })],
+      taskRecords: [storedTaskRecord('r1', '#12')],
+    });
+    expect(el().querySelector<HTMLInputElement>('#copy-name')?.value).toBe('LeetCode · again');
+    await click(harness, el().querySelector('button.save'));
+    const copy = storage.snapshot().projects.find((p) => p.name === 'LeetCode · again');
+    expect(copy).toMatchObject({ mode: 'queue', areaId: 'a1' });
+    expect(url()).toBe(`/planner/projects/${copy?.id}`);
+    expect(storage.snapshot().tasks.filter((t) => t.projectId === copy?.id).map((t) => t.title)).toEqual(['Two Sum', '3Sum']);
+    expect(storage.snapshot().taskRecords).toHaveLength(1);
+  });
+
   it('works through a study session and ends it', async () => {
     const seed = { ...study, tasks: [storedTask('#12', { projectId: 'lc', title: 'Two Sum', position: 1 }), storedTask('#13', { projectId: 'lc', title: '3Sum', position: 2 })] };
     const { harness, el, url } = await open('/planner/study/new?project=lc', seed);

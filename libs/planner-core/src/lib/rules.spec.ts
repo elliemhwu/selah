@@ -1,9 +1,11 @@
 import { ConflictError, NotFoundError, RuleViolationError } from '@selah/shared-utils';
 import {
+  copyProject,
   deleteRecord,
   editRecordDay,
   endSession,
   letGo,
+  moveTask,
   planTask,
   prioritizeTask,
   recordDone,
@@ -208,5 +210,33 @@ describe('sessions', () => {
     const changes = startSession('s1', [{ projectId: 'q1' }], open, ctx);
     expect(changes.sessions?.[0]).toMatchObject({ id: 's0', endedAt: '2026-11-03T12:40:00.000Z' });
     expect(endSession('s1', applied(open, changes), ctx).sessions?.[0]).toMatchObject({ endedAt: ctx.now });
+  });
+});
+
+describe('ordering and copying', () => {
+  const rows = data({ tasks: [task('a', { position: 1 }), task('b', { position: 2 }), task('c', { position: 3 })] });
+
+  it('moves a task between its new neighbours, changing only that task', () => {
+    expect(moveTask('c', 'a', rows, ctx).tasks).toEqual([expect.objectContaining({ id: 'c', position: 1.5 })]);
+    expect(moveTask('c', null, rows, ctx).tasks?.[0].position).toBe(0);
+    expect(moveTask('a', 'c', rows, ctx).tasks?.[0].position).toBe(4);
+    expect(moveTask('b', 'a', rows, ctx)).toEqual({});
+    expect(() => moveTask('a', 'zzz', rows, ctx)).toThrow(NotFoundError);
+  });
+
+  it('copies a queue as a fresh project, every task open again and in order', () => {
+    const queue = data({
+      projects: [project('lc', { mode: 'queue', name: 'Book' })],
+      tasks: [task('ch2', { projectId: 'lc', position: 2 }), task('ch1', { projectId: 'lc', position: 1, notes: 'Intro' }), task('gone', { projectId: 'lc', deletedAt: ctx.now })],
+      taskRecords: [record('r1', 'ch1')],
+    });
+    const changes = copyProject('lc2', 'lc', ' Book, again ', queue, context());
+    expect(changes.projects?.[0]).toMatchObject({ id: 'lc2', name: 'Book, again', mode: 'queue', areaId: 'a1', position: 2 });
+    expect(changes.tasks?.map((t) => [t.id, t.title, t.notes, t.projectId])).toEqual([
+      ['x1', 'ch1', 'Intro', 'lc2'],
+      ['x2', 'ch2', null, 'lc2'],
+    ]);
+    expect(changes.taskRecords).toBeUndefined();
+    expect(fieldErrors(() => copyProject('lc3', 'lc', ' ', queue, ctx))).toHaveProperty('name');
   });
 });
