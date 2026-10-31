@@ -1,6 +1,6 @@
 import { planTask, recordDone, recordWorkedOn, saveTask, startSession } from './rules';
 import { applied, area, context, data, project, record, task } from './testing';
-import { inboxTasks, projectTasks, queueNext, sessionView, todayView, weekView } from './views';
+import { inboxTasks, projectTasks, queueNext, sessionView, todayView, upcomingDays, weekView } from './views';
 
 // The acceptance scenarios of the v1 spec (§8). Today is Tue 3 Nov 2026.
 
@@ -190,5 +190,25 @@ describe('projects and sessions', () => {
     expect(view?.items[0]).toMatchObject({ current: { task: { id: '#14' } }, done: 2, total: 3 });
     expect(ids(view?.done ?? [])).toEqual(['#12', '#13']);
     expect(sessionView('nope', rows, TUE)).toBeNull();
+  });
+});
+
+describe('upcomingDays', () => {
+  it('lists the next days with their open day plans', () => {
+    const rows = data({
+      tasks: [
+        task('wed', { planStart: '2026-11-04', planGrain: 'day' }),
+        task('done', { planStart: '2026-11-04', planGrain: 'day' }),
+        task('week', { planStart: '2026-11-02', planGrain: 'week' }),
+        task('today', { planStart: TUE, planGrain: 'day' }),
+      ],
+      taskRecords: [record('r1', 'done')],
+    });
+    const days = upcomingDays(rows, TUE, 3);
+    expect(days.map((d) => [d.date, ids(d.tasks)])).toEqual([
+      ['2026-11-04', ['wed']],
+      ['2026-11-05', []],
+      ['2026-11-06', []],
+    ]);
   });
 });

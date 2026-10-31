@@ -1,6 +1,6 @@
 import { inject, Injectable, InjectionToken, signal } from '@angular/core';
 import { TODAY } from '../core/today';
-import { backupFileName, type BackupSummary, parseBackup, toBackupJson } from './backup';
+import { backupFileName, type BackupSummary, mergeBackup, type MergePlan, parseBackup, toBackupJson } from './backup';
 import type { DeviceSnapshot } from './device-storage';
 import { DeviceStore } from './device-store';
 
@@ -26,6 +26,8 @@ export interface PendingRestore {
   fileName: string;
   summary: BackupSummary;
   snapshot: DeviceSnapshot;
+  /** What merging it would change (ADR 0034). */
+  merge: MergePlan;
 }
 
 /**
@@ -70,7 +72,14 @@ export class Backups {
   /** Reads a chosen file; throws BackupError when it can't be restored. */
   async read(file: File): Promise<PendingRestore> {
     const { snapshot, summary } = parseBackup(await readText(file));
-    return { fileName: file.name, summary, snapshot };
+    return { fileName: file.name, summary, snapshot, merge: mergeBackup(this.store.data(), snapshot) };
+  }
+
+  /** Adds the backup's new and newer rows to the device in one save; nothing is removed (ADR 0034). */
+  async merge(pending: PendingRestore): Promise<void> {
+    // Worked out again now, in case the data changed since the file was chosen.
+    const { changes } = mergeBackup(this.store.data(), pending.snapshot);
+    if (Object.keys(changes).length) await this.store.save(changes);
   }
 
   /** Replaces everything on the device with the backup. */

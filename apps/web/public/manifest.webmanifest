@@ -1,7 +1,7 @@
 {
   "name": "Selah",
   "short_name": "Selah",
-  "description": "A quiet place for your budget and your journal. Your data stays on this device.",
+  "description": "A quiet place for your budget, your journal and your plans. Your data stays on this device.",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",

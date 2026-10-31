@@ -34,7 +34,7 @@ export class Toast {
   styles: `
     .toast-region {
       position: fixed;
-      inset: auto var(--gutter) calc(var(--nav-height) + 16px + env(safe-area-inset-bottom));
+      inset: auto var(--gutter) calc(var(--nav-height) + 16px + env(safe-area-inset-bottom)) calc(var(--sidebar) + var(--gutter));
       z-index: 1100;
       display: flex;
       justify-content: center;

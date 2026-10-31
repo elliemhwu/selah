@@ -2,6 +2,7 @@
   <a class="link-btn" routerLink="/planner/week" i18n="@@planner.week">Plan the week</a>
 </selah-planner-header>
 
+<div class="columns">
 <div class="page">
   @if (view.isLoading()) {
     <p class="muted small" role="status" i18n="@@planner.loading">Opening the planner…</p>
@@ -102,6 +103,23 @@
       </section>
     }
   }
+</div>
+
+<aside class="upcoming" aria-labelledby="upcoming-heading">
+  <h2 id="upcoming-heading" class="section-title" i18n="@@today.upcoming">Coming up</h2>
+  @for (day of upcoming.value(); track day.date) {
+    <div class="day">
+      <span class="day-name small">{{ day.date | date: 'EEE d' }}</span>
+      <div class="day-tasks">
+        @for (task of day.tasks; track task.task.id) {
+          <selah-task-row [view]="task" [today]="today" />
+        } @empty {
+          <span class="muted small free">·</span>
+        }
+      </div>
+    </div>
+  }
+</aside>
 </div>
 
 <div class="actions">

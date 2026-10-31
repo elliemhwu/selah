@@ -177,6 +177,22 @@ export function weekView(data: PlannerData, today: LocalDate, weekStartDay: IsoW
   };
 }
 
+/**
+ * The next `count` days after today, each with its open tasks planned for that
+ * day: the column beside Today on a wide screen (ADR 0034).
+ */
+export function upcomingDays(data: PlannerData, today: LocalDate, count = 6): { date: LocalDate; tasks: TaskView[] }[] {
+  const index = new Index(data, today);
+  const open = index
+    .visibleTasks()
+    .map((t) => index.view(t))
+    .filter((v) => v.open && v.plan?.grain === 'day');
+  return Array.from({ length: count }, (_, i) => addDays(today, i + 1)).map((date) => ({
+    date,
+    tasks: open.filter((v) => v.plan?.start === date).sort(byPosition),
+  }));
+}
+
 /** A project's tasks in order: open ones first, then finished ones. */
 export function projectTasks(projectId: string, data: PlannerData, today: LocalDate): TaskView[] {
   const index = new Index(data, today);

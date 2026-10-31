@@ -41,6 +41,8 @@ _Last updated: 2026-10-31_
 
 - **Stage C2 (Planner module):** designed 2026-10-31. The design is in [selah-planner-framework.md](selah-planner-framework.md), the v1 build spec in [planner/v1-spec.md](planner/v1-spec.md), and the structure in [ADR 0033](decisions/0033-planner-module.md): the `planner` tables are rows in the store, the rules and the Today and week views are in `libs/planner-core`, and the module lives at `/planner`. v1 replaces Notion for task management: Areas, optional Groups, Projects and Tasks; plans by day, week or month; queues and Study now; Today with Overdue, Slipped and Due soon; the weekly sit-down. Built so far: the `planner` schema, `libs/planner-core` (rules and views, tested against the spec's acceptance scenarios), the eight store tables in the API, the device store and backups, and the screens at `/planner`: Today, Inbox, Projects (areas, groups, projects), a project and its queue, the task, Plan and Continue-when forms, Study now and the weekly sit-down. Tasks are reordered by holding and dragging, and a queue can be copied as a new project. v1 is complete.
 
+- **Stage C3 (Desktop layout):** started 2026-10-31, in [ADR 0034](decisions/0034-desktop-layout-and-merging-backups.md). Finance, Journal and Planner are planned on a Mac or PC in the same PWA, installed from the browser, with no server. From 1024px wide a sidebar lists the modules and the current module's sections in place of the bottom navs, and Today shows the coming days beside it. Data moves between the phone and the computer as backup files: choosing a backup now offers **Merge**, which keeps the newer copy of each row and removes nothing, as well as Replace. Sync waits for stage E.
+
 **Next step:** merge `develop` into `main` and release v0.2.1, then try it on a phone and a laptop for several days (write a few nights, start a moment in Life and write from it, move an entry between moments; enter a few days of spending). Photos and import come after.
 
 ## Phases (Finance MVP)
@@ -67,6 +69,7 @@ Phases 1 and 2 can be swapped. The schema DDL can be written before the workspac
 | B   | Release v0.1.0 to Pages (device build) and test on a phone for a few days; fix what comes up in small PRs; CI checks on PRs                    | Released; testing |
 | C   | Journal module, written once and working in both builds ([ADR 0030](decisions/0030-journal-module.md))                                         | 🚧 In progress    |
 | C2  | Planner module v1 ([ADR 0033](decisions/0033-planner-module.md)): tasks, queues, Today, the weekly sit-down                                    | 🚧 In progress    |
+| C3  | Desktop layout and merging backups ([ADR 0034](decisions/0034-desktop-layout-and-merging-backups.md))                                          | 🚧 In progress    |
 | D   | Feature freeze at a steady point; port the API to ASP.NET (or publish the NestJS one)                                                          | Later             |
 | E   | Hosted service: sign-in, profile, sync between devices, where it runs ([ADR 0028](decisions/0028-local-only.md))                               | Later             |
 

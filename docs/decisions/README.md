@@ -43,6 +43,7 @@ An ADR is one short file per significant decision, explaining **what** was decid
 | [0031](0031-publish-on-release.md)                   | Publish the app when a release is created, not on every merge into main          | Accepted                                                              |
 | [0032](0032-moment-pages.md)                         | A moment is a page of its own, and journals stick to it as memos                 | Accepted                                                              |
 | [0033](0033-planner-module.md)                       | Planner module: tasks and records in the store, rules in planner-core            | Accepted                                                              |
+| [0034](0034-desktop-layout-and-merging-backups.md)   | Selah on a computer: a wide layout, and merging backups                          | Accepted                                                              |
 
 ## Template
 

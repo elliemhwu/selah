@@ -24,6 +24,8 @@
   --gutter: 24px;
   --touch: 44px;
   --nav-height: 76px;
+  // The sidebar on a wide screen (ADR 0034); none on a phone.
+  --sidebar: 0px;
 
   // Journal papers (ADR 0030): a calm lined page, and one paper per memo type.
   --page-lined: #f6f2ea;
@@ -34,6 +36,15 @@
   --memo-god-note: #d3e0ea;
   --memo-moment: #d7e5c9;
   --memo-shadow: rgb(47 44 39 / 0.18);
+}
+
+// A wide screen, such as a Mac or PC (ADR 0034): the sidebar replaces the
+// bottom navigations, so they take no room.
+@media (min-width: 1024px) {
+  :root {
+    --nav-height: 0px;
+    --sidebar: 232px;
+  }
 }
 
 @include cdk.overlay();
