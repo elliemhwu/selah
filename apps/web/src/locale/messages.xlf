@@ -58,7 +58,7 @@
         <source>Settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/app.routes.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/home/home-page.html</context>
@@ -91,14 +91,14 @@
         <source>This file isn&apos;t a Selah backup.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/data/backup.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="backup.newer" datatype="html">
         <source>This backup comes from a newer version of Selah. Update the app, then try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/data/backup.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="action.cancel" datatype="html">
@@ -150,6 +150,30 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.html</context>
           <context context-type="linenumber">3,4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">19,20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">3,5</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/settings/settings-page.html</context>
@@ -207,6 +231,26 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/finance/records/record-form-page.html</context>
           <context context-type="linenumber">11,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">25,27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">29,31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">25,27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">5,7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">9,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.loading" datatype="html">
@@ -2316,6 +2360,22 @@
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">174</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="error.positive" datatype="html">
         <source>Must be more than zero.</source>
@@ -2358,6 +2418,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.ts</context>
           <context context-type="linenumber">79</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">173</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="error.invalid" datatype="html">
@@ -2738,6 +2814,20 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/home/selah-home-page.ts</context>
           <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="selahHome.planner" datatype="html">
+        <source>Planner</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/home/selah-home-page.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="selahHome.plannerHint" datatype="html">
+        <source>Today, projects and the week ahead</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/home/selah-home-page.ts</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="journal.saving" datatype="html">
@@ -3359,6 +3449,1417 @@
         <context-group purpose="location">
           <context context-type="sourcefile">apps/web/src/app/journal/memos/moment-form-page.ts</context>
           <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.inbox" datatype="html">
+        <source>Inbox</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner-shell.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">29,30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.today" datatype="html">
+        <source>Today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner-shell.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">1,2</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">1,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.newTitle" datatype="html">
+        <source>New task</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">58,60</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">5,7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">109,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.loading" datatype="html">
+        <source>Opening the planner…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">18,19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">75,78</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">72,76</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.failed" datatype="html">
+        <source>Couldn&apos;t open the planner.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">20,22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">18,20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.planAction" datatype="html">
+        <source>Plan…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">25,26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">75,77</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">81,82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="inbox.empty" datatype="html">
+        <source>Nothing waiting. New tasks land here until they have a project.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/inbox/inbox-page.ts</context>
+          <context context-type="linenumber">28,30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.nav" datatype="html">
+        <source>Planner</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner-shell.ts</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.projects" datatype="html">
+        <source>Projects</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner-shell.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">143</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.week" datatype="html">
+        <source>Plan the week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">2,3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.newTitle" datatype="html">
+        <source>New project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">25,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.project" datatype="html">
+        <source>Project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.editTitle" datatype="html">
+        <source>Edit project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">27,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copyTitle" datatype="html">
+        <source>Copy project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="area.newTitle" datatype="html">
+        <source>New area</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">64,67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="area.editTitle" datatype="html">
+        <source>Area</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="group.newTitle" datatype="html">
+        <source>New group</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="group.editTitle" datatype="html">
+        <source>Group</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.title" datatype="html">
+        <source>Task</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">89</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">7,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.title" datatype="html">
+        <source>Plan</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.title" datatype="html">
+        <source>Continue when?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">101</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.title" datatype="html">
+        <source>Study now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/planner.routes.ts</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">108,109</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copyAction" datatype="html">
+        <source>Copy</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.notFound" datatype="html">
+        <source>This project isn&apos;t in the planner.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">29,30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">18,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copyHint" datatype="html">
+        <source>A fresh copy of the <x id="INTERPOLATION" equiv-text="{{ s.tasks.length }}"/> tasks in “<x id="INTERPOLATION_1" equiv-text="{{ s.project.name }}"/>”, all open again and in the same order. Its records stay with the original.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.name" datatype="html">
+        <source>Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">38,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copyName" datatype="html">
+        <source><x id="name" equiv-text="name"/> · again</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copied" datatype="html">
+        <source>Project copied.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/copy-project-page.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.notFound" datatype="html">
+        <source>This isn&apos;t in the planner.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">30,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="area.hint" datatype="html">
+        <source>An area of life, such as Work, Study or Church.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">41,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.area" datatype="html">
+        <source>Area</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">45,46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="group.parent" datatype="html">
+        <source>Inside</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">52,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.noGroup" datatype="html">
+        <source>None</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="group.hint" datatype="html">
+        <source>A group gathers projects, such as the ones for one job.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">63,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.saved" datatype="html">
+        <source>Saved.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/name-form-page.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.group" datatype="html">
+        <source>Group</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">57,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.mode" datatype="html">
+        <source>Kind</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.list" datatype="html">
+        <source>List</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">72,73</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.queue" datatype="html">
+        <source>Queue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">74,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.queueHint" datatype="html">
+        <source>Done in order, one after another, with no dates. Study now picks the next one.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">78,79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.listHint" datatype="html">
+        <source>Tasks planned for a day, a week or a month.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">80,82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.archive" datatype="html">
+        <source>Archive this project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">86,88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.added" datatype="html">
+        <source>Project added.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">156</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.saved" datatype="html">
+        <source>Project saved.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.archived" datatype="html">
+        <source>Project archived.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-form-page.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="action.edit" datatype="html">
+        <source>Edit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.next" datatype="html">
+        <source>Next in the queue · <x id="INTERPOLATION" equiv-text="{{ done() }}"/>/<x id="INTERPOLATION_1" equiv-text="{{ c.tasks.length }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.queueDone" datatype="html">
+        <source>Every task in this queue is done.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.copy" datatype="html">
+        <source>Copy as a new project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">36,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.empty" datatype="html">
+        <source>No tasks yet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.dragHint" datatype="html">
+        <source>Hold a task, then drag it to change the order.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.finished" datatype="html">
+        <source>Finished</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/project-page.ts</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="group.add" datatype="html">
+        <source>+ Group</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">25,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.add" datatype="html">
+        <source>+ Project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="project.queueBadge" datatype="html">
+        <source>queue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="area.empty" datatype="html">
+        <source>No projects yet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">59,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="projects.empty" datatype="html">
+        <source>Start with an area of life, such as Work or Study, then add its projects.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/projects/projects-page.ts</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.since" datatype="html">
+        <source>since <x id="INTERPOLATION" equiv-text="{{ v.session.startedAt | date: &apos;HH:mm&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.end" datatype="html">
+        <source>End session</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">27,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.notFound" datatype="html">
+        <source>This session isn&apos;t in the planner.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.started" datatype="html">
+        <source>started · stays at the front</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">48,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="taskRecord.done" datatype="html">
+        <source>Done</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">73,74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">129</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="taskRecord.workedOn" datatype="html">
+        <source>Worked on it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">74,75</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">131</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.sourceDone" datatype="html">
+        <source>All done here.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">55,57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.thisSession" datatype="html">
+        <source>This session</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.ended" datatype="html">
+        <source>Session ended.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-page.ts</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.start" datatype="html">
+        <source>Start</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.queues" datatype="html">
+        <source>Queues</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.todayTasks" datatype="html">
+        <source>From today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="study.nothing" datatype="html">
+        <source>Nothing to study yet: make a queue, or plan a task for today.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/study/study-start-page.ts</context>
+          <context context-type="linenumber">56,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="action.close" datatype="html">
+        <source>Close</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.recorded" datatype="html">
+        <source>Recorded · worked on it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.next" datatype="html">
+        <source>Next time I&apos;ll touch it</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">38,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.tomorrow" datatype="html">
+        <source>Tomorrow</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/plan-label.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.pick" datatype="html">
+        <source>Pick a day, week or month…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.later" datatype="html">
+        <source>Later</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">57,58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">66,67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.laterHint" datatype="html">
+        <source>Stays in its project, off Today and Due soon</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">50,52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">58,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.closeKeeps" datatype="html">
+        <source>Close keeps it for tomorrow.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">53,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.notFound" datatype="html">
+        <source>This task isn&apos;t in the planner.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">56,60</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">16,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.tomorrowToast" datatype="html">
+        <source>Planned for tomorrow.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="continue.laterToast" datatype="html">
+        <source>Set aside for later.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/continue-form-page.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.now" datatype="html">
+        <source>Now: <x id="INTERPOLATION" equiv-text="{{ currentPlan() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.due" datatype="html">
+        <source>due <x id="INTERPOLATION" equiv-text="{{ due | date: &apos;EEE d MMM&apos; }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">19,21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.queue" datatype="html">
+        <source>This task is in a queue, so it&apos;s done in order and has no plan.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.when" datatype="html">
+        <source>When</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.pick" datatype="html">
+        <source>Pick a day, week or month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.grain" datatype="html">
+        <source>How exact</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.from" datatype="html">
+        <source>On</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.alreadyDone" datatype="html">
+        <source>Already done?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">65,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.doneYesterday" datatype="html">
+        <source>Done yesterday</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">67,68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.doneOn" datatype="html">
+        <source>Done on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">71,72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.record" datatype="html">
+        <source>Record</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.letGo" datatype="html">
+        <source>Let go of this task</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.html</context>
+          <context context-type="linenumber">78,80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.none" datatype="html">
+        <source>No date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.today" datatype="html">
+        <source>Today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">68,69</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">97,98</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/plan-label.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.thisWeek" datatype="html">
+        <source>This week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.nextWeek" datatype="html">
+        <source>Next week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.thisMonth" datatype="html">
+        <source>This month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.day" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.weekGrain" datatype="html">
+        <source>Week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">33,34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.month" datatype="html">
+        <source>Month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.saved" datatype="html">
+        <source>Planned.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">114</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.doneToast" datatype="html">
+        <source>Done.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">119</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.letGoToast" datatype="html">
+        <source>Let go.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/plan-form-page.ts</context>
+          <context context-type="linenumber">123</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.titleLabel" datatype="html">
+        <source>What to do</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.project" datatype="html">
+        <source>Project</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">27,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.dueLabel" datatype="html">
+        <source>Due</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.notes" datatype="html">
+        <source>Notes (optional)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">56,57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.status" datatype="html">
+        <source>Where it stands</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">65,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.reopen" datatype="html">
+        <source>Not done yet</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.unprioritize" datatype="html">
+        <source>Not first today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">79,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.prioritize" datatype="html">
+        <source>Do this first today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">81,83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.letGo" datatype="html">
+        <source>Let go</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">83,84</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">70,71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">67,68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.records" datatype="html">
+        <source>What happened</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="taskRecord.remove" datatype="html">
+        <source>Take back</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">102,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.confirmDelete" datatype="html">
+        <source>Tap again to delete this task</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">112,113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.delete" datatype="html">
+        <source>Delete task</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.html</context>
+          <context context-type="linenumber">114,115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.added" datatype="html">
+        <source>Task added.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.addedInbox" datatype="html">
+        <source>Task added to the Inbox.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.saved" datatype="html">
+        <source>Task saved.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.workedOnQueue" datatype="html">
+        <source>Recorded. It stays at the front of the queue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="taskRecord.deleted" datatype="html">
+        <source>Record taken back.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.deleted" datatype="html">
+        <source>Task deleted.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="taskRecord.letGo" datatype="html">
+        <source>Let go</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/tasks/task-form-page.ts</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.inbox" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;count&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ v.inboxCount }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> unsorted in Inbox</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.empty" datatype="html">
+        <source>Nothing planned for today.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">26,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.queues" datatype="html">
+        <source>Up next in your queues</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.overdue" datatype="html">
+        <source>Overdue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.slipped" datatype="html">
+        <source>Slipped</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.dueSoon" datatype="html">
+        <source>Due soon</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">78,79</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="today.pool" datatype="html">
+        <source>This week &amp; month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.letGone" datatype="html">
+        <source>Let go of “<x id="title" equiv-text="view.task.title"/>”.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/today/today-page.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.weekOf" datatype="html">
+        <source>Week of <x id="date" equiv-text="formatDate(plan.start, &apos;d MMM&apos;, locale)"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/plan-label.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.back" datatype="html">
+        <source>Back</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/planner-header.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planner.selah" datatype="html">
+        <source>Selah</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/planner-header.ts</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.first" datatype="html">
+        <source>First</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.started" datatype="html">
+        <source>started</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">38,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.letGoBadge" datatype="html">
+        <source>let go</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">41,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.undone" datatype="html">
+        <source>Not done yet: <x id="title" equiv-text="this.view().task.title"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="task.markDone" datatype="html">
+        <source>Done: <x id="title" equiv-text="this.view().task.title"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/ui/task-row.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.next" datatype="html">
+        <source>Planning next week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">11,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.days" datatype="html">
+        <source>The week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.change" datatype="html">
+        <source>Change</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">37,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.anyDay" datatype="html">
+        <source>Any day this week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.toPlace" datatype="html">
+        <source>To place</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">47,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.pickDay" datatype="html">
+        <source>Pick a day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.dayOption" datatype="html">
+        <source>Day…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">60,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="plan.thisWeekShort" datatype="html">
+        <source>This week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">65,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.nothingWaiting" datatype="html">
+        <source>Nothing waiting to be placed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">75,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.finish" datatype="html">
+        <source>Done planning</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.html</context>
+          <context context-type="linenumber">78,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.carried" datatype="html">
+        <source>Carried over</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.thisMonth" datatype="html">
+        <source>This month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="week.done" datatype="html">
+        <source>The week is planned.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">apps/web/src/app/planner/week/week-page.ts</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.subtitle" datatype="html">

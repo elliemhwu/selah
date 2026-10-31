@@ -1,7 +1,7 @@
 import { type LocalDate, PROJECT_MODES, type ProjectMode, type TaskRecordKind } from '@selah/shared-types';
 import { addDays, ConflictError, DateError, FieldErrorCollector, NotFoundError, toDayNumber } from '@selah/shared-utils';
 import { isPlanGrain, normalizePlan, type Plan, planOf, planText } from './plan';
-import { positionAtEnd } from './position';
+import { positionAtEnd, positionBetween } from './position';
 import {
   type ChangeLogRow,
   isLive,
@@ -198,6 +198,65 @@ export function deleteTask(id: string, data: PlannerData, ctx: PlannerContext): 
   if (!task) throw new NotFoundError(`Task ${id} not found.`);
   if (!isLive(task)) return {};
   return { tasks: [{ ...task, updatedAt: ctx.now, deletedAt: ctx.now }] };
+}
+
+/**
+ * Moves a task to just after `afterId` in its list (null puts it first). Only
+ * the moved task changes: it takes the midpoint of its new neighbours.
+ */
+export function moveTask(id: string, afterId: string | null, data: PlannerData, ctx: PlannerContext): PlannerChanges {
+  const task = findLive(data.tasks, id, 'Task');
+  const siblings = data.tasks
+    .filter((t) => isLive(t) && t.projectId === task.projectId && t.id !== id)
+    .sort((a, b) => a.position - b.position);
+  const index = afterId === null ? -1 : siblings.findIndex((t) => t.id === afterId);
+  if (afterId !== null && index === -1) throw new NotFoundError(`Task ${afterId} not found in this list.`);
+  const position = positionBetween(siblings[index]?.position ?? null, siblings[index + 1]?.position ?? null);
+  if (position === task.position) return {};
+  return { tasks: [{ ...task, position, updatedAt: ctx.now }] };
+}
+
+/**
+ * Starts a project over as a new one, such as reading a book again: the same
+ * area, group and mode, and a fresh open copy of each task in the same order.
+ * Plans, due dates and records stay with the original.
+ */
+export function copyProject(newId: string, sourceId: string, name: string, data: PlannerData, ctx: PlannerContext): PlannerChanges {
+  const source = findLive(data.projects, sourceId, 'Project');
+  if (data.projects.some((p) => p.id === newId)) throw new ConflictError('This project already exists.');
+  const errors = new FieldErrorCollector();
+  const checked = checkName(name, 'Name the project.', errors);
+  errors.throwIfAny("The project can't be copied.");
+  const siblings = data.projects.filter((p) => isLive(p) && p.areaId === source.areaId && p.groupId === source.groupId);
+  const project: ProjectRow = {
+    ...source,
+    id: newId,
+    name: checked,
+    position: positionAtEnd(siblings),
+    archivedAt: null,
+    createdAt: ctx.now,
+    updatedAt: ctx.now,
+    deletedAt: null,
+  };
+  const tasks = data.tasks
+    .filter((t) => isLive(t) && t.projectId === sourceId)
+    .sort((a, b) => a.position - b.position)
+    .map((t): TaskRow => ({
+      id: ctx.newId(),
+      projectId: newId,
+      title: t.title,
+      notes: t.notes,
+      position: t.position,
+      dueDate: null,
+      planStart: null,
+      planGrain: null,
+      later: false,
+      prioritizedOn: null,
+      createdAt: ctx.now,
+      updatedAt: ctx.now,
+      deletedAt: null,
+    }));
+  return tasks.length ? { projects: [project], tasks } : { projects: [project] };
 }
 
 // ---- Records ----------------------------------------------------------------
