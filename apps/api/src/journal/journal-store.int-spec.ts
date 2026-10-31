@@ -159,6 +159,14 @@ describe('store API: journal tables', () => {
         journals: [],
         comments: [],
         godNotes: [],
+        areas: [],
+        projectGroups: [],
+        projects: [],
+        tasks: [],
+        taskRecords: [],
+        sessions: [],
+        sessionItems: [],
+        changeLog: [],
         settings: null,
       })
       .expect(204);

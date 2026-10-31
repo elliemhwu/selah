@@ -12,6 +12,14 @@ import { commentsTable } from '../journal/rows/comments';
 import { godNotesTable } from '../journal/rows/god-notes';
 import { journalsTable } from '../journal/rows/journals';
 import { momentsTable } from '../journal/rows/moments';
+import { areasTable } from '../planner/rows/areas';
+import { changeLogTable } from '../planner/rows/change-log';
+import { projectGroupsTable } from '../planner/rows/project-groups';
+import { projectsTable } from '../planner/rows/projects';
+import { sessionItemsTable } from '../planner/rows/session-items';
+import { sessionsTable } from '../planner/rows/sessions';
+import { taskRecordsTable } from '../planner/rows/task-records';
+import { tasksTable } from '../planner/rows/tasks';
 import type { StoreChangesDto, StoreSnapshotDto } from './store.dto';
 
 /**
@@ -38,6 +46,14 @@ export class StoreService {
         journals: await journalsTable.load(trx),
         comments: await commentsTable.load(trx),
         godNotes: await godNotesTable.load(trx),
+        areas: await areasTable.load(trx),
+        projectGroups: await projectGroupsTable.load(trx),
+        projects: await projectsTable.load(trx),
+        tasks: await tasksTable.load(trx),
+        taskRecords: await taskRecordsTable.load(trx),
+        sessions: await sessionsTable.load(trx),
+        sessionItems: await sessionItemsTable.load(trx),
+        changeLog: await changeLogTable.load(trx),
         settings: await settingsTable.load(trx),
       }));
   }
@@ -51,6 +67,14 @@ export class StoreService {
   async replace(snapshot: StoreSnapshotDto): Promise<void> {
     await this.write(async (trx) => {
       // Rows that refer to others go first.
+      await changeLogTable.clear(trx);
+      await taskRecordsTable.clear(trx);
+      await sessionItemsTable.clear(trx);
+      await sessionsTable.clear(trx);
+      await tasksTable.clear(trx);
+      await projectsTable.clear(trx);
+      await projectGroupsTable.clear(trx);
+      await areasTable.clear(trx);
       await godNotesTable.clear(trx);
       await commentsTable.clear(trx);
       await journalsTable.clear(trx);
@@ -77,7 +101,8 @@ export class StoreService {
 /**
  * Saves in foreign-key order: a row refers only to tables saved before it.
  * Plan versions create the budget items that records and transfers use;
- * moments come before the journals and comments that link to them.
+ * moments come before the journals and comments that link to them; sessions
+ * come before the records made in them.
  */
 async function saveAll(trx: Database, changes: StoreChangesDto): Promise<void> {
   await accountsTable.save(trx, changes.accounts ?? []);
@@ -89,5 +114,13 @@ async function saveAll(trx: Database, changes: StoreChangesDto): Promise<void> {
   await journalsTable.save(trx, changes.journals ?? []);
   await commentsTable.save(trx, changes.comments ?? []);
   await godNotesTable.save(trx, changes.godNotes ?? []);
+  await areasTable.save(trx, changes.areas ?? []);
+  await projectGroupsTable.save(trx, changes.projectGroups ?? []);
+  await projectsTable.save(trx, changes.projects ?? []);
+  await tasksTable.save(trx, changes.tasks ?? []);
+  await sessionsTable.save(trx, changes.sessions ?? []);
+  await sessionItemsTable.save(trx, changes.sessionItems ?? []);
+  await taskRecordsTable.save(trx, changes.taskRecords ?? []);
+  await changeLogTable.save(trx, changes.changeLog ?? []);
   if (changes.settings) await settingsTable.save(trx, changes.settings);
 }

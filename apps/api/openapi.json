@@ -1019,6 +1019,527 @@
           "verseRef"
         ]
       },
+      "AreaRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "學習"
+          },
+          "position": {
+            "type": "number",
+            "format": "double",
+            "description": "Sort order; a moved row takes the midpoint of its neighbours."
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "name",
+          "position",
+          "archivedAt"
+        ]
+      },
+      "ProjectGroupRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "areaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentGroupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "The group it sits in, in the same area."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "華冠"
+          },
+          "position": {
+            "type": "number",
+            "format": "double"
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "areaId",
+          "parentGroupId",
+          "name",
+          "position",
+          "archivedAt"
+        ]
+      },
+      "ProjectMode": {
+        "type": "string",
+        "enum": [
+          "list",
+          "queue"
+        ]
+      },
+      "ProjectRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "areaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "LeetCode"
+          },
+          "mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProjectMode"
+              }
+            ]
+          },
+          "position": {
+            "type": "number",
+            "format": "double"
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "areaId",
+          "groupId",
+          "name",
+          "mode",
+          "position",
+          "archivedAt"
+        ]
+      },
+      "PlanGrain": {
+        "type": "string",
+        "enum": [
+          "day",
+          "week",
+          "month"
+        ]
+      },
+      "TaskRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Null for the Inbox."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "example": "Draft the weekly digest"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 5000,
+            "nullable": true
+          },
+          "position": {
+            "type": "number",
+            "format": "double"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "nullable": true
+          },
+          "planStart": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "nullable": true,
+            "description": "The plan's first day: the day, the week's first day, or the 1st."
+          },
+          "planGrain": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanGrain"
+              }
+            ]
+          },
+          "later": {
+            "type": "boolean",
+            "description": "Unplanned on purpose."
+          },
+          "prioritizedOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "nullable": true,
+            "description": "Prioritized only on this day."
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "projectId",
+          "title",
+          "notes",
+          "position",
+          "dueDate",
+          "planStart",
+          "planGrain",
+          "later",
+          "prioritizedOn"
+        ]
+      },
+      "TaskRecordKind": {
+        "type": "string",
+        "enum": [
+          "worked_on",
+          "done",
+          "let_go"
+        ]
+      },
+      "TaskRecordRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaskRecordKind"
+              }
+            ]
+          },
+          "occurredOn": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-06",
+            "description": "The local day it happened."
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Null when only the day is known."
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "taskId",
+          "kind",
+          "occurredOn",
+          "occurredAt",
+          "sessionId"
+        ]
+      },
+      "SessionRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Null while it runs."
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "startedAt",
+          "endedAt"
+        ]
+      },
+      "SessionItemRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Set for a queue. Exactly one of projectId and taskId is set."
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Set for one task."
+          },
+          "position": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "sessionId",
+          "projectId",
+          "taskId",
+          "position"
+        ]
+      },
+      "ChangeEntity": {
+        "type": "string",
+        "enum": [
+          "task",
+          "task_record"
+        ]
+      },
+      "ChangeLogRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated (ADR 0007)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Set when soft-deleted."
+          },
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChangeEntity"
+              }
+            ]
+          },
+          "entityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "plan"
+          },
+          "oldValue": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true,
+            "example": "2026-11-04/day"
+          },
+          "newValue": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true,
+            "example": "later"
+          },
+          "changedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "entity",
+          "entityId",
+          "field",
+          "oldValue",
+          "newValue",
+          "changedAt"
+        ]
+      },
       "SettingsRowDto": {
         "type": "object",
         "properties": {
@@ -1119,6 +1640,54 @@
               "$ref": "#/components/schemas/GodNoteRowDto"
             }
           },
+          "areas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaRowDto"
+            }
+          },
+          "projectGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectGroupRowDto"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectRowDto"
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskRowDto"
+            }
+          },
+          "taskRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskRecordRowDto"
+            }
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionRowDto"
+            }
+          },
+          "sessionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionItemRowDto"
+            }
+          },
+          "changeLog": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeLogRowDto"
+            }
+          },
           "settings": {
             "nullable": true,
             "description": "Null until the settings are first saved.",
@@ -1140,6 +1709,14 @@
           "journals",
           "comments",
           "godNotes",
+          "areas",
+          "projectGroups",
+          "projects",
+          "tasks",
+          "taskRecords",
+          "sessions",
+          "sessionItems",
+          "changeLog",
           "settings"
         ]
       },
@@ -1239,6 +1816,54 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GodNoteRowDto"
+            }
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaRowDto"
+            }
+          },
+          "projectGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectGroupRowDto"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectRowDto"
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskRowDto"
+            }
+          },
+          "taskRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskRecordRowDto"
+            }
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionRowDto"
+            }
+          },
+          "sessionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionItemRowDto"
+            }
+          },
+          "changeLog": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeLogRowDto"
             }
           },
           "settings": {

@@ -13,6 +13,7 @@ import {
   SECTIONS,
 } from './finance';
 import { DATE_PRECISIONS } from './journal';
+import { CHANGE_ENTITIES, PLAN_GRAINS, PROJECT_MODES, TASK_RECORD_KINDS } from './planner';
 
 // The value sets must match the CHECK constraints in the SQL migrations.
 const migrationsDir = join(__dirname, '../../../../db/migrations');
@@ -33,6 +34,10 @@ describe('value sets', () => {
     ['RESET_ACTIONS', RESET_ACTIONS],
     ['BUDGET_TRANSFER_KINDS', BUDGET_TRANSFER_KINDS],
     ['DATE_PRECISIONS', DATE_PRECISIONS],
+    ['PROJECT_MODES', PROJECT_MODES],
+    ['PLAN_GRAINS', PLAN_GRAINS],
+    ['TASK_RECORD_KINDS', TASK_RECORD_KINDS],
+    ['CHANGE_ENTITIES', CHANGE_ENTITIES],
   ])('%s matches a CHECK constraint in the migrations', (_name, values) => {
     expect(sql).toContain(`IN (${values.map((v) => `'${v}'`).join(', ')})`);
   });

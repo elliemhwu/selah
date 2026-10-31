@@ -58,6 +58,10 @@ export default [
               onlyDependOnLibsWithTags: ['module:journal', 'module:shared'],
             },
             {
+              sourceTag: 'module:planner',
+              onlyDependOnLibsWithTags: ['module:planner', 'module:shared'],
+            },
+            {
               sourceTag: 'module:shared',
               onlyDependOnLibsWithTags: ['module:shared'],
             },

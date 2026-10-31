@@ -35,8 +35,8 @@ export default [
         {
           patterns: [
             {
-              group: ['**/journal', '**/journal/**', '@selah/journal-core'],
-              message: 'Finance must not import from Journal (ADR 0030).',
+              group: ['**/journal', '**/journal/**', '@selah/journal-core', '**/planner', '**/planner/**', '@selah/planner-core'],
+              message: 'Finance must not import from Journal or Planner (ADR 0030, 0033).',
             },
           ],
         },
@@ -51,8 +51,31 @@ export default [
         {
           patterns: [
             {
-              group: ['**/finance', '**/finance/**', '@selah/finance-core'],
-              message: 'Journal must not import from Finance (ADR 0030).',
+              group: ['**/finance', '**/finance/**', '@selah/finance-core', '**/planner', '**/planner/**', '@selah/planner-core'],
+              message: 'Journal must not import from Finance or Planner (ADR 0030, 0033).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/app/planner/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '**/finance',
+                '**/finance/**',
+                '@selah/finance-core',
+                '**/journal',
+                '**/journal/**',
+                '@selah/journal-core',
+              ],
+              message: 'Planner must not import from Finance or Journal (ADR 0033).',
             },
           ],
         },
