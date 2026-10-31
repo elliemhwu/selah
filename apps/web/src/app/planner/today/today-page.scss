@@ -50,11 +50,58 @@
 
 .actions {
   position: fixed;
-  inset: auto 0 calc(var(--nav-height) + 0px);
+  inset: auto 0 var(--nav-height) var(--sidebar);
   z-index: 1;
   display: flex;
   justify-content: center;
   gap: 12px;
   padding: 10px var(--gutter);
   background: linear-gradient(to bottom, transparent, var(--paper) 30%);
+}
+
+// A wide screen shows the coming days beside today (ADR 0034).
+.upcoming {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  :host {
+    max-width: 1080px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .upcoming {
+    position: sticky;
+    top: 16px;
+    display: block;
+    padding: 12px var(--gutter) 32px;
+  }
+
+  .upcoming .section-title {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .day {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .day-name {
+    padding-top: 18px;
+    color: var(--ink-muted);
+    font-family: var(--font-amount);
+  }
+
+  .free {
+    display: block;
+    padding: 16px 0;
+  }
 }

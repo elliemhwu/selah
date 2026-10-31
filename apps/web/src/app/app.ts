@@ -4,10 +4,14 @@ import { Backups } from './data/backups';
 import { DeviceStore } from './data/device-store';
 import { STORAGE_MODE } from './data/storage-mode';
 import { ToastOutlet } from './ui/toast';
+import { WideNav } from './ui/wide-nav';
 
-/** The app shell: the current module's screen and toasts (ADR 0021, 0030). Each module brings its own navigation. */
+/**
+ * The app shell: the current module's screen and toasts (ADR 0021, 0030). Each
+ * module brings its own navigation on a phone; a wide screen gets the sidebar (ADR 0034).
+ */
 @Component({
-  imports: [RouterOutlet, ToastOutlet],
+  imports: [RouterOutlet, ToastOutlet, WideNav],
   selector: 'selah-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

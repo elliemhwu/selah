@@ -157,7 +157,7 @@ section {
 
 .actions {
   position: fixed;
-  inset: auto 0 calc(var(--nav-height) + env(safe-area-inset-bottom) + 12px);
+  inset: auto 0 calc(var(--nav-height) + env(safe-area-inset-bottom) + 12px) var(--sidebar);
   display: flex;
   justify-content: center;
   padding: 0 var(--gutter);

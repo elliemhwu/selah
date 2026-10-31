@@ -49,7 +49,7 @@ describe('Planner pages', () => {
         storedTask('poster', { title: 'Poster' }),
       ],
     });
-    expect(sectionTitles(el())).toEqual(['Today', 'Overdue', 'Slipped']);
+    expect(sectionTitles(el())).toEqual(['Today', 'Overdue', 'Slipped', 'Coming up']);
     expect(el().querySelector('.inbox-link')?.textContent).toContain('1 unsorted in Inbox');
     const today = el().querySelector('selah-task-row');
     expect(today?.textContent).toContain('整理報價單');

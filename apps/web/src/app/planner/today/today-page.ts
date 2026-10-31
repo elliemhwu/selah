@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { TaskView } from '@selah/planner-core';
@@ -15,7 +16,7 @@ import { TaskRow } from '../ui/task-row';
  */
 @Component({
   selector: 'selah-today-page',
-  imports: [Icon, PlannerHeader, RouterLink, TaskRow],
+  imports: [DatePipe, Icon, PlannerHeader, RouterLink, TaskRow],
   templateUrl: './today-page.html',
   styleUrls: ['../ui/planner-page.scss', './today-page.scss'],
 })
@@ -24,6 +25,7 @@ export class TodayPage {
   private readonly toast = inject(Toast);
   protected readonly today = inject(TODAY)();
   protected readonly view = this.api.todayView();
+  protected readonly upcoming = this.api.upcoming();
   protected readonly ready = computed(() => (this.view.hasValue() ? this.view.value() : null));
 
   /** The pool opens by itself when nothing is left for today. */

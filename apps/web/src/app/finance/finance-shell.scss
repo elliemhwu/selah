@@ -39,3 +39,10 @@
     }
   }
 }
+
+// The sidebar takes over on a wide screen (ADR 0034).
+@media (min-width: 1024px) {
+  .bottom-nav {
+    display: none;
+  }
+}

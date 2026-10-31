@@ -1,5 +1,5 @@
 import type { LocalDate } from '@selah/shared-types';
-import { type DeviceSnapshot, EMPTY_SNAPSHOT } from './device-storage';
+import { type DeviceChanges, type DeviceSnapshot, EMPTY_SNAPSHOT } from './device-storage';
 
 // The backup file (ADR 0025): everything on the device, deleted rows included,
 // as JSON. Until sync exists, this is the only copy kept anywhere else.
@@ -83,4 +83,42 @@ export function parseBackup(text: string): { snapshot: DeviceSnapshot; summary: 
       accounts: snapshot.accounts.filter((a) => !a.deletedAt).length,
     },
   };
+}
+
+/** What merging a backup would change on this device (ADR 0034). */
+export interface MergePlan {
+  /** The rows to save: ones this device doesn't have, and newer versions of ones it has. */
+  changes: DeviceChanges;
+  added: number;
+  updated: number;
+}
+
+/**
+ * Merges a backup into this device's data, row by row (ADR 0034). Rows are
+ * matched by id; the later `updatedAt` wins and a tie keeps this device's row.
+ * A soft delete is a row like any other, so deletions carry over. Nothing is
+ * removed.
+ */
+export function mergeBackup(current: DeviceSnapshot, incoming: DeviceSnapshot): MergePlan {
+  const changes: Record<string, unknown> = {};
+  let added = 0;
+  let updated = 0;
+  for (const table of [...TABLES, ...LATER_TABLES]) {
+    const mine = new Map((current[table] as { id: string; updatedAt: string }[]).map((row) => [row.id, row]));
+    const take: unknown[] = [];
+    for (const row of (incoming[table] ?? []) as { id: string; updatedAt: string }[]) {
+      const own = mine.get(row.id);
+      if (!own) added++;
+      else if (row.updatedAt > own.updatedAt) updated++;
+      else continue;
+      take.push(row);
+    }
+    if (take.length) changes[table] = take;
+  }
+  const settings = incoming.settings;
+  if (settings && (!current.settings || settings.updatedAt > current.settings.updatedAt)) {
+    changes['settings'] = settings;
+    updated++;
+  }
+  return { changes: changes as DeviceChanges, added, updated };
 }

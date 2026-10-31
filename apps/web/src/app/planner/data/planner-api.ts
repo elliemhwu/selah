@@ -30,6 +30,7 @@ import {
   startSession,
   type TaskInput,
   todayView,
+  upcomingDays,
   weekView,
 } from '@selah/planner-core';
 import type { LocalDate } from '@selah/shared-types';
@@ -61,6 +62,11 @@ export class PlannerApi {
 
   todayView() {
     return deviceResource(this.store, () => todayView(this.data(), this.today()));
+  }
+
+  /** The next days with their plans, for the column beside Today on a wide screen (ADR 0034). */
+  upcoming() {
+    return deviceResource(this.store, () => upcomingDays(this.data(), this.today()), { defaultValue: [] });
   }
 
   weekView() {

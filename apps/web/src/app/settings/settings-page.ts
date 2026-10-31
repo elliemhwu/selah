@@ -82,6 +82,21 @@ export class SettingsPage {
     }
   }
 
+  protected async merge(): Promise<void> {
+    const pending = this.pending();
+    if (!pending) return;
+    this.restoring.set(true);
+    try {
+      await this.backups.merge(pending);
+      this.pending.set(null);
+      this.toast.show($localize`:@@backup.merged:Backup merged.`);
+    } catch (error) {
+      this.toast.show(problemOf(error).message);
+    } finally {
+      this.restoring.set(false);
+    }
+  }
+
   protected async restore(): Promise<void> {
     const pending = this.pending();
     if (!pending) return;
