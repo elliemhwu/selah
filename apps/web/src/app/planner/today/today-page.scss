@@ -1,0 +1,60 @@
+:host {
+  // Room for the actions above the bottom navigation.
+  padding-bottom: 72px;
+}
+
+.inbox-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.queues {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.pool-toggle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule-strong);
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.actions {
+  position: fixed;
+  inset: auto 0 calc(var(--nav-height) + 0px);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px var(--gutter);
+  background: linear-gradient(to bottom, transparent, var(--paper) 30%);
+}

@@ -1,0 +1,120 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    @if (isNew) {
+      <h1 i18n="@@task.newTitle">New task</h1>
+    } @else {
+      <h1 i18n="@@task.title">Task</h1>
+    }
+    <button type="submit" form="task-form" class="btn btn-quiet save" [disabled]="saving() || loading() || notFound()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@planner.loading">Opening the planner…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@task.notFound">This task isn't in the planner.</p>
+} @else {
+  <div class="form-body">
+    <form id="task-form" [formGroup]="form" (ngSubmit)="save()">
+      <label class="title-label small muted" for="task-title" i18n="@@task.titleLabel">What to do</label>
+      <input id="task-title" class="title-input" formControlName="title" autocomplete="off" [attr.maxlength]="maxTitle" />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <p class="field-error">{{ errorText(form.controls.title) }}</p>
+      }
+
+      <div class="ledger-row">
+        <label for="task-project" i18n="@@task.project">Project</label>
+        <select id="task-project" formControlName="projectId">
+          <option value="" i18n="@@planner.inbox">Inbox</option>
+          @for (entry of tree.value()?.areas ?? []; track entry.area.id) {
+            <optgroup [label]="entry.area.name">
+              @for (project of entry.projects; track project.id) {
+                <option [value]="project.id">{{ project.name }}</option>
+              }
+              @for (group of entry.groups; track group.group.id) {
+                @for (project of group.projects; track project.id) {
+                  <option [value]="project.id">{{ group.group.name }} · {{ project.name }}</option>
+                }
+              }
+            </optgroup>
+          }
+        </select>
+      </div>
+      @if (form.controls.projectId.invalid) {
+        <p class="field-error">{{ errorText(form.controls.projectId) }}</p>
+      }
+
+      <div class="ledger-row">
+        <label for="task-due" i18n="@@task.dueLabel">Due</label>
+        <input id="task-due" type="date" formControlName="dueDate" />
+      </div>
+      @if (form.controls.dueDate.invalid) {
+        <p class="field-error">{{ errorText(form.controls.dueDate) }}</p>
+      }
+
+      <label class="title-label small muted" for="task-notes" i18n="@@task.notes">Notes (optional)</label>
+      <textarea id="task-notes" class="notes" rows="4" formControlName="notes"></textarea>
+      @if (form.controls.notes.invalid) {
+        <p class="field-error">{{ errorText(form.controls.notes) }}</p>
+      }
+    </form>
+
+    @if (current(); as c) {
+      <section class="status" aria-labelledby="status-heading">
+        <h2 id="status-heading" class="section-title" i18n="@@task.status">Where it stands</h2>
+        @if (c.ended; as ended) {
+          <p class="small muted">{{ kindLabel(ended.kind) }} · {{ ended.occurredOn | date: 'EEE d MMM y' }}</p>
+          <div class="buttons">
+            <button type="button" class="btn" [disabled]="saving()" (click)="reopen()" i18n="@@task.reopen">Not done yet</button>
+          </div>
+        } @else {
+          <div class="buttons">
+            <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="done()" i18n="@@taskRecord.done">Done</button>
+            <button type="button" class="btn" [disabled]="saving()" (click)="workedOn()" i18n="@@taskRecord.workedOn">Worked on it</button>
+            <a class="btn" [routerLink]="['/planner/tasks', id, 'plan']" i18n="@@task.planAction">Plan…</a>
+          </div>
+          <div class="buttons quiet">
+            @if (c.task.prioritizedOn === today) {
+              <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="prioritize(false)" i18n="@@task.unprioritize">Not first today</button>
+            } @else {
+              <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="prioritize(true)" i18n="@@task.prioritize">Do this first today</button>
+            }
+            <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="letGo()" i18n="@@task.letGo">Let go</button>
+          </div>
+        }
+      </section>
+
+      @if (c.records.length) {
+        <section aria-labelledby="records-heading">
+          <h2 id="records-heading" class="section-title" i18n="@@task.records">What happened</h2>
+          <ul class="records">
+            @for (record of c.records; track record.id) {
+              <li class="ledger-row record">
+                <label [for]="'record-' + record.id">{{ kindLabel(record.kind) }}</label>
+                <input
+                  [id]="'record-' + record.id"
+                  type="date"
+                  [value]="record.occurredOn"
+                  [max]="today"
+                  (change)="editDay(record.id, $any($event.target).value)"
+                />
+                <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="removeRecord(record.id)" i18n-aria-label="@@taskRecord.remove" aria-label="Take back">✕</button>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <div class="danger">
+        <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="remove()">
+          @if (confirmingDelete()) {
+            <ng-container i18n="@@task.confirmDelete">Tap again to delete this task</ng-container>
+          } @else {
+            <ng-container i18n="@@task.delete">Delete task</ng-container>
+          }
+        </button>
+      </div>
+    }
+  </div>
+}

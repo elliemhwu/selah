@@ -1,0 +1,59 @@
+// Shared by the Planner's list screens.
+:host {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 12px var(--gutter) 32px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.count {
+  font-family: var(--font-amount);
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.empty {
+  padding: 12px 0;
+  font-style: italic;
+}
+
+.link-btn {
+  min-height: 36px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font: 13px var(--font-text);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+a.link-btn {
+  display: inline-flex;
+  align-items: center;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

@@ -1,0 +1,58 @@
+.form-body {
+  gap: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-label {
+  display: block;
+  margin-top: 12px;
+}
+
+.title-input {
+  min-height: var(--touch);
+  padding: 4px 0;
+  border: 0;
+  border-bottom: 1px dotted var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font: 20px var(--font-title);
+}
+
+.notes {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px dotted var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font: 16px / 1.5 var(--font-text);
+  resize: vertical;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.records {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record > label {
+  flex-basis: 120px;
+}

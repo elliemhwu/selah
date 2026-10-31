@@ -57,7 +57,7 @@ describe('Journal pages', () => {
 
   it('is an entry on the Selah home page', async () => {
     const { el } = await open('/');
-    expect([...el.querySelectorAll('.module')].map((m) => m.getAttribute('href'))).toEqual(['/finance', '/journal']);
+    expect([...el.querySelectorAll('.module')].map((m) => m.getAttribute('href'))).toEqual(['/finance', '/journal', '/planner']);
   });
 });
 

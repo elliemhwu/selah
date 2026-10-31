@@ -1,0 +1,80 @@
+<selah-planner-header i18n-title="@@planner.week" title="Plan the week" back="/planner" i18n-backLabel="@@planner.today" backLabel="Today" [today]="today" />
+
+<div class="page">
+  @if (view.isLoading()) {
+    <p class="muted small" role="status" i18n="@@planner.loading">Opening the planner…</p>
+  } @else if (view.error()) {
+    <p class="muted" i18n="@@planner.failed">Couldn't open the planner.</p>
+  } @else if (week(); as w) {
+    <p class="range">
+      @if (nextWeek()) {
+        <span class="small muted" i18n="@@week.next">Planning next week</span>
+      }
+      <span class="section-title">{{ w.start | date: 'd MMM' }} – {{ end() | date: 'd MMM y' }}</span>
+    </p>
+
+    <section class="days" aria-labelledby="days-heading">
+      <h2 id="days-heading" class="visually-hidden" i18n="@@week.days">The week</h2>
+      @for (day of w.days; track day.date) {
+        <div class="day" [class.today]="day.date === today">
+          <span class="day-name small">{{ day.date | date: 'EEE d' }}</span>
+          <div class="day-tasks">
+            @for (task of day.tasks; track task.task.id) {
+              <selah-task-row [view]="task" [today]="today">
+                <a class="link-btn" [routerLink]="['/planner/tasks', task.task.id, 'plan']" i18n="@@week.change">Change</a>
+              </selah-task-row>
+            } @empty {
+              <span class="muted small free">·</span>
+            }
+          </div>
+        </div>
+      }
+      <div class="day week-bucket">
+        <span class="day-name small" i18n="@@plan.weekGrain">Week</span>
+        <div class="day-tasks">
+          @for (task of w.week; track task.task.id) {
+            <selah-task-row [view]="task" [today]="today">
+              <a class="link-btn" [routerLink]="['/planner/tasks', task.task.id, 'plan']" i18n="@@week.change">Change</a>
+            </selah-task-row>
+          } @empty {
+            <span class="muted small free" i18n="@@week.anyDay">Any day this week</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2 class="section-title" i18n="@@week.toPlace">To place</h2>
+      <span class="count">{{ waiting() }}</span>
+    </div>
+
+    @for (group of groups(); track group.id) {
+      @if (group.tasks.length) {
+        <section [attr.aria-labelledby]="group.id + '-heading'">
+          <h3 [id]="group.id + '-heading'" class="group-title small">{{ group.title }}</h3>
+          @for (task of group.tasks; track task.task.id) {
+            <div class="placing">
+              <selah-task-row [view]="task" [today]="today" [showPlan]="true" [checkable]="false" />
+              <div class="place-actions">
+                <select class="day-select" [disabled]="busy()" (change)="toDay(task, $any($event.target).value)" i18n-aria-label="@@week.pickDay" aria-label="Pick a day">
+                  <option value="" i18n="@@week.dayOption">Day…</option>
+                  @for (day of w.days; track day.date) {
+                    <option [value]="day.date">{{ day.date | date: 'EEE d' }}</option>
+                  }
+                </select>
+                <button type="button" class="link-btn" [disabled]="busy()" (click)="toWeek(task)" i18n="@@plan.thisWeekShort">This week</button>
+                <button type="button" class="link-btn" [disabled]="busy()" (click)="later(task)" i18n="@@plan.later">Later</button>
+                <button type="button" class="link-btn" [disabled]="busy()" (click)="letGo(task)" i18n="@@task.letGo">Let go</button>
+              </div>
+            </div>
+          }
+        </section>
+      }
+    }
+    @if (!waiting()) {
+      <p class="muted empty" i18n="@@week.nothingWaiting">Nothing waiting to be placed.</p>
+    }
+
+    <button type="button" class="btn btn-primary finish" (click)="finish()" i18n="@@week.finish">Done planning</button>
+  }
+</div>

@@ -1,0 +1,82 @@
+<header class="form-header">
+  <div class="form-header-inner">
+    <button type="button" class="btn btn-quiet" (click)="cancel()" i18n="@@action.cancel">Cancel</button>
+    <h1 i18n="@@plan.title">Plan</h1>
+    <button type="button" class="btn btn-quiet save" [disabled]="saving() || loading() || notFound() || current()?.inQueue" (click)="save()" i18n="@@action.save">Save</button>
+  </div>
+</header>
+
+@if (loading()) {
+  <p class="form-status muted" role="status" i18n="@@planner.loading">Opening the planner…</p>
+} @else if (notFound()) {
+  <p class="form-status muted" i18n="@@task.notFound">This task isn't in the planner.</p>
+} @else if (current(); as c) {
+  <div class="form-body">
+    <div class="task-card">
+      <span class="small muted" i18n="@@plan.now">Now: {{ currentPlan() }}</span>
+      <span class="task-name">{{ c.task.title }}</span>
+      @if (c.task.dueDate; as due) {
+        <span class="small muted" i18n="@@task.due">due {{ due | date: 'EEE d MMM' }}</span>
+      }
+    </div>
+
+    @if (c.inQueue) {
+      <p class="muted small" i18n="@@plan.queue">This task is in a queue, so it's done in order and has no plan.</p>
+    } @else {
+      <fieldset class="quick" i18n-aria-label="@@plan.when" aria-label="When">
+        @for (choice of quickChoices; track choice.value) {
+          <input type="radio" name="quick" [id]="'quick-' + choice.value" [checked]="quick() === choice.value" (change)="quick.set(choice.value)" />
+          <label [for]="'quick-' + choice.value">{{ choice.label }}</label>
+        }
+      </fieldset>
+
+      <section class="custom" aria-labelledby="custom-heading">
+        <h2 id="custom-heading" class="section-title" i18n="@@plan.pick">Pick a day, week or month</h2>
+        <fieldset class="segmented" i18n-aria-label="@@plan.grain" aria-label="How exact">
+          @for (option of grains; track option.value) {
+            <input type="radio" name="grain" [id]="'grain-' + option.value" [checked]="quick() === 'custom' && grain() === option.value" (change)="setGrain(option.value)" />
+            <label [for]="'grain-' + option.value">{{ option.label }}</label>
+          }
+        </fieldset>
+        <div class="ledger-row">
+          <label for="plan-date" i18n="@@plan.from">On</label>
+          @if (grain() === 'month') {
+            <input id="plan-date" type="month" [value]="date()" (change)="setDate($any($event.target).value)" />
+          } @else {
+            <input id="plan-date" type="date" [value]="date()" (change)="setDate($any($event.target).value)" />
+          }
+        </div>
+        @if (quick() === 'custom') {
+          <p class="hint small muted">{{ customText() }}</p>
+        }
+      </section>
+
+      <div class="later-row">
+        <input type="radio" class="check" name="quick" id="quick-later" [checked]="quick() === 'later'" (change)="quick.set('later')" />
+        <label for="quick-later" class="later-label">
+          <span i18n="@@plan.later">Later</span>
+          <span class="small muted" i18n="@@plan.laterHint">Stays in its project, off Today and Due soon</span>
+        </label>
+      </div>
+    }
+
+    @if (!c.ended) {
+      <section class="already" aria-labelledby="done-heading">
+        <h2 id="done-heading" class="section-title" i18n="@@plan.alreadyDone">Already done?</h2>
+        <button type="button" class="btn" [disabled]="saving()" (click)="doneEarlier(yesterday)">
+          <ng-container i18n="@@plan.doneYesterday">Done yesterday</ng-container>
+          <span class="small muted">{{ yesterday | date: 'EEE d MMM' }}</span>
+        </button>
+        <div class="ledger-row">
+          <label for="done-on" i18n="@@plan.doneOn">Done on</label>
+          <input id="done-on" type="date" [max]="today" [value]="doneOn()" (change)="doneOn.set($any($event.target).value)" />
+          <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="doneEarlier(doneOn())" i18n="@@plan.record">Record</button>
+        </div>
+      </section>
+
+      <div class="danger">
+        <button type="button" class="btn btn-quiet" [disabled]="saving()" (click)="letGo()" i18n="@@plan.letGo">Let go of this task</button>
+      </div>
+    }
+  </div>
+}
