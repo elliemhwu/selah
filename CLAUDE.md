@@ -4,7 +4,7 @@ Context for AI assistants (and humans) working in this repo. Keep it short and c
 
 ## Project
 
-**Selah** is a personal life management PWA with a single user. It is built module by module: **Finance** is the first, **Journal** the second ([design](docs/selah-journal-framework.md)).
+**Selah** is a personal life management PWA with a single user. It is built module by module: **Finance** is the first, **Journal** the second ([design](docs/selah-journal-framework.md)), and **Planner** the third ([design](docs/selah-planner-framework.md), [v1 spec](docs/planner/v1-spec.md)).
 
 - Current status and next steps: [docs/roadmap.md](docs/roadmap.md). **Read this first** and update it when a phase moves.
 - Finance requirements: [docs/finance/requirements.md](docs/finance/requirements.md)
